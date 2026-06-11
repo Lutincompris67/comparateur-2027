@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convertisseur — Excel vers data.js</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#F6F5F1;color:#1C2433;max-width:720px;margin:0 auto;padding:30px 16px;line-height:1.6}
+h1{font-size:23px;margin-bottom:6px}
+p{margin-bottom:12px;color:#4A5468}
+.drop{border:2px dashed #1F3864;border-radius:12px;background:#fff;padding:42px 20px;text-align:center;cursor:pointer;font-size:15px;color:#1F3864;font-weight:600;margin:18px 0}
+.drop.over{background:#E9EDF5}
+.report{background:#fff;border:1px solid #DDDACF;border-radius:10px;padding:16px 19px;margin-top:16px;display:none}
+.report.show{display:block}
+.ok{color:#1D7A5F;font-weight:600}
+.warn{color:#A14E2B;font-weight:600}
+ul{margin:8px 0 8px 20px;font-size:14px}
+button.dl{background:#1F3864;color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;display:none}
+button.dl.show{display:inline-block}
+small{color:#8A8F9C}
+</style>
+</head>
+<body>
+<h1>Convertisseur Excel → data.js</h1>
+<p>Déposez ici votre fichier <b>Comparateur_2027_source.xlsx</b>. La page vérifie la cohérence des données (ID orphelins, sources manquantes…) puis génère le fichier <b>data.js</b> à déposer dans votre dépôt GitHub, à côté de index.html.</p>
+<p><small>Tout se passe dans votre navigateur : le fichier n'est envoyé nulle part.</small></p>
+
+<div class="drop" id="drop">Cliquez ou glissez votre fichier Excel ici</div>
+<input type="file" id="file" accept=".xlsx" style="display:none">
+
+<div class="report" id="report"></div>
+<button class="dl" id="dl">Télécharger data.js</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+"use strict";
+var SPECIAL={'Lisez-moi':1,'Analyses & partis pris':1,'Bibliographie':1};
+var drop=document.getElementById('drop'),fileIn=document.getElementById('file'),
+    report=document.getElementById('report'),dlBtn=document.getElementById('dl'),
+    output=null;
+
+drop.addEventListener('click',function(){fileIn.click();});
+drop.addEventListener('dragover',function(e){e.preventDefault();drop.classList.add('over');});
+drop.addEventListener('dragleave',function(){drop.classList.remove('over');});
+drop.addEventListener('drop',function(e){e.preventDefault();drop.classList.remove('over');if(e.dataTransfer.files[0])handle(e.dataTransfer.files[0]);});
+fileIn.addEventListener('change',function(){if(fileIn.files[0])handle(fileIn.files[0]);});
+
+function cellStr(v){return v==null?'':String(v).trim();}
+
+function sheetRows(ws){
+  return XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+}
+function findCol(headers,name){
+  var low=headers.map(function(h){return String(h).toLowerCase().trim();});
+  return low.indexOf(name.toLowerCase());
+}
+
+function handle(file){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{ convert(XLSX.read(new Uint8Array(e.target.result),{type:'array'})); }
+    catch(err){ report.className='report show'; report.innerHTML='<span class="warn">Erreur de lecture :</span> '+err.message; }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function convert(wb){
+  var themes=[],candidates=[],problems=[],allIds={};
+  wb.SheetNames.forEach(function(name){
+    var clean=name.trim();
+    if(SPECIAL[clean])return;
+    var rows=sheetRows(wb.Sheets[name]);
+    if(!rows.length)return;
+    var hdr=rows[0].map(cellStr);
+    var cId=findCol(hdr,'ID_sujet'); if(cId<0)cId=0;
+    var cSubj=findCol(hdr,'Sujet'); if(cSubj<0)cSubj=1;
+    var candCols=[];
+    hdr.forEach(function(h,i){ if(i!==cId&&i!==cSubj&&h){candCols.push([i,h]); if(candidates.indexOf(h)<0)candidates.push(h);} });
+    var subjects=[];
+    for(var r=1;r<rows.length;r++){
+      var sid=cellStr(rows[r][cId]),label=cellStr(rows[r][cSubj]);
+      if(!sid&&!label)continue;
+      if(!sid){problems.push(clean+' ligne '+(r+1)+' : sujet « '+label+' » sans ID_sujet');continue;}
+      if(allIds[sid])problems.push('ID_sujet en doublon : '+sid);
+      allIds[sid]=1;
+      var positions={};
+      candCols.forEach(function(cc){var t=cellStr(rows[r][cc[0]]);if(t)positions[cc[1]]=t;});
+      subjects.push({id:sid,label:label||sid,positions:positions});
+    }
+    themes.push({name:clean,subjects:subjects});
+  });
+
+  var editorial=[];
+  if(wb.SheetNames.some(function(n){return n.trim()==='Analyses & partis pris';})){
+    var ws=wb.Sheets[wb.SheetNames.filter(function(n){return n.trim()==='Analyses & partis pris';})[0]];
+    var rows=sheetRows(ws),hdr=rows[0].map(cellStr);
+    var ci={id:findCol(hdr,'ID_sujet'),type:findCol(hdr,'Type'),author:findCol(hdr,'Auteur'),initials:findCol(hdr,'Initiales'),text:findCol(hdr,'Texte'),sources:findCol(hdr,'Sources')};
+    for(var r=1;r<rows.length;r++){
+      var sid=ci.id>=0?cellStr(rows[r][ci.id]):'',txt=ci.text>=0?cellStr(rows[r][ci.text]):'';
+      if(!sid&&!txt)continue;
+      if(sid&&!allIds[sid])problems.push('Analyses ligne '+(r+1)+' : ID_sujet « '+sid+' » introuvable dans les onglets thématiques');
+      var typ=ci.type>=0?cellStr(rows[r][ci.type]).toLowerCase():'';
+      var srcs=ci.sources>=0?cellStr(rows[r][ci.sources]).split(',').map(function(s){return s.trim();}).filter(Boolean):[];
+      editorial.push({id:sid,type:typ.indexOf('analyse')===0?'analyse':'parti pris',
+        author:ci.author>=0?cellStr(rows[r][ci.author]):'',initials:ci.initials>=0?cellStr(rows[r][ci.initials]):'',
+        text:txt,sources:srcs});
+    }
+  }
+
+  var bibliography=[];
+  if(wb.SheetNames.some(function(n){return n.trim()==='Bibliographie';})){
+    var wsb=wb.Sheets[wb.SheetNames.filter(function(n){return n.trim()==='Bibliographie';})[0]];
+    var rb=sheetRows(wsb),hb=rb[0].map(cellStr);
+    var cb={id:findCol(hb,'ID_source'),authors:findCol(hb,'Auteurs'),title:findCol(hb,'Titre'),type:findCol(hb,'Type'),org:findCol(hb,'Éditeur/Organisme'),date:findCol(hb,'Date de publication'),url:findCol(hb,'URL'),consulted:findCol(hb,'Date de consultation')};
+    for(var r2=1;r2<rb.length;r2++){
+      var bid=cb.id>=0?cellStr(rb[r2][cb.id]):'';
+      if(!bid)continue;
+      bibliography.push({id:bid,
+        authors:cb.authors>=0?cellStr(rb[r2][cb.authors]):'',title:cb.title>=0?cellStr(rb[r2][cb.title]):'',
+        type:cb.type>=0?cellStr(rb[r2][cb.type]):'',org:cb.org>=0?cellStr(rb[r2][cb.org]):'',
+        date:cb.date>=0?cellStr(rb[r2][cb.date]):'',url:cb.url>=0?cellStr(rb[r2][cb.url]):'',
+        consulted:cb.consulted>=0?cellStr(rb[r2][cb.consulted]):''});
+    }
+  }
+  var bibIds={};bibliography.forEach(function(b){bibIds[b.id]=1;});
+  editorial.forEach(function(e){(e.sources||[]).forEach(function(s){if(!bibIds[s])problems.push('Source « '+s+' » citée mais absente de la Bibliographie');});});
+
+  var today=new Date().toISOString().slice(0,10);
+  var data={meta:{generated:today,title:'Comparateur 2027'},candidates:candidates,themes:themes,editorial:editorial,bibliography:bibliography};
+  output='window.COMPARATEUR_DATA = '+JSON.stringify(data,null,1)+';\n';
+
+  var nSubj=themes.reduce(function(a,t){return a+t.subjects.length;},0);
+  var html='<span class="ok">Conversion réussie.</span> '+themes.length+' thématiques, '+nSubj+' sujets, '+editorial.length+' contenus éditoriaux, '+bibliography.length+' sources.';
+  if(problems.length){
+    html+='<br><br><span class="warn">Points à vérifier ('+problems.length+') :</span><ul>'+problems.map(function(p){return '<li>'+p.replace(/</g,'&lt;')+'</li>';}).join('')+'</ul><small>Ces points n\'empêchent pas la génération, mais corrigez-les dans Excel pour un site cohérent.</small>';
+  } else {
+    html+='<br><span class="ok">Aucune incohérence détectée.</span>';
+  }
+  report.className='report show';report.innerHTML=html;
+  dlBtn.className='dl show';
+}
+
+dlBtn.addEventListener('click',function(){
+  if(!output)return;
+  var blob=new Blob([output],{type:'text/javascript;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='data.js';a.click();
+  URL.revokeObjectURL(a.href);
+});
+})();
+</script>
+</body>
+</html>

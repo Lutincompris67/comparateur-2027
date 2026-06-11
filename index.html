@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparateur 2027 — Les programmes, mot à mot</title>
+<meta name="description" content="Comparateur des programmes écrits des candidats à l'élection présidentielle 2027 : transcription littérale, analyses sourcées, partis pris signés.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F1; --card:#FFFFFF; --ink:#1C2433; --ink-2:#4A5468; --ink-3:#8A8F9C;
+  --nuit:#1F3864; --nuit-soft:#E9EDF5; --ocre:#8F6400; --ocre-soft:#F4EDDC;
+  --rule:#DDDACF; --rule-soft:#EAE8E0;
+  --serif:"Source Serif 4",Georgia,serif; --sans:"Archivo",system-ui,sans-serif;
+  --r:10px; --shadow:0 10px 35px rgba(28,36,51,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6}
+a{color:var(--nuit)}
+button{font-family:var(--sans);cursor:pointer}
+:focus-visible{outline:2px solid var(--ocre);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+
+/* ===== En-tête ===== */
+header{border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:40}
+.head-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:1px;text-decoration:none;color:var(--ink)}
+.brand b{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:.2px}
+.brand span{font-size:11.5px;color:var(--ink-2);letter-spacing:.4px;text-transform:uppercase}
+nav{display:flex;gap:4px}
+nav a{font-size:13.5px;font-weight:500;text-decoration:none;color:var(--ink-2);padding:7px 12px;border-radius:7px}
+nav a.on{background:var(--nuit);color:#fff}
+nav a:not(.on):hover{background:var(--nuit-soft)}
+
+/* ===== Bandeau registres (signature) ===== */
+.registres{display:flex;gap:0;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin:18px 0 4px;background:var(--card)}
+.registres>div{flex:1;padding:10px 14px;font-size:12px;color:var(--ink-2);border-left:1px solid var(--rule-soft)}
+.registres>div:first-child{border-left:none}
+.registres b{display:block;font-size:12.5px;color:var(--ink);margin-bottom:1px}
+.registres .r1 b{font-family:var(--serif)}
+.registres .r2 b{font-weight:600}
+.registres .r3 b{color:var(--ocre)}
+@media(max-width:700px){.registres{flex-direction:column}.registres>div{border-left:none;border-top:1px solid var(--rule-soft)}.registres>div:first-child{border-top:none}}
+
+/* ===== Recherche & thèmes ===== */
+.tools{display:flex;gap:10px;align-items:center;margin:14px 0 10px;flex-wrap:wrap}
+.search{position:relative;flex:1;min-width:230px;max-width:430px}
+.search input{width:100%;padding:9px 13px;border:1px solid var(--rule);border-radius:8px;background:var(--card);font-family:var(--sans);font-size:14px;color:var(--ink)}
+.search input::placeholder{color:var(--ink-3)}
+.s-list{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--card);border:1px solid var(--rule);border-radius:8px;box-shadow:var(--shadow);max-height:300px;overflow:auto;z-index:50;display:none}
+.s-list.open{display:block}
+.s-list button{display:block;width:100%;text-align:left;padding:9px 13px;border:none;background:none;font-size:13.5px;border-bottom:1px solid var(--rule-soft)}
+.s-list button:hover{background:var(--nuit-soft)}
+.s-list button small{display:block;color:var(--ink-3);font-size:11.5px}
+.maj{font-size:12px;color:var(--ink-3);margin-left:auto}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:thin}
+.chip{flex:0 0 auto;border:1px solid var(--rule);background:var(--card);color:var(--ink-2);font-size:13px;font-weight:500;padding:7px 14px;border-radius:99px;white-space:nowrap}
+.chip.on{background:var(--nuit);border-color:var(--nuit);color:#fff}
+.chip:not(.on):hover{border-color:var(--nuit);color:var(--nuit)}
+
+/* ===== Grille comparative ===== */
+.grid-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--card);margin-bottom:26px}
+table{border-collapse:separate;border-spacing:0;width:100%}
+th,td{padding:13px 15px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule-soft);font-size:13.5px}
+thead th{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--nuit);background:var(--nuit-soft);position:sticky;top:0;z-index:2}
+th.subj,td.subj{position:sticky;left:0;background:var(--card);min-width:170px;max-width:215px;border-right:1px solid var(--rule);z-index:3}
+thead th.subj{background:var(--nuit-soft);z-index:4}
+td.cand{min-width:235px;max-width:330px}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:#FBFAF6}
+tbody tr:hover td.subj{background:#F3F1E9}
+.subj-btn{background:none;border:none;text-align:left;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink);padding:0;display:flex;gap:6px;align-items:baseline}
+.subj-btn .arr{color:var(--ocre);font-size:12px}
+.verbatim{font-family:var(--serif);color:var(--ink);font-size:13.8px;line-height:1.55}
+.verbatim::before{content:"«\00a0";color:var(--ink-3)}
+.verbatim::after{content:"\00a0»";color:var(--ink-3)}
+.avenir{color:var(--ink-3);font-style:italic;font-size:13px}
+.badge-ed{display:inline-flex;gap:4px;margin-top:7px;font-size:10.5px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+.badge-ed span{padding:2px 7px;border-radius:4px}
+.badge-ed .ba{background:var(--nuit-soft);color:var(--nuit)}
+.badge-ed .bp{background:var(--ocre-soft);color:var(--ocre)}
+.empty-theme{padding:34px;text-align:center;color:var(--ink-3);font-size:14px}
+
+/* ===== Panneau de détail ===== */
+.overlay{position:fixed;inset:0;background:rgba(28,36,51,.45);z-index:60;opacity:0;pointer-events:none;transition:opacity .18s}
+.overlay.open{opacity:1;pointer-events:auto}
+.panel{position:fixed;top:0;right:0;bottom:0;width:min(580px,100%);background:var(--paper);z-index:61;transform:translateX(102%);transition:transform .22s ease;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.panel.open{transform:none}
+@media(max-width:640px){.panel{top:auto;left:0;width:100%;height:88vh;border-radius:16px 16px 0 0;transform:translateY(102%)}}
+.p-head{padding:18px 22px 0;border-bottom:1px solid var(--rule)}
+.p-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.p-theme{font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--ocre);font-weight:600}
+.p-title{font-family:var(--serif);font-size:21px;font-weight:600;line-height:1.3;margin:3px 0 10px}
+.p-close{border:1px solid var(--rule);background:var(--card);border-radius:8px;width:34px;height:34px;font-size:17px;color:var(--ink-2);flex:0 0 auto}
+.p-tabs{display:flex;gap:2px}
+.p-tab{border:none;background:none;font-size:13.5px;font-weight:600;color:var(--ink-2);padding:9px 13px;border-bottom:2.5px solid transparent;margin-bottom:-1px}
+.p-tab.on{color:var(--nuit);border-color:var(--nuit)}
+.p-body{overflow-y:auto;padding:18px 22px 30px;flex:1}
+.p-section-label{font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:0 0 10px}
+.pos-card{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:13px 16px;margin-bottom:11px}
+.pos-card h4{font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--nuit);margin-bottom:7px}
+.pos-card .verbatim{font-size:14.5px}
+.analyse-box{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--nuit);border-radius:var(--r);padding:15px 18px;font-size:14.5px;line-height:1.7}
+.analyse-box sup a{font-weight:600;text-decoration:none;color:var(--ocre)}
+.src-list{margin-top:16px;padding-top:13px;border-top:1px dashed var(--rule)}
+.src-list h5{font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
+.src-list ol{margin-left:19px;font-size:13px;color:var(--ink-2)}
+.src-list li{margin-bottom:6px}
+.pp-card{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--pp,#777);border-radius:var(--r);padding:13px 16px;margin-bottom:12px}
+.pp-head{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.pp-av{width:30px;height:30px;border-radius:50%;background:var(--pp,#777);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;flex:0 0 auto}
+.pp-name{font-size:13.5px;font-weight:600}
+.pp-tag{font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--ocre);font-weight:600;margin-left:auto}
+.pp-card p{font-size:14px;line-height:1.65}
+.p-empty{color:var(--ink-3);font-size:13.5px;font-style:italic;padding:14px 4px}
+
+/* ===== Pages texte ===== */
+.page{max-width:780px;margin:26px auto 60px;padding:0 16px}
+.page h1{font-family:var(--serif);font-size:30px;font-weight:600;margin-bottom:8px}
+.page .lede{font-size:16px;color:var(--ink-2);margin-bottom:26px}
+.page h2{font-family:var(--serif);font-size:20px;font-weight:600;margin:30px 0 9px}
+.page p{margin-bottom:13px;font-size:15px}
+.page .rg{border-left:4px solid var(--nuit);background:var(--card);border-radius:0 var(--r) var(--r) 0;padding:13px 17px;margin:14px 0}
+.page .rg b{font-family:var(--serif)}
+.bib-item{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:13px 17px;margin-bottom:10px;font-size:14px}
+.bib-item .bid{font-size:11.5px;color:var(--ocre);font-weight:600;letter-spacing:.4px}
+.bib-item .bt{font-family:var(--serif);font-weight:600;font-size:15px;margin:2px 0}
+.bib-item .bm{color:var(--ink-2);font-size:13px}
+.bib-item a{word-break:break-all;font-size:13px}
+footer{border-top:1px solid var(--rule);padding:20px 0 34px;margin-top:10px}
+footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap head-in">
+    <a class="brand" href="#" id="brandLink"><b>Comparateur 2027</b><span>Les programmes, mot à mot</span></a>
+    <nav>
+      <a href="#" data-nav="comparateur" class="on">Comparateur</a>
+      <a href="#methodologie" data-nav="methodologie">Méthodologie</a>
+      <a href="#bibliographie" data-nav="bibliographie">Bibliographie</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== Vue comparateur ===== -->
+<main id="view-comparateur">
+  <div class="wrap">
+    <div class="registres" aria-label="Les trois registres du site">
+      <div class="r1"><b>« Le programme, mot à mot »</b>Transcription littérale des programmes écrits publiés, sans retouche.</div>
+      <div class="r2"><b>L'analyse</b>Éclairage factuel et sourcé : concepts, faisabilité, comparaisons. Sans jugement.</div>
+      <div class="r3"><b>Les partis pris</b>Opinions assumées et signées par leurs auteurs. Clairement séparées du reste.</div>
+    </div>
+    <div class="tools">
+      <div class="search">
+        <input type="search" id="searchInput" placeholder="Rechercher un sujet (ex. eau, retraites…)" aria-label="Rechercher un sujet" autocomplete="off">
+        <div class="s-list" id="searchList" role="listbox"></div>
+      </div>
+      <span class="maj" id="majDate"></span>
+    </div>
+    <div class="chips" id="chips" role="tablist" aria-label="Thématiques"></div>
+    <div class="grid-wrap" id="gridWrap"></div>
+  </div>
+</main>
+
+<!-- ===== Vue méthodologie ===== -->
+<main id="view-methodologie" class="hidden">
+  <div class="page">
+    <h1>Méthodologie</h1>
+    <p class="lede">Ce comparateur est né d'un constat : lors des précédentes élections, la plupart des outils de comparaison restituaient les programmes à travers une grille de lecture implicite, sans que le lecteur puisse distinguer le fait de l'interprétation. Nous avons voulu un outil où cette distinction est la règle de construction.</p>
+
+    <h2>Ce qui entre dans le comparateur</h2>
+    <p>Un candidat intègre le tableau dès lors qu'il a <strong>publié un programme écrit</strong>, même partiel ou limité à de grandes lignes. Les déclarations orales, propos de meeting ou interviews n'y suffisent pas : une idée testée à l'oral peut être abandonnée sans coût, tandis qu'un écrit publié engage son auteur. Les positions non encore publiées apparaissent comme « À venir ».</p>
+
+    <h2>Les trois registres</h2>
+    <p>Chaque sujet est traité selon trois registres, visuellement distincts sur tout le site :</p>
+    <div class="rg"><b>« Le programme, mot à mot ».</b> Les cases du tableau contiennent la transcription littérale des programmes, dans le vocabulaire des candidats, sans reformulation. Ce registre est affiché en caractères serif, entre guillemets.</div>
+    <div class="rg"><b>L'analyse.</b> Elle va au-delà des mots sans verser dans l'opinion : clarification des concepts, liens avec le reste du système social et institutionnel, évaluation de la faisabilité ou du coût lorsque des indicateurs existent, comparaison avec des dispositifs déjà en œuvre ailleurs. Chaque affirmation est sourcée par des appels de note renvoyant à la bibliographie. Une analyse rapporte des faits vérifiables ; elle ne conclut jamais sur la désirabilité d'une mesure.</div>
+    <div class="rg"><b>Les partis pris.</b> Toute appréciation — favorable ou critique — relève de ce registre. Chaque parti pris est signé par son auteur, qui assume sa ligne. Plusieurs partis pris peuvent coexister sur un même sujet : la pluralité des regards fait partie du projet.</div>
+
+    <h2>Le sourçage</h2>
+    <p>Les analyses suivent une exigence de type universitaire : les affirmations factuelles sont reliées à des sources identifiées (rapports officiels, études, textes juridiques, données statistiques, programmes eux-mêmes), réunies dans une bibliographie centralisée et consultable. Chaque source est datée et accompagnée de son lien d'origine, pour que chacun puisse vérifier par lui-même.</p>
+
+    <h2>La neutralité, rendue vérifiable</h2>
+    <p>Nous ne prétendons pas être sans opinions : nous les signons et les séparons. Aucun candidat ne reçoit de traitement visuel distinctif ; les colonnes du tableau sont strictement identiques. La fidélité de la restitution est vérifiable par les liens vers les programmes d'origine. Si vous constatez une erreur de transcription ou d'attribution, signalez-la nous.</p>
+  </div>
+</main>
+
+<!-- ===== Vue bibliographie ===== -->
+<main id="view-bibliographie" class="hidden">
+  <div class="page">
+    <h1>Bibliographie</h1>
+    <p class="lede">Toutes les sources citées dans les analyses, réunies en un seul endroit. Chaque entrée indique sa nature, sa date et son lien d'origine.</p>
+    <div id="bibList"></div>
+  </div>
+</main>
+
+<!-- ===== Panneau de détail ===== -->
+<div class="overlay" id="overlay"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="pTitle">
+  <div class="p-head">
+    <div class="p-top">
+      <div>
+        <div class="p-theme" id="pTheme"></div>
+        <h2 class="p-title" id="pTitle"></h2>
+      </div>
+      <button class="p-close" id="pClose" aria-label="Fermer le panneau">✕</button>
+    </div>
+    <div class="p-tabs">
+      <button class="p-tab on" data-tab="positions">Programmes</button>
+      <button class="p-tab" data-tab="analyse">Analyse</button>
+      <button class="p-tab" data-tab="partis" id="tabPartis">Partis pris</button>
+    </div>
+  </div>
+  <div class="p-body" id="pBody"></div>
+</aside>
+
+<footer>
+  <div class="wrap">
+    <span>Les cases « À venir » correspondent aux positions non encore publiées par écrit.</span>
+    <span id="footMeta"></span>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script>
+(function(){
+"use strict";
+var D = window.COMPARATEUR_DATA;
+if(!D){document.body.innerHTML='<div style="padding:40px;font-family:sans-serif">Le fichier de données <b>data.js</b> est introuvable. Vérifiez qu\'il se trouve dans le même dossier que index.html.</div>';return;}
+
+var esc = function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+var $ = function(id){return document.getElementById(id);};
+
+var state = {theme: D.themes.length? D.themes[0].name : null, subject:null, tab:'positions'};
+
+/* Index éditorial par sujet */
+var edBySubject = {};
+(D.editorial||[]).forEach(function(e){ (edBySubject[e.id]=edBySubject[e.id]||[]).push(e); });
+var bibById = {};
+(D.bibliography||[]).forEach(function(b){ bibById[b.id]=b; });
+
+/* Couleurs d'auteurs (muted, stables par nom) */
+var PP_COLORS = ['#534AB7','#1D7A5F','#A14E2B','#3D6E9E','#7A4E83','#6B6B23'];
+function ppColor(name){var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;return PP_COLORS[h%PP_COLORS.length];}
+function initials(e){if(e.initials)return e.initials.slice(0,3);var p=(e.author||'?').split(/\s+/);return p.map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';}
+
+/* ===== Navigation entre vues ===== */
+var views = ['comparateur','methodologie','bibliographie'];
+function showView(v){
+  views.forEach(function(name){
+    $('view-'+name).classList.toggle('hidden', name!==v);
+    document.querySelector('[data-nav="'+name+'"]').classList.toggle('on', name===v);
+  });
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-nav]').forEach(function(a){
+  a.addEventListener('click',function(ev){
+    ev.preventDefault();
+    var v=a.getAttribute('data-nav');
+    location.hash = v==='comparateur' ? '' : v;
+    showView(v);
+  });
+});
+$('brandLink').addEventListener('click',function(ev){ev.preventDefault();location.hash='';showView('comparateur');});
+
+/* ===== Thématiques ===== */
+function renderChips(){
+  var c = $('chips'); c.innerHTML='';
+  D.themes.forEach(function(t){
+    var b=document.createElement('button');
+    b.className='chip'+(t.name===state.theme?' on':'');
+    b.textContent=t.name; b.setAttribute('role','tab');
+    b.addEventListener('click',function(){state.theme=t.name;renderChips();renderGrid();updateHash();});
+    c.appendChild(b);
+  });
+}
+
+/* ===== Grille ===== */
+function themeByName(n){for(var i=0;i<D.themes.length;i++)if(D.themes[i].name===n)return D.themes[i];return null;}
+function renderGrid(){
+  var t = themeByName(state.theme), w=$('gridWrap');
+  if(!t){w.innerHTML='';return;}
+  if(!t.subjects.length){w.innerHTML='<div class="empty-theme">Aucun sujet dans cette thématique pour l\'instant.</div>';return;}
+  var h='<table><thead><tr><th class="subj">Sujet</th>';
+  D.candidates.forEach(function(c){h+='<th>'+esc(c)+'</th>';});
+  h+='</tr></thead><tbody>';
+  t.subjects.forEach(function(s){
+    var ed=edBySubject[s.id]||[], na=ed.filter(function(e){return e.type==='analyse';}).length,
+        np=ed.filter(function(e){return e.type==='parti pris';}).length;
+    h+='<tr data-sid="'+esc(s.id)+'"><td class="subj"><button class="subj-btn">'+esc(s.label)+' <span class="arr">›</span></button>';
+    if(na||np){h+='<span class="badge-ed">'+(na?'<span class="ba">Analyse</span>':'')+(np?'<span class="bp">'+np+' parti'+(np>1?'s':'')+' pris</span>':'')+'</span>';}
+    h+='</td>';
+    D.candidates.forEach(function(c){
+      var p=s.positions[c];
+      h+='<td class="cand">'+(p?'<span class="verbatim">'+esc(p)+'</span>':'<span class="avenir">À venir</span>')+'</td>';
+    });
+    h+='</tr>';
+  });
+  h+='</tbody></table>';
+  w.innerHTML=h;
+  w.querySelectorAll('tr[data-sid]').forEach(function(tr){
+    tr.addEventListener('click',function(){openPanel(tr.getAttribute('data-sid'));});
+  });
+}
+
+/* ===== Panneau ===== */
+function findSubject(sid){
+  for(var i=0;i<D.themes.length;i++){var t=D.themes[i];
+    for(var j=0;j<t.subjects.length;j++)if(t.subjects[j].id===sid)return{theme:t,subject:t.subjects[j]};}
+  return null;
+}
+function footnotes(text, ids){
+  return esc(text).replace(/\[(\d+)\]/g,function(m,n){
+    var i=parseInt(n,10)-1, sid=ids[i];
+    if(sid===undefined)return '<sup>['+n+']</sup>';
+    return '<sup><a href="#src-'+esc(sid)+'" title="'+esc(sid)+'">['+n+']</a></sup>';
+  });
+}
+function renderPanelBody(){
+  var f=findSubject(state.subject); if(!f)return;
+  var s=f.subject, ed=edBySubject[s.id]||[], body=$('pBody'), h='';
+  if(state.tab==='positions'){
+    h+='<p class="p-section-label">« Le programme, mot à mot » — transcription littérale</p>';
+    var any=false;
+    D.candidates.forEach(function(c){
+      var p=s.positions[c];
+      h+='<div class="pos-card"><h4>'+esc(c)+'</h4>'+(p?'<span class="verbatim">'+esc(p)+'</span>':'<span class="avenir">À venir — pas encore de position publiée par écrit.</span>')+'</div>';
+      if(p)any=true;
+    });
+    if(!any)h+='<p class="p-empty">Aucun programme écrit publié sur ce sujet pour l\'instant.</p>';
+  }
+  if(state.tab==='analyse'){
+    var analyses=ed.filter(function(e){return e.type==='analyse';});
+    h+='<p class="p-section-label">Analyse — factuelle, neutre et sourcée</p>';
+    if(!analyses.length)h+='<p class="p-empty">Pas encore d\'analyse sur ce sujet.</p>';
+    analyses.forEach(function(a){
+      h+='<div class="analyse-box">'+footnotes(a.text,a.sources||[]);
+      if(a.sources&&a.sources.length){
+        h+='<div class="src-list"><h5>Sources</h5><ol>';
+        a.sources.forEach(function(sid){
+          var b=bibById[sid];
+          h+= b ? '<li id="src-'+esc(sid)+'">'+esc(b.authors? b.authors+'. ':'')+'<i>'+esc(b.title)+'</i>'+(b.org?', '+esc(b.org):'')+(b.date?', '+esc(b.date):'')+(b.url?'. <a href="'+esc(b.url)+'" target="_blank" rel="noopener">Consulter ↗</a>':'')+'</li>'
+                 : '<li id="src-'+esc(sid)+'">'+esc(sid)+' <span class="avenir">(référence à compléter dans la bibliographie)</span></li>';
+        });
+        h+='</ol></div>';
+      }
+      h+='</div>';
+    });
+  }
+  if(state.tab==='partis'){
+    var pp=ed.filter(function(e){return e.type==='parti pris';});
+    h+='<p class="p-section-label">Partis pris — opinions signées</p>';
+    if(!pp.length)h+='<p class="p-empty">Pas encore de parti pris sur ce sujet. Les contributions arrivent au fil du projet.</p>';
+    pp.forEach(function(p){
+      var col=ppColor(p.author||'?');
+      h+='<div class="pp-card" style="--pp:'+col+'"><div class="pp-head"><span class="pp-av">'+esc(initials(p))+'</span><span class="pp-name">L\'avis de '+esc(p.author||'Anonyme')+'</span><span class="pp-tag">Opinion</span></div><p>'+esc(p.text)+'</p></div>';
+    });
+  }
+  body.innerHTML=h; body.scrollTop=0;
+}
+function openPanel(sid){
+  var f=findSubject(sid); if(!f)return;
+  state.subject=sid; state.tab='positions';
+  state.theme=f.theme.name; renderChips(); renderGrid();
+  $('pTheme').textContent=f.theme.name;
+  $('pTitle').textContent=f.subject.label;
+  var np=(edBySubject[sid]||[]).filter(function(e){return e.type==='parti pris';}).length;
+  $('tabPartis').textContent='Partis pris'+(np?' ('+np+')':'');
+  document.querySelectorAll('.p-tab').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')==='positions');});
+  renderPanelBody();
+  $('overlay').classList.add('open'); $('panel').classList.add('open');
+  updateHash(); $('pClose').focus();
+}
+function closePanel(){
+  state.subject=null;
+  $('overlay').classList.remove('open'); $('panel').classList.remove('open');
+  updateHash();
+}
+$('overlay').addEventListener('click',closePanel);
+$('pClose').addEventListener('click',closePanel);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closePanel();});
+document.querySelectorAll('.p-tab').forEach(function(b){
+  b.addEventListener('click',function(){
+    state.tab=b.getAttribute('data-tab');
+    document.querySelectorAll('.p-tab').forEach(function(x){x.classList.toggle('on',x===b);});
+    renderPanelBody();
+  });
+});
+
+/* ===== Liens partageables (hash) ===== */
+function updateHash(){
+  if(state.subject)location.hash='s/'+encodeURIComponent(state.subject);
+  else if(state.theme)location.hash='t/'+encodeURIComponent(state.theme);
+}
+function applyHash(){
+  var h=decodeURIComponent(location.hash.replace(/^#/,''));
+  if(h==='methodologie'||h==='bibliographie'){showView(h);return;}
+  showView('comparateur');
+  if(h.indexOf('s/')===0){var sid=h.slice(2);var f=findSubject(sid);if(f){openPanel(sid);return;}}
+  if(h.indexOf('t/')===0){var tn=h.slice(2);if(themeByName(tn)){state.theme=tn;}}
+  renderChips();renderGrid();
+}
+
+/* ===== Recherche ===== */
+var allSubjects=[];
+D.themes.forEach(function(t){t.subjects.forEach(function(s){allSubjects.push({t:t.name,s:s});});});
+var sInput=$('searchInput'), sList=$('searchList');
+sInput.addEventListener('input',function(){
+  var q=sInput.value.trim().toLowerCase();
+  if(q.length<2){sList.classList.remove('open');sList.innerHTML='';return;}
+  var hits=allSubjects.filter(function(x){return x.s.label.toLowerCase().indexOf(q)>=0;}).slice(0,12);
+  sList.innerHTML = hits.length ? '' : '<button disabled>Aucun sujet trouvé</button>';
+  hits.forEach(function(x){
+    var b=document.createElement('button');
+    b.innerHTML=esc(x.s.label)+'<small>'+esc(x.t)+'</small>';
+    b.addEventListener('click',function(){sList.classList.remove('open');sInput.value='';openPanel(x.s.id);});
+    sList.appendChild(b);
+  });
+  sList.classList.add('open');
+});
+document.addEventListener('click',function(e){if(!e.target.closest('.search'))sList.classList.remove('open');});
+
+/* ===== Bibliographie ===== */
+function renderBib(){
+  var w=$('bibList');
+  if(!(D.bibliography||[]).length){w.innerHTML='<p class="p-empty">La bibliographie se remplira au fil des analyses.</p>';return;}
+  w.innerHTML=D.bibliography.map(function(b){
+    return '<div class="bib-item"><div class="bid">'+esc(b.id)+(b.type?' · '+esc(b.type):'')+'</div><div class="bt">'+esc(b.title)+'</div><div class="bm">'+esc(b.authors)+(b.org?' — '+esc(b.org):'')+(b.date?' · '+esc(b.date):'')+(b.consulted?' · consulté le '+esc(b.consulted):'')+'</div>'+(b.url?'<a href="'+esc(b.url)+'" target="_blank" rel="noopener">'+esc(b.url)+'</a>':'')+'</div>';
+  }).join('');
+}
+
+/* ===== Init ===== */
+$('majDate').textContent = D.meta && D.meta.generated ? 'Données du '+D.meta.generated : '';
+$('footMeta').textContent = 'Comparateur 2027 — données mises à jour le '+(D.meta?D.meta.generated:'');
+renderChips(); renderGrid(); renderBib(); applyHash();
+window.addEventListener('hashchange',applyHash);
+})();
+</script>
+</body>
+</html>
