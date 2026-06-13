@@ -59,6 +59,15 @@ nav a.on{color:var(--terre);border-color:var(--terre)}
 .s-list button small{display:block;color:var(--ink-3);font-size:11.5px}
 .maj{font-size:12px;color:var(--ink-3);margin-left:auto}
 .som-label{font-size:11.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:18px 0 10px}
+.constit-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;margin:16px 0 4px;padding:13px 18px;background:var(--terre-deep);border:none;border-radius:var(--r);color:#FAF2EC;transition:background .12s, transform .12s}
+.constit-banner:hover{background:var(--terre);transform:translateY(-1px)}
+.cb-left{display:flex;flex-direction:column;gap:2px}
+.cb-kicker{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--terre-soft);font-weight:600}
+.cb-title{font-family:var(--serif);font-size:16.5px;font-weight:600;color:#fff}
+.cb-go{flex:0 0 auto;font-size:12.5px;font-weight:600;color:#FAF2EC;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.cb-arr{transition:transform .12s}
+.constit-banner:hover .cb-arr{transform:translateX(3px)}
+@media(max-width:560px){.constit-banner{flex-direction:column;align-items:flex-start;gap:8px}}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px;margin-bottom:40px}
 @media(max-width:480px){.cards{grid-template-columns:repeat(2,1fr)}}
 .t-card{position:relative;background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:14px 15px 12px;text-align:left;display:flex;flex-direction:column;gap:5px;min-height:86px;transition:border-color .12s, box-shadow .12s, transform .12s}
@@ -182,6 +191,13 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
       </div>
       <span class="maj" id="majDate"></span>
     </div>
+    <button class="constit-banner" id="constitBanner" type="button">
+      <span class="cb-left">
+        <span class="cb-kicker">Au cœur de 2027</span>
+        <span class="cb-title">Constitution — les révisions proposées</span>
+      </span>
+      <span class="cb-go">Voir les propositions <span class="cb-arr">→</span></span>
+    </button>
     <p class="som-label">Choisissez une thématique</p>
     <div class="cards" id="cards"></div>
   </div>
@@ -319,6 +335,7 @@ $('backLink').addEventListener('click',goAccueil);
 function renderCards(){
   var w=$('cards'); w.innerHTML='';
   D.themes.forEach(function(t){
+    if(t.name==='Constitution')return;
     var ed=edByTheme[t.name], b=document.createElement('button');
     b.className='t-card';
     var h='<b>'+esc(t.name)+'</b><span class="n">'+t.subjects.length+' sujet'+(t.subjects.length>1?'s':'')+'</span>';
@@ -504,6 +521,17 @@ function renderBib(){
     return '<div class="bib-item"><div class="bid">'+esc(b.id)+(b.type?' · '+esc(b.type):'')+'</div><div class="bt">'+esc(b.title)+'</div><div class="bm">'+esc(b.authors)+(b.org?' — '+esc(b.org):'')+(b.date?' · '+esc(b.date):'')+(b.consulted?' · consulté le '+esc(b.consulted):'')+'</div>'+(b.url?'<a href="'+esc(b.url)+'" target="_blank" rel="noopener">'+esc(b.url)+'</a>':'')+'</div>';
   }).join('');
 }
+
+/* ===== Bandeau Constitution ===== */
+(function(){
+  var banner=$('constitBanner');
+  if(!banner)return;
+  if(themeByName('Constitution')){
+    banner.addEventListener('click',function(){openTheme('Constitution');});
+  } else {
+    banner.classList.add('hidden');
+  }
+})();
 
 /* ===== Init ===== */
 $('majDate').textContent = D.meta && D.meta.generated ? 'Données du '+D.meta.generated : '';

@@ -1,6 +1,6 @@
 window.COMPARATEUR_DATA = {
  "meta": {
-  "generated": "2026-06-11",
+  "generated": "2026-06-13",
   "title": "Comparateur 2027"
  },
  "candidates": [
@@ -10,6 +10,38 @@ window.COMPARATEUR_DATA = {
   "Candidat D"
  ],
  "themes": [
+  {
+   "name": "Constitution",
+   "subjects": [
+    {
+     "id": "CON-ve-republique",
+     "label": "Changement de République / réforme institutionnelle",
+     "positions": {
+      "Candidat A": "[EXEMPLE à remplacer] Texte littéral du programme du candidat A sur ce sujet, transcrit mot à mot depuis le document publié."
+     }
+    },
+    {
+     "id": "CON-referendum-ric",
+     "label": "Référendum / Référendum d'initiative citoyenne (RIC)",
+     "positions": {}
+    },
+    {
+     "id": "CON-mandat-presidentiel",
+     "label": "Mandat présidentiel (durée, nombre)",
+     "positions": {}
+    },
+    {
+     "id": "CON-mode-scrutin",
+     "label": "Mode de scrutin / proportionnelle",
+     "positions": {}
+    },
+    {
+     "id": "CON-article-49-3",
+     "label": "Article 49.3 / pouvoirs du Parlement",
+     "positions": {}
+    }
+   ]
+  },
   {
    "name": "Santé",
    "subjects": [
