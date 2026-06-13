@@ -43,6 +43,146 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
+   "name": "Economie",
+   "subjects": [
+    {
+     "id": "ECN-sante",
+     "label": "Santé",
+     "positions": {}
+    },
+    {
+     "id": "ECN-banque",
+     "label": "Banque",
+     "positions": {}
+    },
+    {
+     "id": "ECN-bourse",
+     "label": "Bourse",
+     "positions": {}
+    },
+    {
+     "id": "ECN-fonds-souverains",
+     "label": "Fonds souverains",
+     "positions": {}
+    },
+    {
+     "id": "ECN-protectionnisme",
+     "label": "Protectionnisme",
+     "positions": {}
+    },
+    {
+     "id": "ECN-aides-publiques",
+     "label": "Aides publiques",
+     "positions": {}
+    },
+    {
+     "id": "ECN-assurance",
+     "label": "Assurance",
+     "positions": {}
+    },
+    {
+     "id": "ECN-fond-public-etat",
+     "label": "Fond public d'Etat",
+     "positions": {}
+    },
+    {
+     "id": "ECN-caisse-depots",
+     "label": "Caisse des dépôts",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Sécurité",
+   "subjects": [
+    {
+     "id": "SEC-etat-urgence-lois-connexes",
+     "label": "Etat d'urgence et lois connexes",
+     "positions": {}
+    },
+    {
+     "id": "SEC-lutte-drogue",
+     "label": "Lutte contre la drogue",
+     "positions": {}
+    },
+    {
+     "id": "SEC-police",
+     "label": "Police",
+     "positions": {}
+    },
+    {
+     "id": "SEC-reformes",
+     "label": "Réformes",
+     "positions": {}
+    },
+    {
+     "id": "SEC-violences-femmes",
+     "label": "Violences contre les femmes",
+     "positions": {}
+    },
+    {
+     "id": "SEC-violences-elus",
+     "label": "Violences contre les élus",
+     "positions": {}
+    },
+    {
+     "id": "SEC-violences-depositaires",
+     "label": "Violences contre les dépositaires de l'autorité publique",
+     "positions": {}
+    },
+    {
+     "id": "SEC-constitution",
+     "label": "Constitution",
+     "positions": {}
+    },
+    {
+     "id": "SEC-plans",
+     "label": "Plans",
+     "positions": {}
+    },
+    {
+     "id": "SEC-sanctions-financieres-sociales",
+     "label": "Sanctions financières et sociales",
+     "positions": {}
+    },
+    {
+     "id": "SEC-prisons",
+     "label": "Prisons",
+     "positions": {}
+    },
+    {
+     "id": "SEC-travaux-interets-generaux-tig",
+     "label": "Travaux d'Interêts Généraux (TIG)",
+     "positions": {}
+    },
+    {
+     "id": "SEC-securite-ligne",
+     "label": "Sécurité en ligne",
+     "positions": {}
+    },
+    {
+     "id": "SEC-terrorisme",
+     "label": "Terrorisme",
+     "positions": {}
+    },
+    {
+     "id": "SEC-radicalisation",
+     "label": "Radicalisation",
+     "positions": {}
+    },
+    {
+     "id": "SEC-violences-sexuelles-mineures",
+     "label": "Violences sexuelles contre les mineures",
+     "positions": {}
+    },
+    {
+     "id": "SEC-violences-personnes-lgbtqi",
+     "label": "Violences contre les personnes LGBTQI+",
+     "positions": {}
+    }
+   ]
+  },
+  {
    "name": "Santé",
    "subjects": [
     {
@@ -186,501 +326,6 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
-   "name": "Ecole",
-   "subjects": [
-    {
-     "id": "ECO-effectif-personnels",
-     "label": "Effectif des personnels",
-     "positions": {}
-    },
-    {
-     "id": "ECO-recrutement-enseignants",
-     "label": "Recrutement des enseignants",
-     "positions": {}
-    },
-    {
-     "id": "ECO-formation-personnels",
-     "label": "Formation des personnels",
-     "positions": {}
-    },
-    {
-     "id": "ECO-remuneration-personnels",
-     "label": "Rémunération des personnels",
-     "positions": {}
-    },
-    {
-     "id": "ECO-travail-personnels",
-     "label": "Travail des personnels",
-     "positions": {}
-    },
-    {
-     "id": "ECO-education-sante",
-     "label": "Education à la santé",
-     "positions": {}
-    },
-    {
-     "id": "ECO-medecine-scolaire",
-     "label": "Médecine scolaire",
-     "positions": {}
-    },
-    {
-     "id": "ECO-reformes",
-     "label": "Réformes",
-     "positions": {}
-    },
-    {
-     "id": "ECO-programmes-scolaires",
-     "label": "Programmes scolaires",
-     "positions": {}
-    },
-    {
-     "id": "ECO-vie-scolaire",
-     "label": "Vie scolaire",
-     "positions": {}
-    },
-    {
-     "id": "ECO-calendrier-scolaire",
-     "label": "Calendrier scolaire",
-     "positions": {}
-    },
-    {
-     "id": "ECO-orientation-post-bac",
-     "label": "Orientation post-bac",
-     "positions": {}
-    },
-    {
-     "id": "ECO-enseignement-professionnel",
-     "label": "Enseignement professionnel et agricole",
-     "positions": {}
-    },
-    {
-     "id": "ECO-accompagnement-decrocheurs",
-     "label": "Accompagnement des décrocheurs",
-     "positions": {}
-    },
-    {
-     "id": "ECO-accompagnement-eleves",
-     "label": "Accompagnement des élèves en situation de handicap",
-     "positions": {}
-    },
-    {
-     "id": "ECO-accompagnement-primo-arrivants",
-     "label": "Accompagnement des primo-arrivants",
-     "positions": {}
-    },
-    {
-     "id": "ECO-numerique-education",
-     "label": "Numérique et éducation",
-     "positions": {}
-    },
-    {
-     "id": "ECO-periscolaire",
-     "label": "Périscolaire",
-     "positions": {}
-    },
-    {
-     "id": "ECO-creches",
-     "label": "Crèches",
-     "positions": {}
-    },
-    {
-     "id": "ECO-administration",
-     "label": "Administration",
-     "positions": {}
-    },
-    {
-     "id": "ECO-plans",
-     "label": "Plans",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Environnement",
-   "subjects": [
-    {
-     "id": "ENV-biodiversite",
-     "label": "Biodiversité",
-     "positions": {}
-    },
-    {
-     "id": "ENV-investissements",
-     "label": "Investissements",
-     "positions": {}
-    },
-    {
-     "id": "ENV-isolation-batiments",
-     "label": "Isolation des bâtiments",
-     "positions": {}
-    },
-    {
-     "id": "ENV-emissions-gaz-effet-serre-ges",
-     "label": "Emissions de Gaz à effet de serre (GES)",
-     "positions": {}
-    },
-    {
-     "id": "ENV-pollutions",
-     "label": "Pollutions",
-     "positions": {}
-    },
-    {
-     "id": "ENV-protection-preservation-sols",
-     "label": "Protection/Préservation des sols",
-     "positions": {}
-    },
-    {
-     "id": "ENV-urbanisme",
-     "label": "Urbanisme",
-     "positions": {}
-    },
-    {
-     "id": "ENV-limitation-vitesse-route",
-     "label": "Limitation de vitesse sur la route",
-     "positions": {}
-    },
-    {
-     "id": "ENV-zones-faibles-emissions",
-     "label": "Zones à faibles émissions métropolitaines",
-     "positions": {}
-    },
-    {
-     "id": "ENV-alimentation",
-     "label": "Alimentation",
-     "positions": {}
-    },
-    {
-     "id": "ENV-forets",
-     "label": "Forêts",
-     "positions": {}
-    },
-    {
-     "id": "ENV-recyclage",
-     "label": "Recyclage",
-     "positions": {}
-    },
-    {
-     "id": "ENV-echelle-europeenne",
-     "label": "Echelle européenne",
-     "positions": {}
-    },
-    {
-     "id": "ENV-mines",
-     "label": "Mines",
-     "positions": {}
-    },
-    {
-     "id": "ENV-fonds-marins",
-     "label": "Fonds marins",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Aide Sociale",
-   "subjects": [
-    {
-     "id": "AID-allocations-familiales",
-     "label": "Allocations familiales",
-     "positions": {}
-    },
-    {
-     "id": "AID-revenu-autonomie",
-     "label": "Revenu d'autonomie",
-     "positions": {}
-    },
-    {
-     "id": "AID-accompagnement-malades",
-     "label": "Accompagnement des malades",
-     "positions": {}
-    },
-    {
-     "id": "AID-accompagnement-jeunes",
-     "label": "Accompagnement des jeunes",
-     "positions": {}
-    },
-    {
-     "id": "AID-accompagnements-handicapes",
-     "label": "Accompagnements des handicapés",
-     "positions": {}
-    },
-    {
-     "id": "AID-creation-entreprises",
-     "label": "Création d'entreprises",
-     "positions": {}
-    },
-    {
-     "id": "AID-ame",
-     "label": "AME",
-     "positions": {}
-    },
-    {
-     "id": "AID-conge-parental",
-     "label": "Congé parental",
-     "positions": {}
-    },
-    {
-     "id": "AID-pensions-reversion",
-     "label": "Pensions de réversion",
-     "positions": {}
-    },
-    {
-     "id": "AID-aide-sociale-enfance",
-     "label": "Aide sociale à l'enfance",
-     "positions": {}
-    },
-    {
-     "id": "AID-aide-logement",
-     "label": "Aide au logement",
-     "positions": {}
-    },
-    {
-     "id": "AID-protections-feminines",
-     "label": "Protections féminines",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Economie",
-   "subjects": [
-    {
-     "id": "ECN-sante",
-     "label": "Santé",
-     "positions": {}
-    },
-    {
-     "id": "ECN-banque",
-     "label": "Banque",
-     "positions": {}
-    },
-    {
-     "id": "ECN-bourse",
-     "label": "Bourse",
-     "positions": {}
-    },
-    {
-     "id": "ECN-fonds-souverains",
-     "label": "Fonds souverains",
-     "positions": {}
-    },
-    {
-     "id": "ECN-protectionnisme",
-     "label": "Protectionnisme",
-     "positions": {}
-    },
-    {
-     "id": "ECN-aides-publiques",
-     "label": "Aides publiques",
-     "positions": {}
-    },
-    {
-     "id": "ECN-assurance",
-     "label": "Assurance",
-     "positions": {}
-    },
-    {
-     "id": "ECN-fond-public-etat",
-     "label": "Fond public d'Etat",
-     "positions": {}
-    },
-    {
-     "id": "ECN-caisse-depots",
-     "label": "Caisse des dépôts",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Europe",
-   "subjects": [
-    {
-     "id": "EUR-traites-europeens",
-     "label": "Traités européens",
-     "positions": {}
-    },
-    {
-     "id": "EUR-flux-migratoires",
-     "label": "Flux migratoires",
-     "positions": {}
-    },
-    {
-     "id": "EUR-plans",
-     "label": "Plans",
-     "positions": {}
-    },
-    {
-     "id": "EUR-pac",
-     "label": "PAC",
-     "positions": {}
-    },
-    {
-     "id": "EUR-industrie",
-     "label": "Industrie",
-     "positions": {}
-    },
-    {
-     "id": "EUR-transition-climat",
-     "label": "Transition pour le climat",
-     "positions": {}
-    },
-    {
-     "id": "EUR-membres",
-     "label": "Membres",
-     "positions": {}
-    },
-    {
-     "id": "EUR-marche-europeen",
-     "label": "Marché européen",
-     "positions": {}
-    },
-    {
-     "id": "EUR-droit-europeen",
-     "label": "Droit européen",
-     "positions": {}
-    },
-    {
-     "id": "EUR-numerique",
-     "label": "Numérique",
-     "positions": {}
-    },
-    {
-     "id": "EUR-dette",
-     "label": "Dette",
-     "positions": {}
-    },
-    {
-     "id": "EUR-banque-centrale-europeenne",
-     "label": "Banque Centrale Européenne",
-     "positions": {}
-    },
-    {
-     "id": "EUR-drapeau-europeen",
-     "label": "Drapeau européen",
-     "positions": {}
-    },
-    {
-     "id": "EUR-fonds-souverains",
-     "label": "Fonds souverains",
-     "positions": {}
-    },
-    {
-     "id": "EUR-paradis-fiscaux-europeens",
-     "label": "Paradis fiscaux européens",
-     "positions": {}
-    },
-    {
-     "id": "EUR-travailleurs-frontaliers",
-     "label": "Travailleurs frontaliers",
-     "positions": {}
-    },
-    {
-     "id": "EUR-taxation-flux-financiers",
-     "label": "Taxation des flux financiers",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Agriculture",
-   "subjects": [
-    {
-     "id": "AGR-reformes",
-     "label": "Réformes",
-     "positions": {}
-    },
-    {
-     "id": "AGR-remuneration-agriculteurs",
-     "label": "Rémunération des agriculteurs",
-     "positions": {}
-    },
-    {
-     "id": "AGR-imposition-exploitations",
-     "label": "Imposition des exploitations agricoles",
-     "positions": {}
-    },
-    {
-     "id": "AGR-formation",
-     "label": "Formation",
-     "positions": {}
-    },
-    {
-     "id": "AGR-periodes-crises-climatiques-ou",
-     "label": "Périodes de crises climatiques ou autres",
-     "positions": {}
-    },
-    {
-     "id": "AGR-recrutement",
-     "label": "Recrutement",
-     "positions": {}
-    },
-    {
-     "id": "AGR-retraite",
-     "label": "Retraite",
-     "positions": {}
-    },
-    {
-     "id": "AGR-emprunts-agriculteurs",
-     "label": "Emprunts des agriculteurs",
-     "positions": {}
-    },
-    {
-     "id": "AGR-produits-phytosanitaires",
-     "label": "Produits phytosanitaires",
-     "positions": {}
-    },
-    {
-     "id": "AGR-adaptation-changement",
-     "label": "Adaptation au changement climatique",
-     "positions": {}
-    },
-    {
-     "id": "AGR-biocarburants",
-     "label": "Biocarburants",
-     "positions": {}
-    },
-    {
-     "id": "AGR-export",
-     "label": "Export",
-     "positions": {}
-    },
-    {
-     "id": "AGR-import",
-     "label": "Import",
-     "positions": {}
-    },
-    {
-     "id": "AGR-pac",
-     "label": "PAC",
-     "positions": {}
-    },
-    {
-     "id": "AGR-algoculture",
-     "label": "Algoculture",
-     "positions": {}
-    },
-    {
-     "id": "AGR-centrale-achat",
-     "label": "Centrale d'achat",
-     "positions": {}
-    },
-    {
-     "id": "AGR-main-oeuvre-etrangere",
-     "label": "Main d'oeuvre étrangère",
-     "positions": {}
-    },
-    {
-     "id": "AGR-circuits-courts",
-     "label": "Circuits courts",
-     "positions": {}
-    },
-    {
-     "id": "AGR-abattoirs",
-     "label": "Abattoirs",
-     "positions": {}
-    }
-   ]
-  },
-  {
    "name": "Immigration",
    "subjects": [
     {
@@ -726,41 +371,6 @@ window.COMPARATEUR_DATA = {
     {
      "id": "IMM-visas-travail-titres-sejours",
      "label": "Visas de travail et titres de séjours",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Ruralité",
-   "subjects": [
-    {
-     "id": "RUR-construction-logements",
-     "label": "Construction de logements",
-     "positions": {}
-    },
-    {
-     "id": "RUR-condition-vie",
-     "label": "Condition de vie",
-     "positions": {}
-    },
-    {
-     "id": "RUR-fonds-publics-dedies",
-     "label": "Fonds publics dédiés",
-     "positions": {}
-    },
-    {
-     "id": "RUR-emploi",
-     "label": "Emploi",
-     "positions": {}
-    },
-    {
-     "id": "RUR-gens-voyage",
-     "label": "Gens du voyage",
-     "positions": {}
-    },
-    {
-     "id": "RUR-offre-transports",
-     "label": "Offre de transports",
      "positions": {}
     }
    ]
@@ -871,261 +481,116 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
-   "name": "Sécurité",
+   "name": "Aide Sociale",
    "subjects": [
     {
-     "id": "SEC-etat-urgence-lois-connexes",
-     "label": "Etat d'urgence et lois connexes",
+     "id": "AID-allocations-familiales",
+     "label": "Allocations familiales",
      "positions": {}
     },
     {
-     "id": "SEC-lutte-drogue",
-     "label": "Lutte contre la drogue",
+     "id": "AID-revenu-autonomie",
+     "label": "Revenu d'autonomie",
      "positions": {}
     },
     {
-     "id": "SEC-police",
-     "label": "Police",
+     "id": "AID-accompagnement-malades",
+     "label": "Accompagnement des malades",
      "positions": {}
     },
     {
-     "id": "SEC-reformes",
-     "label": "Réformes",
+     "id": "AID-accompagnement-jeunes",
+     "label": "Accompagnement des jeunes",
      "positions": {}
     },
     {
-     "id": "SEC-violences-femmes",
-     "label": "Violences contre les femmes",
+     "id": "AID-accompagnements-handicapes",
+     "label": "Accompagnements des handicapés",
      "positions": {}
     },
     {
-     "id": "SEC-violences-elus",
-     "label": "Violences contre les élus",
+     "id": "AID-creation-entreprises",
+     "label": "Création d'entreprises",
      "positions": {}
     },
     {
-     "id": "SEC-violences-depositaires",
-     "label": "Violences contre les dépositaires de l'autorité publique",
+     "id": "AID-ame",
+     "label": "AME",
      "positions": {}
     },
     {
-     "id": "SEC-constitution",
-     "label": "Constitution",
+     "id": "AID-conge-parental",
+     "label": "Congé parental",
      "positions": {}
     },
     {
-     "id": "SEC-plans",
-     "label": "Plans",
+     "id": "AID-pensions-reversion",
+     "label": "Pensions de réversion",
      "positions": {}
     },
     {
-     "id": "SEC-sanctions-financieres-sociales",
-     "label": "Sanctions financières et sociales",
+     "id": "AID-aide-sociale-enfance",
+     "label": "Aide sociale à l'enfance",
      "positions": {}
     },
     {
-     "id": "SEC-prisons",
-     "label": "Prisons",
+     "id": "AID-aide-logement",
+     "label": "Aide au logement",
      "positions": {}
     },
     {
-     "id": "SEC-travaux-interets-generaux-tig",
-     "label": "Travaux d'Interêts Généraux (TIG)",
-     "positions": {}
-    },
-    {
-     "id": "SEC-securite-ligne",
-     "label": "Sécurité en ligne",
-     "positions": {}
-    },
-    {
-     "id": "SEC-terrorisme",
-     "label": "Terrorisme",
-     "positions": {}
-    },
-    {
-     "id": "SEC-radicalisation",
-     "label": "Radicalisation",
-     "positions": {}
-    },
-    {
-     "id": "SEC-violences-sexuelles-mineures",
-     "label": "Violences sexuelles contre les mineures",
-     "positions": {}
-    },
-    {
-     "id": "SEC-violences-personnes-lgbtqi",
-     "label": "Violences contre les personnes LGBTQI+",
+     "id": "AID-protections-feminines",
+     "label": "Protections féminines",
      "positions": {}
     }
    ]
   },
   {
-   "name": "Justice",
+   "name": "Retraites",
    "subjects": [
     {
-     "id": "JUS-reformes",
-     "label": "Réformes",
+     "id": "RET-personnels-charge",
+     "label": "Personnels en charge",
      "positions": {}
     },
     {
-     "id": "JUS-effectif-personnels",
-     "label": "Effectif des personnels",
+     "id": "RET-hebergement-anciens",
+     "label": "Hébergement des anciens",
      "positions": {}
     },
     {
-     "id": "JUS-procedure-penale",
-     "label": "Procédure pénale",
+     "id": "RET-qualite-vie",
+     "label": "Qualité de vie",
      "positions": {}
     },
     {
-     "id": "JUS-peines-planchers",
-     "label": "Peines planchers",
+     "id": "RET-proches-aidants",
+     "label": "Proches aidants",
      "positions": {}
     },
     {
-     "id": "JUS-majorite-penale",
-     "label": "Majorité pénale",
+     "id": "RET-financement",
+     "label": "Financement",
      "positions": {}
     },
     {
-     "id": "JUS-delais-jugement",
-     "label": "Délais de jugement",
+     "id": "RET-aide-personne",
+     "label": "Aide à la personne",
      "positions": {}
     },
     {
-     "id": "JUS-prisons",
-     "label": "Prisons",
+     "id": "RET-age-depart-retraite",
+     "label": "Age de départ à la retraite",
      "positions": {}
     },
     {
-     "id": "JUS-justice-etrangers",
-     "label": "Justice pour les étrangers",
+     "id": "RET-pensions",
+     "label": "Pensions",
      "positions": {}
     },
     {
-     "id": "JUS-violences-conjugales-sexuelles",
-     "label": "Violences conjugales et sexuelles",
-     "positions": {}
-    },
-    {
-     "id": "JUS-amenagements-peine",
-     "label": "Aménagements de peine",
-     "positions": {}
-    },
-    {
-     "id": "JUS-nouveaux-delits",
-     "label": "Nouveaux délits",
-     "positions": {}
-    },
-    {
-     "id": "JUS-remises-peine",
-     "label": "Remises de peine",
-     "positions": {}
-    },
-    {
-     "id": "JUS-detention-preventive",
-     "label": "Détention préventive",
-     "positions": {}
-    },
-    {
-     "id": "JUS-lanceurs-alerte",
-     "label": "Lanceurs d'alerte",
-     "positions": {}
-    },
-    {
-     "id": "JUS-justice-internet",
-     "label": "Justice sur internet",
-     "positions": {}
-    },
-    {
-     "id": "JUS-violences-personnes-lgbtqi",
-     "label": "Violences contre les personnes LGBTQI+",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Fraude",
-   "subjects": [
-    {
-     "id": "FRA-fraude-sociale",
-     "label": "Fraude Sociale",
-     "positions": {}
-    },
-    {
-     "id": "FRA-reformes",
-     "label": "Réformes",
-     "positions": {}
-    },
-    {
-     "id": "FRA-paradis-fiscaux",
-     "label": "Paradis fiscaux",
-     "positions": {}
-    },
-    {
-     "id": "FRA-fraude-fiscale",
-     "label": "Fraude fiscale",
-     "positions": {}
-    },
-    {
-     "id": "FRA-verrou-bercy-autorisation",
-     "label": "Verrou de Bercy (autorisation nécessaire de Bercy pour poursuivre les fraudeurs)",
-     "positions": {}
-    },
-    {
-     "id": "FRA-informartion-fraude",
-     "label": "Informartion sur la fraude",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Industrie",
-   "subjects": [
-    {
-     "id": "IND-industrie-pharmaceutique",
-     "label": "Industrie pharmaceutique",
-     "positions": {}
-    },
-    {
-     "id": "IND-pollutions",
-     "label": "Pollutions",
-     "positions": {}
-    },
-    {
-     "id": "IND-procedures",
-     "label": "Procédures",
-     "positions": {}
-    },
-    {
-     "id": "IND-deserts-industriels",
-     "label": "Déserts industriels",
-     "positions": {}
-    },
-    {
-     "id": "IND-europe",
-     "label": "Europe",
-     "positions": {}
-    },
-    {
-     "id": "IND-nationalisations",
-     "label": "Nationalisations",
-     "positions": {}
-    },
-    {
-     "id": "IND-statut-societes",
-     "label": "Statut des sociétés",
-     "positions": {}
-    },
-    {
-     "id": "IND-subventions-publiques",
-     "label": "Subventions publiques",
-     "positions": {}
-    },
-    {
-     "id": "IND-valorisation-produits-francais",
-     "label": "Valorisation des produits français",
+     "id": "RET-hopital-geriatrie",
+     "label": "Hôpital - Gériatrie",
      "positions": {}
     }
    ]
@@ -1221,201 +686,556 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
-   "name": "Sport",
+   "name": "Environnement",
    "subjects": [
     {
-     "id": "SPO-financements-sportifs",
-     "label": "Financements sportifs",
+     "id": "ENV-biodiversite",
+     "label": "Biodiversité",
      "positions": {}
     },
     {
-     "id": "SPO-clubs-sportifs",
-     "label": "Clubs sportifs",
+     "id": "ENV-investissements",
+     "label": "Investissements",
      "positions": {}
     },
     {
-     "id": "SPO-jo-2024",
-     "label": "JO 2024",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Retraites",
-   "subjects": [
-    {
-     "id": "RET-personnels-charge",
-     "label": "Personnels en charge",
+     "id": "ENV-isolation-batiments",
+     "label": "Isolation des bâtiments",
      "positions": {}
     },
     {
-     "id": "RET-hebergement-anciens",
-     "label": "Hébergement des anciens",
+     "id": "ENV-emissions-gaz-effet-serre-ges",
+     "label": "Emissions de Gaz à effet de serre (GES)",
      "positions": {}
     },
     {
-     "id": "RET-qualite-vie",
-     "label": "Qualité de vie",
+     "id": "ENV-pollutions",
+     "label": "Pollutions",
      "positions": {}
     },
     {
-     "id": "RET-proches-aidants",
-     "label": "Proches aidants",
+     "id": "ENV-protection-preservation-sols",
+     "label": "Protection/Préservation des sols",
      "positions": {}
     },
     {
-     "id": "RET-financement",
-     "label": "Financement",
+     "id": "ENV-urbanisme",
+     "label": "Urbanisme",
      "positions": {}
     },
     {
-     "id": "RET-aide-personne",
-     "label": "Aide à la personne",
-     "positions": {}
-    },
-    {
-     "id": "RET-age-depart-retraite",
-     "label": "Age de départ à la retraite",
-     "positions": {}
-    },
-    {
-     "id": "RET-pensions",
-     "label": "Pensions",
-     "positions": {}
-    },
-    {
-     "id": "RET-hopital-geriatrie",
-     "label": "Hôpital - Gériatrie",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Transports",
-   "subjects": [
-    {
-     "id": "TRS-offre-transports",
-     "label": "Offre de transports",
-     "positions": {}
-    },
-    {
-     "id": "TRS-carburants",
-     "label": "Carburants",
-     "positions": {}
-    },
-    {
-     "id": "TRS-permis",
-     "label": "Permis",
-     "positions": {}
-    },
-    {
-     "id": "TRS-limitation-vitesse-route",
+     "id": "ENV-limitation-vitesse-route",
      "label": "Limitation de vitesse sur la route",
      "positions": {}
     },
     {
-     "id": "TRS-zones-faibles-emissions",
+     "id": "ENV-zones-faibles-emissions",
      "label": "Zones à faibles émissions métropolitaines",
      "positions": {}
     },
     {
-     "id": "TRS-amendes-stationnement",
-     "label": "Amendes de stationnement",
+     "id": "ENV-alimentation",
+     "label": "Alimentation",
      "positions": {}
     },
     {
-     "id": "TRS-controle-technique",
-     "label": "Contrôle technique",
+     "id": "ENV-forets",
+     "label": "Forêts",
      "positions": {}
     },
     {
-     "id": "TRS-autoroutes",
-     "label": "Autoroutes",
+     "id": "ENV-recyclage",
+     "label": "Recyclage",
      "positions": {}
     },
     {
-     "id": "TRS-ports",
-     "label": "Ports",
+     "id": "ENV-echelle-europeenne",
+     "label": "Echelle européenne",
+     "positions": {}
+    },
+    {
+     "id": "ENV-mines",
+     "label": "Mines",
+     "positions": {}
+    },
+    {
+     "id": "ENV-fonds-marins",
+     "label": "Fonds marins",
      "positions": {}
     }
    ]
   },
   {
-   "name": "Recherche et supérieur",
+   "name": "Ecole",
    "subjects": [
     {
-     "id": "RES-statut-personnels-superieur",
-     "label": "Statut des personnels du supérieur",
+     "id": "ECO-effectif-personnels",
+     "label": "Effectif des personnels",
      "positions": {}
     },
     {
-     "id": "RES-hebergement-etudiants",
-     "label": "Hébergement des étudiants",
+     "id": "ECO-recrutement-enseignants",
+     "label": "Recrutement des enseignants",
      "positions": {}
     },
     {
-     "id": "RES-vie-etudiants",
-     "label": "Vie des étudiants",
+     "id": "ECO-formation-personnels",
+     "label": "Formation des personnels",
      "positions": {}
     },
     {
-     "id": "RES-effectifs-personnels",
-     "label": "Effectifs des personnels",
+     "id": "ECO-remuneration-personnels",
+     "label": "Rémunération des personnels",
      "positions": {}
     },
     {
-     "id": "RES-reformes",
+     "id": "ECO-travail-personnels",
+     "label": "Travail des personnels",
+     "positions": {}
+    },
+    {
+     "id": "ECO-education-sante",
+     "label": "Education à la santé",
+     "positions": {}
+    },
+    {
+     "id": "ECO-medecine-scolaire",
+     "label": "Médecine scolaire",
+     "positions": {}
+    },
+    {
+     "id": "ECO-reformes",
      "label": "Réformes",
      "positions": {}
     },
     {
-     "id": "RES-financements",
-     "label": "Financements",
+     "id": "ECO-programmes-scolaires",
+     "label": "Programmes scolaires",
      "positions": {}
     },
     {
-     "id": "RES-publications-scientifiques",
-     "label": "Publications scientifiques",
+     "id": "ECO-vie-scolaire",
+     "label": "Vie scolaire",
      "positions": {}
     },
     {
-     "id": "RES-medecine-universitaire",
-     "label": "Médecine universitaire",
+     "id": "ECO-calendrier-scolaire",
+     "label": "Calendrier scolaire",
      "positions": {}
     },
     {
-     "id": "RES-bibliotheques-universitaires",
-     "label": "Bibliothèques universitaires",
+     "id": "ECO-orientation-post-bac",
+     "label": "Orientation post-bac",
      "positions": {}
     },
     {
-     "id": "RES-batiments",
-     "label": "Bâtiments",
+     "id": "ECO-enseignement-professionnel",
+     "label": "Enseignement professionnel et agricole",
      "positions": {}
     },
     {
-     "id": "RES-petites-moyennes-universites",
-     "label": "Petites / Moyennes universités",
+     "id": "ECO-accompagnement-decrocheurs",
+     "label": "Accompagnement des décrocheurs",
      "positions": {}
     },
     {
-     "id": "RES-orientation",
-     "label": "Orientation",
+     "id": "ECO-accompagnement-eleves",
+     "label": "Accompagnement des élèves en situation de handicap",
      "positions": {}
     },
     {
-     "id": "RES-plans-recherche",
-     "label": "Plans pour la recherche",
+     "id": "ECO-accompagnement-primo-arrivants",
+     "label": "Accompagnement des primo-arrivants",
      "positions": {}
     },
     {
-     "id": "RES-recherche-developpement-sein",
-     "label": "Recherche et développement au sein des entreprises privées",
+     "id": "ECO-numerique-education",
+     "label": "Numérique et éducation",
      "positions": {}
     },
     {
-     "id": "RES-spatial",
-     "label": "Spatial",
+     "id": "ECO-periscolaire",
+     "label": "Périscolaire",
+     "positions": {}
+    },
+    {
+     "id": "ECO-creches",
+     "label": "Crèches",
+     "positions": {}
+    },
+    {
+     "id": "ECO-administration",
+     "label": "Administration",
+     "positions": {}
+    },
+    {
+     "id": "ECO-plans",
+     "label": "Plans",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Justice",
+   "subjects": [
+    {
+     "id": "JUS-reformes",
+     "label": "Réformes",
+     "positions": {}
+    },
+    {
+     "id": "JUS-effectif-personnels",
+     "label": "Effectif des personnels",
+     "positions": {}
+    },
+    {
+     "id": "JUS-procedure-penale",
+     "label": "Procédure pénale",
+     "positions": {}
+    },
+    {
+     "id": "JUS-peines-planchers",
+     "label": "Peines planchers",
+     "positions": {}
+    },
+    {
+     "id": "JUS-majorite-penale",
+     "label": "Majorité pénale",
+     "positions": {}
+    },
+    {
+     "id": "JUS-delais-jugement",
+     "label": "Délais de jugement",
+     "positions": {}
+    },
+    {
+     "id": "JUS-prisons",
+     "label": "Prisons",
+     "positions": {}
+    },
+    {
+     "id": "JUS-justice-etrangers",
+     "label": "Justice pour les étrangers",
+     "positions": {}
+    },
+    {
+     "id": "JUS-violences-conjugales-sexuelles",
+     "label": "Violences conjugales et sexuelles",
+     "positions": {}
+    },
+    {
+     "id": "JUS-amenagements-peine",
+     "label": "Aménagements de peine",
+     "positions": {}
+    },
+    {
+     "id": "JUS-nouveaux-delits",
+     "label": "Nouveaux délits",
+     "positions": {}
+    },
+    {
+     "id": "JUS-remises-peine",
+     "label": "Remises de peine",
+     "positions": {}
+    },
+    {
+     "id": "JUS-detention-preventive",
+     "label": "Détention préventive",
+     "positions": {}
+    },
+    {
+     "id": "JUS-lanceurs-alerte",
+     "label": "Lanceurs d'alerte",
+     "positions": {}
+    },
+    {
+     "id": "JUS-justice-internet",
+     "label": "Justice sur internet",
+     "positions": {}
+    },
+    {
+     "id": "JUS-violences-personnes-lgbtqi",
+     "label": "Violences contre les personnes LGBTQI+",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Logement",
+   "subjects": [
+    {
+     "id": "LOG-reformes",
+     "label": "Réformes",
+     "positions": {}
+    },
+    {
+     "id": "LOG-loyers",
+     "label": "Loyers",
+     "positions": {}
+    },
+    {
+     "id": "LOG-ruralite",
+     "label": "Ruralité",
+     "positions": {}
+    },
+    {
+     "id": "LOG-acces-logement",
+     "label": "Accès au logement",
+     "positions": {}
+    },
+    {
+     "id": "LOG-logements-sociaux",
+     "label": "Logements sociaux",
+     "positions": {}
+    },
+    {
+     "id": "LOG-plan",
+     "label": "Plan",
+     "positions": {}
+    },
+    {
+     "id": "LOG-logements-insalubres",
+     "label": "Logements insalubres",
+     "positions": {}
+    },
+    {
+     "id": "LOG-logements-urgence",
+     "label": "Logements d'urgence",
+     "positions": {}
+    },
+    {
+     "id": "LOG-ghettos",
+     "label": "Ghettos",
+     "positions": {}
+    },
+    {
+     "id": "LOG-logements-personnes-situation",
+     "label": "Logements pour personnes en situation de handicap",
+     "positions": {}
+    },
+    {
+     "id": "LOG-protection-proprietaires",
+     "label": "Protection des propriétaires",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Agriculture",
+   "subjects": [
+    {
+     "id": "AGR-reformes",
+     "label": "Réformes",
+     "positions": {}
+    },
+    {
+     "id": "AGR-remuneration-agriculteurs",
+     "label": "Rémunération des agriculteurs",
+     "positions": {}
+    },
+    {
+     "id": "AGR-imposition-exploitations",
+     "label": "Imposition des exploitations agricoles",
+     "positions": {}
+    },
+    {
+     "id": "AGR-formation",
+     "label": "Formation",
+     "positions": {}
+    },
+    {
+     "id": "AGR-periodes-crises-climatiques-ou",
+     "label": "Périodes de crises climatiques ou autres",
+     "positions": {}
+    },
+    {
+     "id": "AGR-recrutement",
+     "label": "Recrutement",
+     "positions": {}
+    },
+    {
+     "id": "AGR-retraite",
+     "label": "Retraite",
+     "positions": {}
+    },
+    {
+     "id": "AGR-emprunts-agriculteurs",
+     "label": "Emprunts des agriculteurs",
+     "positions": {}
+    },
+    {
+     "id": "AGR-produits-phytosanitaires",
+     "label": "Produits phytosanitaires",
+     "positions": {}
+    },
+    {
+     "id": "AGR-adaptation-changement",
+     "label": "Adaptation au changement climatique",
+     "positions": {}
+    },
+    {
+     "id": "AGR-biocarburants",
+     "label": "Biocarburants",
+     "positions": {}
+    },
+    {
+     "id": "AGR-export",
+     "label": "Export",
+     "positions": {}
+    },
+    {
+     "id": "AGR-import",
+     "label": "Import",
+     "positions": {}
+    },
+    {
+     "id": "AGR-pac",
+     "label": "PAC",
+     "positions": {}
+    },
+    {
+     "id": "AGR-algoculture",
+     "label": "Algoculture",
+     "positions": {}
+    },
+    {
+     "id": "AGR-centrale-achat",
+     "label": "Centrale d'achat",
+     "positions": {}
+    },
+    {
+     "id": "AGR-main-oeuvre-etrangere",
+     "label": "Main d'oeuvre étrangère",
+     "positions": {}
+    },
+    {
+     "id": "AGR-circuits-courts",
+     "label": "Circuits courts",
+     "positions": {}
+    },
+    {
+     "id": "AGR-abattoirs",
+     "label": "Abattoirs",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Energie",
+   "subjects": [
+    {
+     "id": "ENE-reformes",
+     "label": "Réformes",
+     "positions": {}
+    },
+    {
+     "id": "ENE-enr-energies-renouvelables",
+     "label": "ENR (énergies renouvelables)",
+     "positions": {}
+    },
+    {
+     "id": "ENE-nucleaire",
+     "label": "Nucléaire",
+     "positions": {}
+    },
+    {
+     "id": "ENE-tarif-electricite",
+     "label": "Tarif électricité",
+     "positions": {}
+    },
+    {
+     "id": "ENE-hydrogene",
+     "label": "Hydrogène",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Europe",
+   "subjects": [
+    {
+     "id": "EUR-traites-europeens",
+     "label": "Traités européens",
+     "positions": {}
+    },
+    {
+     "id": "EUR-flux-migratoires",
+     "label": "Flux migratoires",
+     "positions": {}
+    },
+    {
+     "id": "EUR-plans",
+     "label": "Plans",
+     "positions": {}
+    },
+    {
+     "id": "EUR-pac",
+     "label": "PAC",
+     "positions": {}
+    },
+    {
+     "id": "EUR-industrie",
+     "label": "Industrie",
+     "positions": {}
+    },
+    {
+     "id": "EUR-transition-climat",
+     "label": "Transition pour le climat",
+     "positions": {}
+    },
+    {
+     "id": "EUR-membres",
+     "label": "Membres",
+     "positions": {}
+    },
+    {
+     "id": "EUR-marche-europeen",
+     "label": "Marché européen",
+     "positions": {}
+    },
+    {
+     "id": "EUR-droit-europeen",
+     "label": "Droit européen",
+     "positions": {}
+    },
+    {
+     "id": "EUR-numerique",
+     "label": "Numérique",
+     "positions": {}
+    },
+    {
+     "id": "EUR-dette",
+     "label": "Dette",
+     "positions": {}
+    },
+    {
+     "id": "EUR-banque-centrale-europeenne",
+     "label": "Banque Centrale Européenne",
+     "positions": {}
+    },
+    {
+     "id": "EUR-drapeau-europeen",
+     "label": "Drapeau européen",
+     "positions": {}
+    },
+    {
+     "id": "EUR-fonds-souverains",
+     "label": "Fonds souverains",
+     "positions": {}
+    },
+    {
+     "id": "EUR-paradis-fiscaux-europeens",
+     "label": "Paradis fiscaux européens",
+     "positions": {}
+    },
+    {
+     "id": "EUR-travailleurs-frontaliers",
+     "label": "Travailleurs frontaliers",
+     "positions": {}
+    },
+    {
+     "id": "EUR-taxation-flux-financiers",
+     "label": "Taxation des flux financiers",
      "positions": {}
     }
    ]
@@ -1501,61 +1321,6 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
-   "name": "Fonction publique",
-   "subjects": [
-    {
-     "id": "FPU-effectif-personnels",
-     "label": "Effectif des personnels",
-     "positions": {}
-    },
-    {
-     "id": "FPU-reformes",
-     "label": "Réformes",
-     "positions": {}
-    },
-    {
-     "id": "FPU-audiovisuel-public",
-     "label": "Audiovisuel public",
-     "positions": {}
-    },
-    {
-     "id": "FPU-pole-emploi",
-     "label": "Pole emploi",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Energie",
-   "subjects": [
-    {
-     "id": "ENE-reformes",
-     "label": "Réformes",
-     "positions": {}
-    },
-    {
-     "id": "ENE-enr-energies-renouvelables",
-     "label": "ENR (énergies renouvelables)",
-     "positions": {}
-    },
-    {
-     "id": "ENE-nucleaire",
-     "label": "Nucléaire",
-     "positions": {}
-    },
-    {
-     "id": "ENE-tarif-electricite",
-     "label": "Tarif électricité",
-     "positions": {}
-    },
-    {
-     "id": "ENE-hydrogene",
-     "label": "Hydrogène",
-     "positions": {}
-    }
-   ]
-  },
-  {
    "name": "Militaire",
    "subjects": [
     {
@@ -1626,71 +1391,51 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
-   "name": "Outre-Mer",
+   "name": "Industrie",
    "subjects": [
     {
-     "id": "OUM-politique-generale",
-     "label": "Politique générale",
+     "id": "IND-industrie-pharmaceutique",
+     "label": "Industrie pharmaceutique",
      "positions": {}
     },
     {
-     "id": "OUM-developpement-outre-mer",
-     "label": "Développement des Outre-Mer",
+     "id": "IND-pollutions",
+     "label": "Pollutions",
      "positions": {}
     },
     {
-     "id": "OUM-mers-oceans",
-     "label": "Mers et océans",
+     "id": "IND-procedures",
+     "label": "Procédures",
      "positions": {}
     },
     {
-     "id": "OUM-nouvelle-caledonie",
-     "label": "Nouvelle-Calédonie",
+     "id": "IND-deserts-industriels",
+     "label": "Déserts industriels",
      "positions": {}
     },
     {
-     "id": "OUM-acces-hexagone",
-     "label": "Accès à l'hexagone",
+     "id": "IND-europe",
+     "label": "Europe",
      "positions": {}
     },
     {
-     "id": "OUM-environnement",
-     "label": "Environnement",
+     "id": "IND-nationalisations",
+     "label": "Nationalisations",
      "positions": {}
     },
     {
-     "id": "OUM-fiscalite",
-     "label": "Fiscalité",
+     "id": "IND-statut-societes",
+     "label": "Statut des sociétés",
      "positions": {}
     },
     {
-     "id": "OUM-autonomie-territoires",
-     "label": "Autonomie des territoires",
+     "id": "IND-subventions-publiques",
+     "label": "Subventions publiques",
      "positions": {}
     },
     {
-     "id": "OUM-culture-regionale",
-     "label": "Culture régionale",
-     "positions": {}
-    },
-    {
-     "id": "OUM-nuclearisation-pacifique",
-     "label": "Nucléarisation du Pacifique",
-     "positions": {}
-    }
-   ]
-  },
-  {
-   "name": "Ressources",
-   "subjects": [
-    {
-     "id": "RSO-mers-oceans",
-     "label": "Mers et océans",
-     "positions": {}
-    },
-    {
-     "id": "RSO-nouvelle-caledonie",
-     "label": "Nouvelle-Calédonie",
+     "id": "IND-valorisation-produits-francais",
+     "label": "Valorisation des produits français",
      "positions": {}
     }
    ]
@@ -1771,141 +1516,226 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
-   "name": "Culture",
+   "name": "Fonction publique",
    "subjects": [
     {
-     "id": "CUL-musees",
-     "label": "Musées",
+     "id": "FPU-effectif-personnels",
+     "label": "Effectif des personnels",
      "positions": {}
     },
     {
-     "id": "CUL-lien-avec-education",
-     "label": "Lien avec l'éducation",
-     "positions": {}
-    },
-    {
-     "id": "CUL-evenements",
-     "label": "Evénements",
-     "positions": {}
-    },
-    {
-     "id": "CUL-diffusion-culture",
-     "label": "Diffusion de la culture",
-     "positions": {}
-    },
-    {
-     "id": "CUL-cinema",
-     "label": "Cinéma",
-     "positions": {}
-    },
-    {
-     "id": "CUL-mecenat",
-     "label": "Mécenat",
-     "positions": {}
-    },
-    {
-     "id": "CUL-reformes",
+     "id": "FPU-reformes",
      "label": "Réformes",
      "positions": {}
     },
     {
-     "id": "CUL-budget",
-     "label": "Budget",
+     "id": "FPU-audiovisuel-public",
+     "label": "Audiovisuel public",
+     "positions": {}
+    },
+    {
+     "id": "FPU-pole-emploi",
+     "label": "Pole emploi",
      "positions": {}
     }
    ]
   },
   {
-   "name": "Logement",
+   "name": "Transports",
    "subjects": [
     {
-     "id": "LOG-reformes",
-     "label": "Réformes",
+     "id": "TRS-offre-transports",
+     "label": "Offre de transports",
      "positions": {}
     },
     {
-     "id": "LOG-loyers",
-     "label": "Loyers",
+     "id": "TRS-carburants",
+     "label": "Carburants",
      "positions": {}
     },
     {
-     "id": "LOG-ruralite",
-     "label": "Ruralité",
+     "id": "TRS-permis",
+     "label": "Permis",
      "positions": {}
     },
     {
-     "id": "LOG-acces-logement",
-     "label": "Accès au logement",
+     "id": "TRS-limitation-vitesse-route",
+     "label": "Limitation de vitesse sur la route",
      "positions": {}
     },
     {
-     "id": "LOG-logements-sociaux",
-     "label": "Logements sociaux",
+     "id": "TRS-zones-faibles-emissions",
+     "label": "Zones à faibles émissions métropolitaines",
      "positions": {}
     },
     {
-     "id": "LOG-plan",
-     "label": "Plan",
+     "id": "TRS-amendes-stationnement",
+     "label": "Amendes de stationnement",
      "positions": {}
     },
     {
-     "id": "LOG-logements-insalubres",
-     "label": "Logements insalubres",
+     "id": "TRS-controle-technique",
+     "label": "Contrôle technique",
      "positions": {}
     },
     {
-     "id": "LOG-logements-urgence",
-     "label": "Logements d'urgence",
+     "id": "TRS-autoroutes",
+     "label": "Autoroutes",
      "positions": {}
     },
     {
-     "id": "LOG-ghettos",
-     "label": "Ghettos",
-     "positions": {}
-    },
-    {
-     "id": "LOG-logements-personnes-situation",
-     "label": "Logements pour personnes en situation de handicap",
-     "positions": {}
-    },
-    {
-     "id": "LOG-protection-proprietaires",
-     "label": "Protection des propriétaires",
+     "id": "TRS-ports",
+     "label": "Ports",
      "positions": {}
     }
    ]
   },
   {
-   "name": "Religion",
+   "name": "Ruralité",
    "subjects": [
     {
-     "id": "REL-laicite",
-     "label": "Laïcité",
+     "id": "RUR-construction-logements",
+     "label": "Construction de logements",
      "positions": {}
     },
     {
-     "id": "REL-financement",
-     "label": "Financement",
+     "id": "RUR-condition-vie",
+     "label": "Condition de vie",
      "positions": {}
     },
     {
-     "id": "REL-repression-appels-haine",
-     "label": "Répression des appels à la Haine",
+     "id": "RUR-fonds-publics-dedies",
+     "label": "Fonds publics dédiés",
      "positions": {}
     },
     {
-     "id": "REL-port-voile",
-     "label": "Port du voile",
+     "id": "RUR-emploi",
+     "label": "Emploi",
      "positions": {}
     },
     {
-     "id": "REL-burkini",
-     "label": "Burkini",
+     "id": "RUR-gens-voyage",
+     "label": "Gens du voyage",
      "positions": {}
     },
     {
-     "id": "REL-lieux-culte",
-     "label": "Lieux de culte",
+     "id": "RUR-offre-transports",
+     "label": "Offre de transports",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Recherche et supérieur",
+   "subjects": [
+    {
+     "id": "RES-statut-personnels-superieur",
+     "label": "Statut des personnels du supérieur",
+     "positions": {}
+    },
+    {
+     "id": "RES-hebergement-etudiants",
+     "label": "Hébergement des étudiants",
+     "positions": {}
+    },
+    {
+     "id": "RES-vie-etudiants",
+     "label": "Vie des étudiants",
+     "positions": {}
+    },
+    {
+     "id": "RES-effectifs-personnels",
+     "label": "Effectifs des personnels",
+     "positions": {}
+    },
+    {
+     "id": "RES-reformes",
+     "label": "Réformes",
+     "positions": {}
+    },
+    {
+     "id": "RES-financements",
+     "label": "Financements",
+     "positions": {}
+    },
+    {
+     "id": "RES-publications-scientifiques",
+     "label": "Publications scientifiques",
+     "positions": {}
+    },
+    {
+     "id": "RES-medecine-universitaire",
+     "label": "Médecine universitaire",
+     "positions": {}
+    },
+    {
+     "id": "RES-bibliotheques-universitaires",
+     "label": "Bibliothèques universitaires",
+     "positions": {}
+    },
+    {
+     "id": "RES-batiments",
+     "label": "Bâtiments",
+     "positions": {}
+    },
+    {
+     "id": "RES-petites-moyennes-universites",
+     "label": "Petites / Moyennes universités",
+     "positions": {}
+    },
+    {
+     "id": "RES-orientation",
+     "label": "Orientation",
+     "positions": {}
+    },
+    {
+     "id": "RES-plans-recherche",
+     "label": "Plans pour la recherche",
+     "positions": {}
+    },
+    {
+     "id": "RES-recherche-developpement-sein",
+     "label": "Recherche et développement au sein des entreprises privées",
+     "positions": {}
+    },
+    {
+     "id": "RES-spatial",
+     "label": "Spatial",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Fraude",
+   "subjects": [
+    {
+     "id": "FRA-fraude-sociale",
+     "label": "Fraude Sociale",
+     "positions": {}
+    },
+    {
+     "id": "FRA-reformes",
+     "label": "Réformes",
+     "positions": {}
+    },
+    {
+     "id": "FRA-paradis-fiscaux",
+     "label": "Paradis fiscaux",
+     "positions": {}
+    },
+    {
+     "id": "FRA-fraude-fiscale",
+     "label": "Fraude fiscale",
+     "positions": {}
+    },
+    {
+     "id": "FRA-verrou-bercy-autorisation",
+     "label": "Verrou de Bercy (autorisation nécessaire de Bercy pour poursuivre les fraudeurs)",
+     "positions": {}
+    },
+    {
+     "id": "FRA-informartion-fraude",
+     "label": "Informartion sur la fraude",
      "positions": {}
     }
    ]
@@ -1991,6 +1821,161 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
+   "name": "Culture",
+   "subjects": [
+    {
+     "id": "CUL-musees",
+     "label": "Musées",
+     "positions": {}
+    },
+    {
+     "id": "CUL-lien-avec-education",
+     "label": "Lien avec l'éducation",
+     "positions": {}
+    },
+    {
+     "id": "CUL-evenements",
+     "label": "Evénements",
+     "positions": {}
+    },
+    {
+     "id": "CUL-diffusion-culture",
+     "label": "Diffusion de la culture",
+     "positions": {}
+    },
+    {
+     "id": "CUL-cinema",
+     "label": "Cinéma",
+     "positions": {}
+    },
+    {
+     "id": "CUL-mecenat",
+     "label": "Mécenat",
+     "positions": {}
+    },
+    {
+     "id": "CUL-reformes",
+     "label": "Réformes",
+     "positions": {}
+    },
+    {
+     "id": "CUL-budget",
+     "label": "Budget",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Sport",
+   "subjects": [
+    {
+     "id": "SPO-financements-sportifs",
+     "label": "Financements sportifs",
+     "positions": {}
+    },
+    {
+     "id": "SPO-clubs-sportifs",
+     "label": "Clubs sportifs",
+     "positions": {}
+    },
+    {
+     "id": "SPO-jo-2024",
+     "label": "JO 2024",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Outre-Mer",
+   "subjects": [
+    {
+     "id": "OUM-politique-generale",
+     "label": "Politique générale",
+     "positions": {}
+    },
+    {
+     "id": "OUM-developpement-outre-mer",
+     "label": "Développement des Outre-Mer",
+     "positions": {}
+    },
+    {
+     "id": "OUM-mers-oceans",
+     "label": "Mers et océans",
+     "positions": {}
+    },
+    {
+     "id": "OUM-nouvelle-caledonie",
+     "label": "Nouvelle-Calédonie",
+     "positions": {}
+    },
+    {
+     "id": "OUM-acces-hexagone",
+     "label": "Accès à l'hexagone",
+     "positions": {}
+    },
+    {
+     "id": "OUM-environnement",
+     "label": "Environnement",
+     "positions": {}
+    },
+    {
+     "id": "OUM-fiscalite",
+     "label": "Fiscalité",
+     "positions": {}
+    },
+    {
+     "id": "OUM-autonomie-territoires",
+     "label": "Autonomie des territoires",
+     "positions": {}
+    },
+    {
+     "id": "OUM-culture-regionale",
+     "label": "Culture régionale",
+     "positions": {}
+    },
+    {
+     "id": "OUM-nuclearisation-pacifique",
+     "label": "Nucléarisation du Pacifique",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Religion",
+   "subjects": [
+    {
+     "id": "REL-laicite",
+     "label": "Laïcité",
+     "positions": {}
+    },
+    {
+     "id": "REL-financement",
+     "label": "Financement",
+     "positions": {}
+    },
+    {
+     "id": "REL-repression-appels-haine",
+     "label": "Répression des appels à la Haine",
+     "positions": {}
+    },
+    {
+     "id": "REL-port-voile",
+     "label": "Port du voile",
+     "positions": {}
+    },
+    {
+     "id": "REL-burkini",
+     "label": "Burkini",
+     "positions": {}
+    },
+    {
+     "id": "REL-lieux-culte",
+     "label": "Lieux de culte",
+     "positions": {}
+    }
+   ]
+  },
+  {
    "name": "Identité & orientation sexuelle",
    "subjects": [
     {
@@ -2016,6 +2001,21 @@ window.COMPARATEUR_DATA = {
     {
      "id": "IDO-personnes-intersexes",
      "label": "Personnes intersexes",
+     "positions": {}
+    }
+   ]
+  },
+  {
+   "name": "Ressources",
+   "subjects": [
+    {
+     "id": "RSO-mers-oceans",
+     "label": "Mers et océans",
+     "positions": {}
+    },
+    {
+     "id": "RSO-nouvelle-caledonie",
+     "label": "Nouvelle-Calédonie",
      "positions": {}
     }
    ]
