@@ -52,6 +52,8 @@ nav a.on{color:var(--terre);border-color:var(--terre)}
 .registres b{display:block;font-size:13px;margin-bottom:3px}
 .registres .r1{background:var(--terre-deep);color:#F4E7DE}
 .registres .r1 b{font-family:var(--serif);font-size:15px;color:#fff}
+.registres .r1-link{color:#fff;text-decoration:underline;text-decoration-color:rgba(255,255,255,.5);text-underline-offset:3px;transition:text-decoration-color .12s}
+.registres .r1-link:hover{text-decoration-color:#fff}
 .registres .r2{background:var(--terre-soft);color:var(--terre-deep)}
 .registres .r2 b{font-weight:600;color:var(--terre-deep)}
 .registres .r3{background:var(--terre-mist);color:var(--ink-2)}
@@ -188,9 +190,9 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
   </div>
 </header>
 
-<div class="accroche-wrap">
+<div class="accroche-wrap" id="accrocheWrap">
   <div class="wrap">
-    <p class="accroche"><span class="accroche-hl">Parce qu'en France, près de 60% des promesses ont été réalisées depuis 1995.</span></p>
+    <p class="accroche"><span class="accroche-hl">Parce qu'en France, près de 60% des promesses des programmes ont été réalisées depuis 1995.</span></p>
   </div>
 </div>
 
@@ -198,7 +200,7 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
 <main id="view-accueil">
   <div class="wrap">
     <div class="registres" aria-label="Les trois registres du site">
-      <div class="r1"><b>Et s'ils ne mentaient pas ?</b>Macron a tenu, au moins partiellement, plus de 70% de ses promesses lors de son 1er mandat</div>
+      <div class="r1"><b><a href="https://www.youtube.com/watch?v=M84OlXxdHiY" target="_blank" rel="noopener" class="r1-link">Et s'ils ne mentaient pas ?</a></b>Macron a tenu, au moins partiellement, plus de 70% de ses promesses lors de son 1er mandat</div>
       <div class="r2"><b>L'analyse</b>Éclairage factuel et sourcé : explication des concepts, faisabilité, comparaisons. Sans jugement ou avis.</div>
       <div class="r3"><b>Les partis pris</b>Opinions assumées et signées par leurs auteurs sur un sujet</div>
     </div>
@@ -321,6 +323,7 @@ function initials(e){if(e.initials)return e.initials.slice(0,3);var p=(e.author|
 var views = ['accueil','theme','methodologie'];
 function showView(v){
   views.forEach(function(name){ $('view-'+name).classList.toggle('hidden', name!==v); });
+  $('accrocheWrap').classList.toggle('hidden', v!=='accueil');
   document.querySelectorAll('[data-nav]').forEach(function(a){
     a.classList.toggle('on', a.getAttribute('data-nav')===v);
   });
