@@ -72,18 +72,23 @@ nav a.on{color:var(--terre);border-color:var(--terre)}
 .cb-arr{transition:transform .12s}
 .constit-banner:hover .cb-arr{transform:translateX(3px)}
 @media(max-width:560px){.constit-banner{flex-direction:column;align-items:flex-start;gap:8px}}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:10px;margin-bottom:40px}
-@media(max-width:480px){.cards{grid-template-columns:repeat(2,1fr)}}
-.t-card{position:relative;background:var(--gb);border:1px solid var(--gb-border);border-radius:var(--r);padding:14px 15px 12px;text-align:left;display:flex;flex-direction:column;gap:5px;min-height:86px;transition:background .12s, box-shadow .12s, transform .12s}
-.t-card::after{content:"";position:absolute;inset:0;border-radius:var(--r);pointer-events:none;border:2px solid transparent;transition:border-color .12s}
-.t-card:hover{background:var(--gb-hover);box-shadow:0 4px 14px rgba(45,40,30,.14);transform:translateY(-1px)}
-.t-card:hover::after{border-color:var(--gb-frame)}
-.t-card b{position:relative;font-size:14px;font-weight:600;color:var(--gb-ink);line-height:1.3}
-.t-card .n{position:relative;font-size:12px;color:var(--gb-ink-2)}
-.t-card .ed{position:relative;display:flex;gap:4px;margin-top:auto;flex-wrap:wrap}
-.t-card .ed span{font-size:10px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:4px}
-.t-card .ed .ea{background:var(--graphite-soft);color:var(--graphite)}
-.t-card .ed .ep{background:var(--terre-soft);color:var(--terre-deep)}
+.cards{--hw:150px;--hh:132px;--hgap:14px;display:flex;flex-direction:column;align-items:center;gap:calc(var(--hgap) * .55);margin:6px 0 40px}
+.hex-row{display:flex;justify-content:center;gap:var(--hgap)}
+.hex-row.offset{margin-left:calc((var(--hw) + var(--hgap)) / 2)}
+.hex{position:relative;flex:0 0 auto;width:var(--hw);height:var(--hh);border:none;background:none;padding:0;cursor:pointer}
+.hex-shape{position:absolute;inset:0;background:var(--gb-border);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);transition:background .12s, transform .12s}
+.hex-inner{position:absolute;inset:1.5px;background:var(--gb);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0 16px;text-align:center;transition:background .12s}
+.hex:hover .hex-shape{background:var(--gb-frame);transform:translateY(-2px)}
+.hex:hover .hex-inner{background:var(--gb-hover);transform:translateY(-2px)}
+.hex b{font-size:13px;font-weight:600;color:var(--gb-ink);line-height:1.2}
+.hex .n{font-size:11px;color:var(--gb-ink-2)}
+.hex .ed{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
+.hex .ed span{font-size:8.5px;font-weight:600;letter-spacing:.2px;text-transform:uppercase;padding:1px 5px;border-radius:3px}
+.hex .ed .ea{background:var(--graphite-soft);color:var(--graphite)}
+.hex .ed .ep{background:var(--terre-soft);color:var(--terre-deep)}
+@media(max-width:760px){.cards{--hw:128px;--hh:113px}.hex b{font-size:11.5px}}
+@media(max-width:560px){.cards{--hw:104px;--hh:92px;--hgap:10px}.hex b{font-size:10px}.hex .n{font-size:9px}.hex-inner{padding:0 9px}}
+@media(max-width:380px){.cards{--hw:92px;--hh:81px}}
 
 /* ===== Vue thématique ===== */
 .t-top{display:flex;align-items:center;gap:14px;margin:18px 0 6px;flex-wrap:wrap}
@@ -335,22 +340,49 @@ function goAccueil(ev){if(ev)ev.preventDefault();state.theme=null;state.subject=
 $('brandLink').addEventListener('click',goAccueil);
 $('backLink').addEventListener('click',goAccueil);
 
-/* ===== Sommaire : cartes des thématiques ===== */
+/* ===== Sommaire : nid d'abeille hexagonal ===== */
+function hexThemes(){
+  return D.themes.filter(function(t){return t.name!=='Constitution';});
+}
+function perRow(){
+  var cards=$('cards');
+  var cs=getComputedStyle(cards);
+  var hw=parseFloat(cs.getPropertyValue('--hw'))||150;
+  var hgap=parseFloat(cs.getPropertyValue('--hgap'))||14;
+  var avail=cards.clientWidth||document.querySelector('.wrap').clientWidth;
+  var n=Math.floor((avail+hgap)/(hw+hgap));
+  return Math.max(2,Math.min(n,7));
+}
 function renderCards(){
   var w=$('cards'); w.innerHTML='';
-  D.themes.forEach(function(t){
-    if(t.name==='Constitution')return;
-    var ed=edByTheme[t.name], b=document.createElement('button');
-    b.className='t-card';
-    var h='<b>'+esc(t.name)+'</b><span class="n">'+t.subjects.length+' sujet'+(t.subjects.length>1?'s':'')+'</span>';
-    if(ed.na||ed.np){
-      h+='<span class="ed">'+(ed.na?'<span class="ea">'+ed.na+' analyse'+(ed.na>1?'s':'')+'</span>':'')+(ed.np?'<span class="ep">'+ed.np+' parti'+(ed.np>1?'s':'')+' pris</span>':'')+'</span>';
+  var themes=hexThemes(), cols=perRow(), i=0, rowIndex=0;
+  while(i<themes.length){
+    var isOffset=rowIndex%2===1;
+    var count=isOffset?cols-1:cols;
+    var row=document.createElement('div');
+    row.className='hex-row'+(isOffset?' offset':'');
+    for(var k=0;k<count && i<themes.length;k++,i++){
+      var t=themes[i], ed=edByTheme[t.name];
+      var b=document.createElement('button');
+      b.className='hex'; b.title=t.name;
+      var inner='<span class="hex-shape"></span><span class="hex-inner"><b>'+esc(t.name)+'</b><span class="n">'+t.subjects.length+' sujet'+(t.subjects.length>1?'s':'')+'</span>';
+      if(ed.na||ed.np){
+        inner+='<span class="ed">'+(ed.na?'<span class="ea">'+ed.na+'\u00A0analyse'+(ed.na>1?'s':'')+'</span>':'')+(ed.np?'<span class="ep">'+ed.np+'\u00A0p.p.</span>':'')+'</span>';
+      }
+      inner+='</span>';
+      b.innerHTML=inner;
+      (function(name){b.addEventListener('click',function(){openTheme(name);});})(t.name);
+      row.appendChild(b);
     }
-    b.innerHTML=h;
-    b.addEventListener('click',function(){openTheme(t.name);});
-    w.appendChild(b);
-  });
+    w.appendChild(row);
+    rowIndex++;
+  }
 }
+var _rsTimer=null;
+window.addEventListener('resize',function(){
+  if(_rsTimer)clearTimeout(_rsTimer);
+  _rsTimer=setTimeout(function(){ if(!$('view-accueil').classList.contains('hidden'))renderCards(); },150);
+});
 
 /* ===== Vue thématique ===== */
 function themeByName(n){for(var i=0;i<D.themes.length;i++)if(D.themes[i].name===n)return D.themes[i];return null;}
