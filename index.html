@@ -39,15 +39,24 @@ nav a{font-size:12.5px;text-decoration:none;color:var(--ink-3);padding:4px 2px;b
 nav a:hover{color:var(--terre)}
 nav a.on{color:var(--terre);border-color:var(--terre)}
 
+/* ===== Accroche percutante ===== */
+.accroche-wrap{background:var(--terre-deep);border-bottom:3px solid var(--terre)}
+.accroche{max-width:1180px;margin:0 auto;padding:18px 16px;text-align:center}
+.accroche-hl{font-family:var(--serif);font-weight:600;font-size:clamp(19px,4.6vw,30px);line-height:1.28;color:#fff;letter-spacing:.2px}
+@media(max-width:560px){.accroche{padding:20px 16px}.accroche-hl{font-size:22px}}
+
 /* ===== Bandeau registres (signature) ===== */
 .registres{display:flex;gap:0;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin:20px 0 6px;background:var(--card)}
-.registres>div{flex:1;padding:11px 15px;font-size:12px;color:var(--ink-2);border-left:1px solid var(--rule-soft)}
+.registres>div{flex:1;padding:13px 16px;font-size:12px;border-left:1px solid rgba(255,255,255,.25)}
 .registres>div:first-child{border-left:none}
-.registres b{display:block;font-size:12.5px;color:var(--ink);margin-bottom:1px}
-.registres .r1 b{font-family:var(--serif)}
-.registres .r2 b{font-weight:600}
+.registres b{display:block;font-size:13px;margin-bottom:3px}
+.registres .r1{background:var(--terre-deep);color:#F4E7DE}
+.registres .r1 b{font-family:var(--serif);font-size:15px;color:#fff}
+.registres .r2{background:var(--terre-soft);color:var(--terre-deep)}
+.registres .r2 b{font-weight:600;color:var(--terre-deep)}
+.registres .r3{background:var(--terre-mist);color:var(--ink-2)}
 .registres .r3 b{color:var(--terre)}
-@media(max-width:700px){.registres{flex-direction:column}.registres>div{border-left:none;border-top:1px solid var(--rule-soft)}.registres>div:first-child{border-top:none}}
+@media(max-width:700px){.registres{flex-direction:column}.registres>div{border-left:none;border-top:1px solid rgba(255,255,255,.25)}.registres>div:first-child{border-top:none}}
 
 /* ===== Sommaire (page d'accueil) ===== */
 .tools{display:flex;gap:10px;align-items:center;margin:16px 0 6px;flex-wrap:wrap}
@@ -172,19 +181,24 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
 
 <header>
   <div class="wrap head-in">
-    <a class="brand" href="#" id="brandLink"><b>Comparateur 2027</b><span>Parce qu'en France, près de 60% des promesses ont été réalisées depuis 1995</span></a>
+    <a class="brand" href="#" id="brandLink"><b>Comparateur 2027</b><span>Les programmes des candidats, mot à mot</span></a>
     <nav>
       <a href="#methodologie" data-nav="methodologie">Méthodologie</a>
-      <a href="#bibliographie" data-nav="bibliographie">Bibliographie</a>
     </nav>
   </div>
 </header>
+
+<div class="accroche-wrap">
+  <div class="wrap">
+    <p class="accroche"><span class="accroche-hl">Parce qu'en France, près de 60% des promesses ont été réalisées depuis 1995.</span></p>
+  </div>
+</div>
 
 <!-- ===== Vue sommaire (accueil) ===== -->
 <main id="view-accueil">
   <div class="wrap">
     <div class="registres" aria-label="Les trois registres du site">
-      <div class="r1"><b>« Le programme, mot à mot »</b>Parce qu'en France près de 60% des promesses ont été réalisées depuis 1995</div>
+      <div class="r1"><b>Et s'ils ne mentaient pas ?</b>Macron a tenu, au moins partiellement, plus de 70% de ses promesses lors de son 1er mandat</div>
       <div class="r2"><b>L'analyse</b>Éclairage factuel et sourcé : explication des concepts, faisabilité, comparaisons. Sans jugement ou avis.</div>
       <div class="r3"><b>Les partis pris</b>Opinions assumées et signées par leurs auteurs sur un sujet</div>
     </div>
@@ -197,8 +211,8 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
     </div>
     <button class="constit-banner" id="constitBanner" type="button">
       <span class="cb-left">
-        <span class="cb-kicker">Au cœur de 2027</span>
-        <span class="cb-title">Constitution — les révisions proposées</span>
+        <span class="cb-kicker">Le fondement de la République</span>
+        <span class="cb-title">Constitution — les révisions proposées de la loi des lois</span>
       </span>
       <span class="cb-go">Voir les propositions <span class="cb-arr">→</span></span>
     </button>
@@ -234,23 +248,14 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
     <h2>Les trois registres</h2>
     <p>Chaque sujet est traité selon trois registres, visuellement distincts sur tout le site :</p>
     <div class="rg"><b>« Le programme, mot à mot ».</b> Les cases du tableau contiennent la transcription littérale des programmes, dans le vocabulaire des candidats, sans reformulation. Ce registre est affiché en caractères serif, entre guillemets.</div>
-    <div class="rg"><b>L'analyse.</b> Elle va au-delà des mots sans verser dans l'opinion : clarification des concepts, liens avec le reste du système social et institutionnel, évaluation de la faisabilité ou du coût lorsque des indicateurs existent, comparaison avec des dispositifs déjà en œuvre ailleurs. Chaque affirmation est sourcée par des appels de note renvoyant à la bibliographie. Une analyse rapporte des faits vérifiables ; elle ne conclut jamais sur la désirabilité d'une mesure.</div>
+    <div class="rg"><b>L'analyse.</b> Elle va au-delà des mots sans verser dans l'opinion : clarification des concepts, liens avec le reste du système social et institutionnel, évaluation de la faisabilité ou du coût lorsque des indicateurs existent, comparaison avec des dispositifs déjà en œuvre ailleurs. Chaque analyse indique ses sources, listées juste en dessous d'elle. Une analyse rapporte des faits vérifiables ; elle ne conclut jamais sur la désirabilité d'une mesure.</div>
     <div class="rg"><b>Les partis pris.</b> Toute appréciation — favorable ou critique — relève de ce registre. Chaque parti pris est signé par son auteur, qui assume sa ligne. Plusieurs partis pris peuvent coexister sur un même sujet : la pluralité des regards fait partie du projet.</div>
 
     <h2>Le sourçage</h2>
-    <p>Les analyses suivent une exigence de type universitaire : les affirmations factuelles sont reliées à des sources identifiées (rapports officiels, études, textes juridiques, données statistiques, programmes eux-mêmes), réunies dans une bibliographie centralisée et consultable. Chaque source est datée et accompagnée de son lien d'origine, pour que chacun puisse vérifier par lui-même.</p>
+    <p>Les analyses suivent une exigence de type universitaire : les affirmations factuelles sont reliées à des sources identifiées (rapports officiels, études, textes juridiques, données statistiques, programmes eux-mêmes), indiquées directement sous chaque analyse, datées et accompagnées de leur lien d'origine, pour que chacun puisse vérifier par lui-même.</p>
 
     <h2>La neutralité, rendue vérifiable</h2>
     <p>Nous ne prétendons pas être sans opinions : nous les signons et les séparons. Aucun candidat ne reçoit de traitement visuel distinctif ; les colonnes du tableau sont strictement identiques. La fidélité de la restitution est vérifiable par les liens vers les programmes d'origine. Si vous constatez une erreur de transcription ou d'attribution, signalez-la nous.</p>
-  </div>
-</main>
-
-<!-- ===== Vue bibliographie ===== -->
-<main id="view-bibliographie" class="hidden">
-  <div class="page">
-    <h1>Bibliographie</h1>
-    <p class="lede">Toutes les sources citées dans les analyses, réunies en un seul endroit. Chaque entrée indique sa nature, sa date et son lien d'origine.</p>
-    <div id="bibList"></div>
   </div>
 </main>
 
@@ -296,8 +301,6 @@ var state = {theme:null, subject:null, tab:'positions'};
 /* Index éditorial */
 var edBySubject = {};
 (D.editorial||[]).forEach(function(e){ (edBySubject[e.id]=edBySubject[e.id]||[]).push(e); });
-var bibById = {};
-(D.bibliography||[]).forEach(function(b){ bibById[b.id]=b; });
 
 /* Compteurs éditoriaux par thème (pour les cartes du sommaire) */
 var edByTheme = {};
@@ -315,7 +318,7 @@ function ppColor(name){var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCo
 function initials(e){if(e.initials)return e.initials.slice(0,3);var p=(e.author||'?').split(/\s+/);return p.map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';}
 
 /* ===== Navigation entre vues ===== */
-var views = ['accueil','theme','methodologie','bibliographie'];
+var views = ['accueil','theme','methodologie'];
 function showView(v){
   views.forEach(function(name){ $('view-'+name).classList.toggle('hidden', name!==v); });
   document.querySelectorAll('[data-nav]').forEach(function(a){
@@ -451,11 +454,9 @@ function findSubject(sid){
     for(var j=0;j<t.subjects.length;j++)if(t.subjects[j].id===sid)return{theme:t,subject:t.subjects[j]};}
   return null;
 }
-function footnotes(text, ids){
-  return esc(text).replace(/\[(\d+)\]/g,function(m,n){
-    var i=parseInt(n,10)-1, sid=ids[i];
-    if(sid===undefined)return '<sup>['+n+']</sup>';
-    return '<sup><a href="#src-'+esc(sid)+'" title="'+esc(sid)+'">['+n+']</a></sup>';
+function linkify(text){
+  return esc(text).replace(/(https?:\/\/[^\s]+)/g,function(url){
+    return '<a href="'+url+'" target="_blank" rel="noopener">'+url+'</a>';
   });
 }
 function renderPanelBody(){
@@ -476,15 +477,13 @@ function renderPanelBody(){
     h+='<p class="p-section-label">Analyse — factuelle, neutre et sourcée</p>';
     if(!analyses.length)h+='<p class="p-empty">Pas encore d\'analyse sur ce sujet.</p>';
     analyses.forEach(function(a){
-      h+='<div class="analyse-box">'+footnotes(a.text,a.sources||[]);
+      h+='<div class="analyse-box">'+esc(a.text).replace(/\n/g,'<br>');
       if(a.sources&&a.sources.length){
-        h+='<div class="src-list"><h5>Sources</h5><ol>';
-        a.sources.forEach(function(sid){
-          var b=bibById[sid];
-          h+= b ? '<li id="src-'+esc(sid)+'">'+esc(b.authors? b.authors+'. ':'')+'<i>'+esc(b.title)+'</i>'+(b.org?', '+esc(b.org):'')+(b.date?', '+esc(b.date):'')+(b.url?'. <a href="'+esc(b.url)+'" target="_blank" rel="noopener">Consulter ↗</a>':'')+'</li>'
-                 : '<li id="src-'+esc(sid)+'">'+esc(sid)+' <span class="avenir">(référence à compléter dans la bibliographie)</span></li>';
+        h+='<div class="src-list"><h5>Sources</h5><ul>';
+        a.sources.forEach(function(src){
+          h+='<li>'+linkify(src)+'</li>';
         });
-        h+='</ol></div>';
+        h+='</ul></div>';
       }
       h+='</div>';
     });
@@ -535,7 +534,7 @@ document.querySelectorAll('.p-tab').forEach(function(b){
 /* ===== Liens partageables (hash) ===== */
 function applyHash(){
   var h=decodeURIComponent(location.hash.replace(/^#/,''));
-  if(h==='methodologie'||h==='bibliographie'){showView(h);return;}
+  if(h==='methodologie'){showView(h);return;}
   if(h.indexOf('s/')===0){var sid=h.slice(2);if(findSubject(sid)){openPanel(sid);return;}}
   if(h.indexOf('t/')===0){var tn=h.slice(2);if(themeByName(tn)){state.theme=tn;renderThemeView();showView('theme');return;}}
   showView('accueil');
@@ -561,15 +560,6 @@ sInput.addEventListener('input',function(){
 });
 document.addEventListener('click',function(e){if(!e.target.closest('.search'))sList.classList.remove('open');});
 
-/* ===== Bibliographie ===== */
-function renderBib(){
-  var w=$('bibList');
-  if(!(D.bibliography||[]).length){w.innerHTML='<p class="p-empty">La bibliographie se remplira au fil des analyses.</p>';return;}
-  w.innerHTML=D.bibliography.map(function(b){
-    return '<div class="bib-item"><div class="bid">'+esc(b.id)+(b.type?' · '+esc(b.type):'')+'</div><div class="bt">'+esc(b.title)+'</div><div class="bm">'+esc(b.authors)+(b.org?' — '+esc(b.org):'')+(b.date?' · '+esc(b.date):'')+(b.consulted?' · consulté le '+esc(b.consulted):'')+'</div>'+(b.url?'<a href="'+esc(b.url)+'" target="_blank" rel="noopener">'+esc(b.url)+'</a>':'')+'</div>';
-  }).join('');
-}
-
 /* ===== Bandeau Constitution ===== */
 (function(){
   var banner=$('constitBanner');
@@ -584,7 +574,7 @@ function renderBib(){
 /* ===== Init ===== */
 $('majDate').textContent = D.meta && D.meta.generated ? 'Données du '+D.meta.generated : '';
 $('footMeta').textContent = 'Comparateur 2027 — données mises à jour le '+(D.meta?D.meta.generated:'');
-renderCards(); renderBib(); applyHash();
+renderCards(); applyHash();
 })();
 </script>
 </body>
