@@ -1,6 +1,6 @@
 window.COMPARATEUR_DATA = {
  "meta": {
-  "generated": "2026-06-13",
+  "generated": "2026-06-28",
   "title": "Comparateur 2027"
  },
  "candidates": [
@@ -2029,8 +2029,7 @@ window.COMPARATEUR_DATA = {
    "initials": "",
    "text": "[EXEMPLE à remplacer] Analyse factuelle : contexte du sujet et chiffres clés [1]. Comparaison avec des dispositifs existants ailleurs en Europe [2]. Texte neutre, sans jugement de valeur.",
    "sources": [
-    "EXEMPLE-2026-01",
-    "EXEMPLE-2026-02"
+    "EXEMPLE-2026-01, EXEMPLE-2026-02"
    ]
   },
   {
@@ -2050,26 +2049,5 @@ window.COMPARATEUR_DATA = {
    "sources": []
   }
  ],
- "bibliography": [
-  {
-   "id": "EXEMPLE-2026-01",
-   "authors": "Organisme fictif",
-   "title": "[EXEMPLE à remplacer] Rapport sur l’accès aux soins",
-   "type": "rapport officiel",
-   "org": "Organisme public",
-   "date": "2026",
-   "url": "https://exemple.fr/rapport",
-   "consulted": "2026-06-11"
-  },
-  {
-   "id": "EXEMPLE-2026-02",
-   "authors": "Auteur fictif",
-   "title": "[EXEMPLE à remplacer] Étude comparative européenne",
-   "type": "étude/recherche",
-   "org": "Revue fictive",
-   "date": "2025",
-   "url": "https://exemple.fr/etude",
-   "consulted": "2026-06-11"
-  }
- ]
+ "bibliography": []
 };

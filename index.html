@@ -11,7 +11,8 @@
 <style>
 :root{
   --paper:#F7F5F0; --card:#FFFFFF; --ink:#27221B; --ink-2:#5C5346; --ink-3:#978D7E;
-  --terre:#8C4A2F; --terre-deep:#6E3920; --terre-soft:#F4E7DE; --terre-mist:#FAF2EC;
+  --terre:#CC7A48; --terre-deep:#B05F2E; --terre-soft:#F4E2D2; --terre-mist:#FBF1E9;
+  --terre-accroche:#CC7A48; --terre-accroche-line:#E08A4E;
   --graphite:#6B6459; --graphite-soft:#EFEDE8;
   --rule:#E0DACF; --rule-soft:#ECE8DF;
   --gb:#CDC8BF; --gb-border:#B3ADA1; --gb-hover:#C2BCB1; --gb-frame:#534D43;
@@ -40,25 +41,25 @@ nav a:hover{color:var(--terre)}
 nav a.on{color:var(--terre);border-color:var(--terre)}
 
 /* ===== Accroche percutante ===== */
-.accroche-wrap{background:var(--terre-deep);border-bottom:3px solid var(--terre)}
+.accroche-wrap{background:var(--terre-accroche);border-bottom:3px solid var(--terre-accroche-line)}
 .accroche{max-width:1180px;margin:0 auto;padding:18px 16px;text-align:center}
 .accroche-hl{font-family:var(--serif);font-weight:600;font-size:clamp(19px,4.6vw,30px);line-height:1.28;color:#fff;letter-spacing:.2px}
 @media(max-width:560px){.accroche{padding:20px 16px}.accroche-hl{font-size:22px}}
 
 /* ===== Bandeau registres (signature) ===== */
 .registres{display:flex;gap:0;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin:20px 0 6px;background:var(--card)}
-.registres>div{flex:1;padding:13px 16px;font-size:12px;border-left:1px solid rgba(255,255,255,.25)}
+.registres>div{flex:1;padding:13px 16px;font-size:12px;border-left:1px solid rgba(255,255,255,.3)}
 .registres>div:first-child{border-left:none}
 .registres b{display:block;font-size:13px;margin-bottom:3px}
-.registres .r1{background:var(--terre-deep);color:#F4E7DE}
+.registres .r1{background:var(--terre);color:#FBEDE2}
 .registres .r1 b{font-family:var(--serif);font-size:15px;color:#fff}
 .registres .r1-link{color:#fff;text-decoration:underline;text-decoration-color:rgba(255,255,255,.5);text-underline-offset:3px;transition:text-decoration-color .12s}
 .registres .r1-link:hover{text-decoration-color:#fff}
-.registres .r2{background:var(--terre-soft);color:var(--terre-deep)}
+.registres .r2{background:var(--terre-soft);color:#856248}
 .registres .r2 b{font-weight:600;color:var(--terre-deep)}
 .registres .r3{background:var(--terre-mist);color:var(--ink-2)}
 .registres .r3 b{color:var(--terre)}
-@media(max-width:700px){.registres{flex-direction:column}.registres>div{border-left:none;border-top:1px solid rgba(255,255,255,.25)}.registres>div:first-child{border-top:none}}
+@media(max-width:700px){.registres{flex-direction:column}.registres>div{border-left:none;border-top:1px solid rgba(255,255,255,.3)}.registres>div:first-child{border-top:none}}
 
 /* ===== Sommaire (page d'accueil) ===== */
 .tools{display:flex;gap:10px;align-items:center;margin:16px 0 6px;flex-wrap:wrap}
