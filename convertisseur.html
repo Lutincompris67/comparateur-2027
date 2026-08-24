@@ -35,7 +35,12 @@ small{color:#8A8F9C}
 <script>
 (function(){
 "use strict";
-var SPECIAL={'Lisez-moi':1,'Analyses & partis pris':1,'Bibliographie':1};
+var SPECIAL={'Lisez-moi':1,'Analyses & partis pris':1,'Bibliographie':1,'Journal':1};
+/* Onglets de travail ignorés : nom exact ci-dessus, ou nom commençant par
+   « Journal » ou par « _ » (convention pour tout onglet hors données). */
+function isWorkSheet(name){
+  return !!SPECIAL[name] || /^journal/i.test(name) || name.charAt(0)==='_';
+}
 var drop=document.getElementById('drop'),fileIn=document.getElementById('file'),
     report=document.getElementById('report'),dlBtn=document.getElementById('dl'),
     output=null;
@@ -69,7 +74,7 @@ function convert(wb){
   var themes=[],candidates=[],problems=[],allIds={};
   wb.SheetNames.forEach(function(name){
     var clean=name.trim();
-    if(SPECIAL[clean])return;
+    if(isWorkSheet(clean))return;
     var rows=sheetRows(wb.Sheets[name]);
     if(!rows.length)return;
     var hdr=rows[0].map(cellStr);

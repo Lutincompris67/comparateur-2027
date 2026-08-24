@@ -1,15 +1,13 @@
 window.COMPARATEUR_DATA = {
  "meta": {
-  "generated": "2026-08-23",
+  "generated": "2026-08-24",
   "title": "Comparateur 2027"
  },
  "candidates": [
   "Édouard Philippe",
   "Candidat B",
   "Candidat C",
-  "Candidat D",
-  "Rattachement retenu par Claude",
-  "Motif du désaccord"
+  "Candidat D"
  ],
  "themes": [
   {
@@ -465,7 +463,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "IMP-impots-revenu",
      "label": "Impôts sur le revenu",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Accorder une part fiscale dès le deuxième enfant pour que chaque naissance soit reconnue et soutenue par la nation, pas seulement à partir de la troisième."
+     }
     },
     {
      "id": "IMP-impot-fortune",
@@ -510,7 +510,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "AID-allocations-familiales",
      "label": "Allocations familiales",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Créer une aide financière unique, lisible et universelle pour les familles, en fusionnant les dispositifs existants trop complexes et trop éparpillés."
+     }
     },
     {
      "id": "AID-revenu-autonomie",
@@ -545,7 +547,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "AID-conge-parental",
      "label": "Congé parental",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Créer le temps partiel parental : passer à 80% payés 100 pendant 2 mois pour faciliter la reprise du travail des parents après les congés parentaux."
+     }
     },
     {
      "id": "AID-pensions-reversion",
@@ -810,7 +814,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-remuneration-personnels",
      "label": "Rémunération des personnels",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Revaloriser massivement le métier de professeur en augmentant les rémunérations et en révisant le recrutement, la formation et l'accompagnement tout au long de la carrière."
+     }
     },
     {
      "id": "ECO-travail-personnels",
@@ -830,12 +836,16 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-reformes",
      "label": "Réformes",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Nous ferons la révolution scolaire la plus importante depuis Jules Ferry : construire l'école du 21e siècle, libre, performante et moderne."
+     }
     },
     {
      "id": "ECO-programmes-scolaires",
      "label": "Programmes scolaires",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Concentrer l'enseignement primaire sur les savoirs fondamentaux, lire, écrire, compter, socle sans lequel aucun autre apprentissage n'est possible."
+     }
     },
     {
      "id": "ECO-vie-scolaire",
@@ -845,7 +855,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-calendrier-scolaire",
      "label": "Calendrier scolaire",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Adapter les rythmes scolaires aux seuls besoins des enfants : journées moins longues, plus de sport et de culture, vacances d'été raccourcies pour éviter la déperdition des savoirs."
+     }
     },
     {
      "id": "ECO-orientation-post-bac",
@@ -880,7 +892,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-periscolaire",
      "label": "Périscolaire",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Réformer le périscolaire en déployant les certificats d’honorabilité partout et un choc de formation."
+     }
     },
     {
      "id": "ECO-creches",
@@ -890,12 +904,21 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-administration",
      "label": "Administration",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Faire des chefs d'établissements les véritables patrons de l'école : liberté d'adapter les méthodes et les horaires, d'imposer l'uniforme, de fixer les règles de discipline, de choisir et d'évaluer les enseignants."
+     }
     },
     {
      "id": "ECO-plans",
      "label": "Plans",
      "positions": {}
+    },
+    {
+     "id": "ECO-soutien-scolaire",
+     "label": "Soutien scolaire",
+     "positions": {
+      "Édouard Philippe": "Créer un service public universel du soutien scolaire, combinant assistant IA personnalisé et brigades d'anciens professeurs et d'étudiants volontaires."
+     }
     }
    ]
   },
@@ -919,7 +942,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "JUS-procedure-penale",
      "label": "Procédure pénale",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Créer un principe de précaution pénal afin que, pour chaque plainte liée aux enfants, une mesure de protection immédiate soit mise en place pour protéger la victime potentielle."
+     }
     },
     {
      "id": "JUS-peines-planchers",
@@ -989,7 +1014,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "JUS-justice-internet",
      "label": "Justice sur internet",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Lutter contre le proxénétisme en ligne en faisant fermer les sites qui la laissent prospérer en toute impunité."
+     }
     },
     {
      "id": "JUS-violences-personnes-lgbtqi",
@@ -1016,6 +1043,20 @@ window.COMPARATEUR_DATA = {
      "positions": {
       "Édouard Philippe": "Mettre en place des courtes peines en s'inspirant des pays du Nord qui condamnent dès la première infraction à une peine courte et dissuasive plutôt que d'enfermer trop tard et trop longtemps."
      }
+    },
+    {
+     "id": "JUS-acces-antecedents-judiciaires",
+     "label": "Accès aux antécédents judiciaires",
+     "positions": {
+      "Édouard Philippe": "Instituer un « droit de savoir » inspiré de la Sarah's law britannique qui permet aux parents de saisir la police pour faire vérifier l'absence d'antécédents d'une personne entrant en contact avec leur enfant."
+     }
+    },
+    {
+     "id": "JUS-prescription",
+     "label": "Prescription",
+     "positions": {
+      "Édouard Philippe": "Mettre en place l'imprescriptibilité pour les crimes sur mineur afin de faire savoir aux auteurs qu'ils ne seront jamais ni sereins, ni à l'abri."
+     }
     }
    ]
   },
@@ -1040,7 +1081,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "LOG-acces-logement",
      "label": "Accès au logement",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Faciliter le déménagement des familles qui s'agrandissent grâce à un prêt à taux zéro pour chaque naissance."
+     }
     },
     {
      "id": "LOG-logements-sociaux",
@@ -2095,250 +2138,6 @@ window.COMPARATEUR_DATA = {
      "positions": {}
     }
    ]
-  },
-  {
-   "name": "Journal lot 1",
-   "subjects": [
-    {
-     "id": "Il faut remettre de l’ordre chez nous, dans nos rues. Première mission régalienne de l'État, la Justice est devenue un facteur de désordre. Résultat, tout se délite. Les Français n’ont plus confiance en l’État. Entre dysfonctionnements à répétition, surcharges, lenteurs incompréhensibles, sanctions inadaptées, il faut refonder la Justice. De fond en comble. Pour qu'enfin elle puisse mettre fin aux fléaux qui minent notre société, à commencer par le narcotrafic et les agressions de nos enfants.",
-     "label": "Justice / JUS-reformes",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Il faut reprendre le contrôle de nos frontières. La France a le droit de choisir qui entre et réside sur son territoire. Edouard Philippe mettra fin à l’immigration subie pour retrouver la maîtrise de notre destin migratoire et mieux intégrer ceux qui ont le droit de résider en France.",
-     "label": "Immigration / IMM-volume-accueil",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "La sécurité des Français se joue enfin au-delà de nos frontières. Dans un monde où la guerre est revenue en Europe, la France doit se réarmer et donner à ses armées la masse qui leur manque pour défendre notre souveraineté et dissuader nos adversaires.",
-     "label": "Militaire / MIL-budget-armee",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Mettre en place des courtes peines en s'inspirant des pays du Nord qui condamnent dès la première infraction à une peine courte et dissuasive plutôt que d'enfermer trop tard et trop longtemps.",
-     "label": "Justice / JUS-courtes-peines",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Mettre en place des peines planchers pour les infractions les plus graves, en particulier lorsqu'elles portent atteinte à l'intégrité physique des personnes dépositaires de l'autorité publique.",
-     "label": "Justice / JUS-peines-planchers",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Supprimer le juge d'application des peines afin de garantir que ce qu'un juge a décidé ne soit pas défait par un autre que lui.",
-     "label": "Justice / JUS-amenagements-peine",
-     "positions": {
-      "Rattachement retenu par Claude": "accord",
-      "Motif du désaccord": "Rattachement initialement imposé : Justice / JUS-reformes. Déplacé sur JUS-amenagements-peine après validation : mesure ciblée sur l'exécution des peines et non refonte d'ensemble."
-     }
-    },
-    {
-     "id": "Réviser les modalités de formation et de sélection des magistrats, en développant le recrutement d'individus ayant eu une vie professionnelle dans d'autres secteurs du droit.",
-     "label": "Justice / JUS-effectif-personnels",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Renforcer la responsabilité des juges, avec une révision de la composition du CSM et l’instauration d’un « devoir de redevabilité » à l’égard des victimes.",
-     "label": "Justice / JUS-responsabilite-magistrats",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Renforcer l'autorité du Garde des Sceaux sur le parquet, notamment par la possibilité d'adresser des instructions individuelles aux procureurs.",
-     "label": "Justice / JUS-parquet-executif",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Donner un pouvoir de sanction pénale aux maires afin qu'ils puissent réprimer les petites infractions, ces incivilités qui pourrissent la vie de millions de Français.",
-     "label": "Structure politique et admin / STR-commune",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Créer un « état d’urgence narco » avec des moyens juridiques d’exception limités dans le temps et dans l’espace, allant jusqu’à l’utilisation ciblée de la reconnaissance faciale.",
-     "label": "Sécurité / SEC-etat-urgence-lois-connexes",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Constituer une « fiche S financière » : création d’un profil bancaire spécifique pour les personnes condamnées pour narcotrafic.",
-     "label": "Sécurité / SEC-sanctions-financieres-sociales",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Lever l’excuse de minorité pour les faits en lien avec le narcotrafic et créer la comparution immédiate des mineurs pour ces infractions.",
-     "label": "Justice / JUS-majorite-penale",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Créer des établissements de réinsertion et de soin pour les mineurs condamnés pour narcotrafic.",
-     "label": "Justice / JUS-prisons",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Lutter contre le scandale des amendes non-recouvrées : permettre le recouvrement forcé des amendes sur les prestations sociales.",
-     "label": "Sécurité / SEC-sanctions-financieres-sociales",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Un choc de fermeté pénale : alignement du régime de l’application des peines des grands narcotrafiquants sur celui des terroristes.",
-     "label": "Justice / JUS-amenagements-peine",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Un grand plan anticorruption des fonctionnaires : criblage systématique de toutes les fonctions sensibles (greffiers, agents fiscaux, préfectures…) et réforme des habilitations.",
-     "label": "Fonction publique / FPU-probite-anticorruption",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "La transparence pour les missions de service public : information systématique des employeurs publics lorsqu’une personne chargée de mission de service public est poursuivie pour usage de stupéfiant.",
-     "label": "Fonction publique / FPU-probite-anticorruption",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Être intraitable avec les consommateurs : opérations “place nette” dans les boîtes de nuit et festivals, recouvrement forcé des amendes, y compris sur les prestations sociales.",
-     "label": "Sécurité / SEC-lutte-drogue",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Pour une “diplomatie narco” : liste noire européenne des pays non-coopératifs.",
-     "label": "Sécurité / SEC-drogue-cooperation-internationale",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Une modernisation du renseignement : DGSI mobilisée sur le narcotrafic",
-     "label": "Sécurité / SEC-renseignement",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "grande réforme du renseignement économique et financier pour mieux tracer les fonds et saisir les avoirs, physiques et numériques (cryptomonnaies).",
-     "label": "Fraude / FRA-reformes",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Dénoncer l’accord de 1968 avec l’Algérie pour reprendre le contrôle des flux migratoires avec ce pays.",
-     "label": "Immigration / IMM-accords-migratoires",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Mettre fin au dévoiement de l’asile en faisant voter chaque année par le Parlement une liste de pays sûrs.",
-     "label": "Immigration / IMM-conditions-demande-accueil",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Restreindre l’immigration familiale.",
-     "label": "Immigration / IMM-conditions-demande-accueil",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Mettre en place une politique de quotas migratoires permettant de choisir notre immigration économique.",
-     "label": "Immigration / IMM-volume-accueil",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Être intraitables avec les étrangers délinquants : expulsion immédiate et fin des aides sociales.",
-     "label": "Justice / JUS-justice-etrangers",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Utiliser les centres de retour prévus par le règlement européen retour.",
-     "label": "Immigration / IMM-migrants",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Mettre en place une véritable politique d’intégration par la langue, le travail et les valeurs républicaines.",
-     "label": "Immigration / IMM-citoyennete",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Porter le nombre de réservistes de 45 000 à 250 000 et le service militaire volontaire de 3 000 à 50 000 places par an.",
-     "label": "Militaire / MIL-service-militaire",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Massifier notre production et nos achats de drones tactiques, sur le modèle du programme américain de 300 000 drones.",
-     "label": "Militaire / MIL-investissements",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Lancer un grand plan munitions pour dépasser l'objectif actuel de 100 000 obus par an et atteindre l'échelle des 700 000 produits par l'Allemagne.",
-     "label": "Militaire / MIL-investissements",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Renforcer notre flotte navale, notamment en doublant le nombre de navires aux Antilles pour lutter contre le narcotrafic et sécuriser nos outre-mer.",
-     "label": "Militaire / MIL-investissements",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    },
-    {
-     "id": "Lancer une nouvelle LPM de la massification, au-delà de la LPM actuelle qui épaissit les armées sans les étendre.",
-     "label": "Militaire / MIL-budget-armee",
-     "positions": {
-      "Rattachement retenu par Claude": "accord"
-     }
-    }
-   ]
   }
  ],
  "editorial": [
@@ -2399,6 +2198,16 @@ window.COMPARATEUR_DATA = {
    "org": "Avec Édouard 2027",
    "date": "2026",
    "url": "https://www.edouardphilippe.fr/priorites/pour-une-france-plus-sure",
+   "consulted": "23/08/2026"
+  },
+  {
+   "id": "PHILIPPE-2026-02",
+   "authors": "Édouard Philippe",
+   "title": "Pour une France plus attentive à ses enfants — Les priorités",
+   "type": "programme",
+   "org": "Avec Édouard 2027",
+   "date": "2026",
+   "url": "https://www.edouardphilippe.fr/priorites/pour-une-france-plus-attentive-a-ses-enfants",
    "consulted": "23/08/2026"
   }
  ]
