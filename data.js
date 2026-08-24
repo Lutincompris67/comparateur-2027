@@ -112,6 +112,13 @@ window.COMPARATEUR_DATA = {
      "positions": {
       "Édouard Philippe": "[...] ramener le déficit de plus de 5 % à 2 % du PIB en fin de quinquennat, comme l'ont fait l'Allemagne ou les Pays-Bas."
      }
+    },
+    {
+     "id": "ECN-epargne",
+     "label": "Épargne des ménages",
+     "positions": {
+      "Édouard Philippe": "Créer un « livret capital France » pour mobiliser l'épargne dormante des Français, et utiliser la capitalisation retraite pour financer nos champions technologiques."
+     }
     }
    ]
   },
@@ -700,7 +707,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "TRA-chomage",
      "label": "Chômage",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés."
+     }
     },
     {
      "id": "TRA-interessement-participation",
@@ -778,21 +787,6 @@ window.COMPARATEUR_DATA = {
      "positions": {}
     },
     {
-     "id": "ENV-investissements",
-     "label": "Investissements",
-     "positions": {}
-    },
-    {
-     "id": "ENV-isolation-batiments",
-     "label": "Isolation des bâtiments",
-     "positions": {}
-    },
-    {
-     "id": "ENV-emissions-gaz-effet-serre-ges",
-     "label": "Emissions de Gaz à effet de serre (GES)",
-     "positions": {}
-    },
-    {
      "id": "ENV-pollutions",
      "label": "Pollutions",
      "positions": {}
@@ -800,21 +794,6 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ENV-protection-preservation-sols",
      "label": "Protection/Préservation des sols",
-     "positions": {}
-    },
-    {
-     "id": "ENV-urbanisme",
-     "label": "Urbanisme",
-     "positions": {}
-    },
-    {
-     "id": "ENV-limitation-vitesse-route",
-     "label": "Limitation de vitesse sur la route",
-     "positions": {}
-    },
-    {
-     "id": "ENV-zones-faibles-emissions",
-     "label": "Zones à faibles émissions métropolitaines",
      "positions": {}
     },
     {
@@ -845,6 +824,186 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ENV-fonds-marins",
      "label": "Fonds marins",
+     "positions": {}
+    },
+    {
+     "id": "ADA-urbanisme",
+     "label": "Urbanisme",
+     "positions": {
+      "Édouard Philippe": "Donner de l'ombre à nos villes en multipliant les plantations d'arbres et en levant les règles d'urbanisme qui freinent l'adaptation des espaces publics."
+     },
+     "aliasIn": [
+      "Environnement"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Climat — atténuation",
+   "subjects": [
+    {
+     "id": "ATT-emissions-ges",
+     "label": "Émissions de gaz à effet de serre",
+     "positions": {}
+    },
+    {
+     "id": "ATT-investissements",
+     "label": "Investissements pour la réduction des émissions",
+     "positions": {}
+    },
+    {
+     "id": "ATT-isolation-batiments",
+     "label": "Isolation et rénovation des bâtiments",
+     "positions": {},
+     "aliasIn": [
+      "Climat — adaptation"
+     ]
+    },
+    {
+     "id": "ATT-capture-carbone",
+     "label": "Capture et stockage de carbone",
+     "positions": {
+      "Édouard Philippe": "Accélérer la décarbonation du pays et investir massivement dans la capture de carbone pour limiter l'ampleur du réchauffement."
+     }
+    },
+    {
+     "id": "ATT-priorites-sectorielles",
+     "label": "Priorités sectorielles de décarbonation",
+     "positions": {
+      "Édouard Philippe": "Concentrer l'action climatique sur ce qui réduit vraiment les émissions et crée de la croissance : fret de marchandises, rénovation, grande industrie."
+     }
+    },
+    {
+     "id": "TRS-limitation-vitesse-route",
+     "label": "Limitation de vitesse sur la route",
+     "positions": {},
+     "aliasIn": [
+      "Climat — atténuation"
+     ]
+    },
+    {
+     "id": "TRS-zones-faibles-emissions",
+     "label": "Zones à faibles émissions métropolitaines",
+     "positions": {},
+     "aliasIn": [
+      "Climat — atténuation"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Climat — adaptation",
+   "subjects": [
+    {
+     "id": "ADA-urbanisme",
+     "label": "Urbanisme",
+     "positions": {
+      "Édouard Philippe": "Donner de l'ombre à nos villes en multipliant les plantations d'arbres et en levant les règles d'urbanisme qui freinent l'adaptation des espaces publics."
+     },
+     "aliasIn": [
+      "Environnement"
+     ]
+    },
+    {
+     "id": "ADA-batiments-lieux-accueil",
+     "label": "Climatisation et confort d'été des bâtiments",
+     "positions": {
+      "Édouard Philippe": "Climatiser massivement les lieux accueillant des personnes fragiles."
+     }
+    },
+    {
+     "id": "ADA-financement",
+     "label": "Financement de l'adaptation",
+     "positions": {
+      "Édouard Philippe": "Doubler le montant du Fonds vert en le recentrant sur l'adaptation et la climatisation des des bâtiments publics."
+     }
+    },
+    {
+     "id": "ADA-organisation-etat",
+     "label": "Organisation de l'État face à l'adaptation",
+     "positions": {}
+    },
+    {
+     "id": "ATT-isolation-batiments",
+     "label": "Isolation et rénovation des bâtiments",
+     "positions": {},
+     "aliasIn": [
+      "Climat — adaptation"
+     ]
+    },
+    {
+     "id": "AGR-adaptation-changement",
+     "label": "Adaptation au changement climatique",
+     "positions": {},
+     "aliasIn": [
+      "Climat — adaptation"
+     ]
+    },
+    {
+     "id": "FPU-agences-operateurs",
+     "label": "Agences, opérateurs et périmètre de l'État",
+     "positions": {
+      "Édouard Philippe": "Réorganiser massivement l'État en regroupant ou privatisant les agences et opérateurs enchevêtrés, et en simplifiant drastiquement les procédures. — Réorganiser l'Etat pour s'adapter, en créant une DATAR 2.0, opérateur unique de l'adaptation au changement climatique mobilisant ingénieurs, agronomes, urbanistes au service de l'adaptation dans les territoires."
+     },
+     "aliasIn": [
+      "Climat — adaptation"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Eau",
+   "subjects": [
+    {
+     "id": "EAU-ressource-partage",
+     "label": "Ressource en eau et partage des usages",
+     "positions": {}
+    },
+    {
+     "id": "EAU-qualite-pollutions",
+     "label": "Qualité de l'eau et pollutions",
+     "positions": {}
+    },
+    {
+     "id": "EAU-eau-potable",
+     "label": "Eau potable",
+     "positions": {}
+    },
+    {
+     "id": "EAU-assainissement",
+     "label": "Assainissement",
+     "positions": {}
+    },
+    {
+     "id": "EAU-secheresses-restrictions",
+     "label": "Sécheresses et restrictions",
+     "positions": {}
+    },
+    {
+     "id": "EAU-cours-eau-baignade",
+     "label": "Cours d'eau et baignade",
+     "positions": {
+      "Édouard Philippe": "Rendre aux Français l'accès à l'eau en lançant un plan baignade national pour rendre baignables toutes nos rivières et rénover nos piscines."
+     }
+    },
+    {
+     "id": "EAU-littoral",
+     "label": "Littoral et trait de côte",
+     "positions": {}
+    },
+    {
+     "id": "EAU-stockage-retenues",
+     "label": "Stockage et retenues d'eau",
+     "positions": {}
+    },
+    {
+     "id": "EAU-prix-facture",
+     "label": "Prix de l'eau",
+     "positions": {}
+    },
+    {
+     "id": "EAU-reseaux-gestion",
+     "label": "Réseaux et gestion du service de l'eau",
      "positions": {}
     }
    ]
@@ -978,6 +1137,13 @@ window.COMPARATEUR_DATA = {
      "label": "Soutien scolaire",
      "positions": {
       "Édouard Philippe": "Créer un service public universel du soutien scolaire, combinant assistant IA personnalisé et brigades d'anciens professeurs et d'étudiants volontaires."
+     }
+    },
+    {
+     "id": "ECO-intelligence-artificielle",
+     "label": "Intelligence artificielle à l'école",
+     "positions": {
+      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés."
      }
     }
    ]
@@ -1236,7 +1402,10 @@ window.COMPARATEUR_DATA = {
     {
      "id": "AGR-adaptation-changement",
      "label": "Adaptation au changement climatique",
-     "positions": {}
+     "positions": {},
+     "aliasIn": [
+      "Climat — adaptation"
+     ]
     },
     {
      "id": "AGR-biocarburants",
@@ -1329,12 +1498,16 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ENE-nucleaire",
      "label": "Nucléaire",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Assurer notre souveraineté énergétique en relançant le nucléaire, en développant les renouvelables et en électrifiant massivement nos usages."
+     }
     },
     {
      "id": "ENE-tarif-electricite",
      "label": "Tarif électricité",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Ouvrir un accès préférentiel à notre énergie décarbonée pour les acteurs nationaux et européens, avec des règles de raccordement inspirées des AI Growth Zones britanniques."
+     }
     },
     {
      "id": "ENE-hydrogene",
@@ -1396,7 +1569,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "EUR-numerique",
      "label": "Numérique",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Peser à l'échelle européenne avec un Buy European Tech Act et des achats technologiques groupés entre États membres."
+     }
     },
     {
      "id": "EUR-dette",
@@ -1438,6 +1613,13 @@ window.COMPARATEUR_DATA = {
      "label": "Union européenne des marchés de capitaux",
      "positions": {
       "Édouard Philippe": "Construire une union européenne des marchés de capitaux capable de rivaliser avec les géants américains."
+     }
+    },
+    {
+     "id": "EUR-prix-carbone",
+     "label": "Prix du carbone et mécanisme d'ajustement aux frontières",
+     "positions": {
+      "Édouard Philippe": "Instaurer un prix du carbone aux frontières européennes pour protéger nos industries qui décarbonent face à une concurrence déloyale."
      }
     }
    ]
@@ -1759,8 +1941,11 @@ window.COMPARATEUR_DATA = {
      "id": "FPU-agences-operateurs",
      "label": "Agences, opérateurs et périmètre de l'État",
      "positions": {
-      "Édouard Philippe": "Réorganiser massivement l'État en regroupant ou privatisant les agences et opérateurs enchevêtrés, et en simplifiant drastiquement les procédures."
-     }
+      "Édouard Philippe": "Réorganiser massivement l'État en regroupant ou privatisant les agences et opérateurs enchevêtrés, et en simplifiant drastiquement les procédures. — Réorganiser l'Etat pour s'adapter, en créant une DATAR 2.0, opérateur unique de l'adaptation au changement climatique mobilisant ingénieurs, agronomes, urbanistes au service de l'adaptation dans les territoires."
+     },
+     "aliasIn": [
+      "Climat — adaptation"
+     ]
     }
    ]
   },
@@ -1785,12 +1970,18 @@ window.COMPARATEUR_DATA = {
     {
      "id": "TRS-limitation-vitesse-route",
      "label": "Limitation de vitesse sur la route",
-     "positions": {}
+     "positions": {},
+     "aliasIn": [
+      "Climat — atténuation"
+     ]
     },
     {
      "id": "TRS-zones-faibles-emissions",
      "label": "Zones à faibles émissions métropolitaines",
-     "positions": {}
+     "positions": {},
+     "aliasIn": [
+      "Climat — atténuation"
+     ]
     },
     {
      "id": "TRS-amendes-stationnement",
@@ -1910,7 +2101,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "RES-orientation",
      "label": "Orientation",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Massifier la production d'ingénieurs, de 40 000 à 100 000 par an en cinq ans."
+     }
     },
     {
      "id": "RES-plans-recherche",
@@ -1967,7 +2160,7 @@ window.COMPARATEUR_DATA = {
    ]
   },
   {
-   "name": "Numérique",
+   "name": "Numérique & IA",
    "subjects": [
     {
      "id": "NUM-investissements",
@@ -1993,6 +2186,27 @@ window.COMPARATEUR_DATA = {
      "id": "NUM-administration",
      "label": "Administration",
      "positions": {}
+    },
+    {
+     "id": "NUM-souverainete-ia",
+     "label": "Souveraineté et infrastructure en intelligence artificielle",
+     "positions": {
+      "Édouard Philippe": "Développer une infrastructure d'intelligence artificielle européenne souveraine, en soutenant nos champions et en doublant notre capacité de calcul en cinq ans. — Créer un « livret capital France » pour mobiliser l'épargne dormante des Français, et utiliser la capitalisation retraite pour financer nos champions technologiques."
+     }
+    },
+    {
+     "id": "NUM-regulation-ia",
+     "label": "Régulation de l'intelligence artificielle",
+     "positions": {
+      "Édouard Philippe": "Simplifier le cadre juridique européen applicable à l'IA, sans renoncer à une régulation éthique et protectrice des enfants."
+     }
+    },
+    {
+     "id": "NUM-ia-emploi",
+     "label": "Intelligence artificielle et emploi",
+     "positions": {
+      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés."
+     }
     }
    ]
   },
@@ -2325,6 +2539,16 @@ window.COMPARATEUR_DATA = {
    "org": "Avec Édouard 2027",
    "date": "2026",
    "url": "https://www.edouardphilippe.fr/priorites/pour-une-france-plus-prospere",
+   "consulted": "24/08/2026"
+  },
+  {
+   "id": "PHILIPPE-2026-04",
+   "authors": "Édouard Philippe",
+   "title": "Pour une France plus conquérante — Les priorités",
+   "type": "programme",
+   "org": "Avec Édouard 2027",
+   "date": "2026",
+   "url": "https://www.edouardphilippe.fr/priorites/pour-une-france-plus-conquerante",
    "consulted": "24/08/2026"
   }
  ]
