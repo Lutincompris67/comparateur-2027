@@ -72,6 +72,9 @@ function handle(file){
 
 function convert(wb){
   var themes=[],candidates=[],problems=[],allIds={};
+  /* borrows : liste des emprunts détectés, à appliquer après la première passe.
+     Chaque entrée = {origin: nom du thème d'origine, targets: [noms des thèmes cibles], subject: objet sujet}. */
+  var borrows=[];
   wb.SheetNames.forEach(function(name){
     var clean=name.trim();
     if(isWorkSheet(clean))return;
@@ -80,8 +83,9 @@ function convert(wb){
     var hdr=rows[0].map(cellStr);
     var cId=findCol(hdr,'ID_sujet'); if(cId<0)cId=0;
     var cSubj=findCol(hdr,'Sujet'); if(cSubj<0)cSubj=1;
+    var cAussi=findCol(hdr,'Aussi dans'); /* -1 si la colonne n'existe pas (rétrocompatibilité) */
     var candCols=[];
-    hdr.forEach(function(h,i){ if(i!==cId&&i!==cSubj&&h){candCols.push([i,h]); if(candidates.indexOf(h)<0)candidates.push(h);} });
+    hdr.forEach(function(h,i){ if(i!==cId&&i!==cSubj&&i!==cAussi&&h){candCols.push([i,h]); if(candidates.indexOf(h)<0)candidates.push(h);} });
     var subjects=[];
     for(var r=1;r<rows.length;r++){
       var sid=cellStr(rows[r][cId]),label=cellStr(rows[r][cSubj]);
@@ -91,9 +95,48 @@ function convert(wb){
       allIds[sid]=1;
       var positions={};
       candCols.forEach(function(cc){var t=cellStr(rows[r][cc[0]]);if(t)positions[cc[1]]=t;});
-      subjects.push({id:sid,label:label||sid,positions:positions});
+      var subject={id:sid,label:label||sid,positions:positions};
+      subjects.push(subject);
+      /* Enregistrement des emprunts, si la colonne « Aussi dans » existe et est renseignée. */
+      if(cAussi>=0){
+        var aussi=cellStr(rows[r][cAussi]);
+        if(aussi){
+          var targets=aussi.split(',').map(function(s){return s.trim();}).filter(Boolean);
+          if(targets.length)borrows.push({origin:clean,targets:targets,subject:subject});
+        }
+      }
     }
     themes.push({name:clean,subjects:subjects});
+  });
+
+  /* Application des emprunts : pour chaque emprunt, on insère une RÉFÉRENCE au sujet dans
+     les thématiques cibles (même objet JavaScript, donc contenu strictement identique).
+     On marque le sujet d'origine avec « aliasIn » pour que le site puisse résoudre les
+     liens partageables du type #s/SEC-prisons quand l'ID d'origine est JUS-prisons. */
+  var themeByName={};
+  themes.forEach(function(t){themeByName[t.name]=t;});
+  borrows.forEach(function(b){
+    b.targets.forEach(function(tName){
+      var target=themeByName[tName];
+      if(!target){
+        problems.push('Sujet « '+b.subject.label+' » ('+b.subject.id+') : la thématique cible « '+tName+' » n\'existe pas. Vérifier l\'orthographe dans la colonne « Aussi dans ».');
+        return;
+      }
+      if(tName===b.origin){
+        problems.push('Sujet « '+b.subject.label+' » ('+b.subject.id+') : la thématique « '+tName+' » figure dans « Aussi dans » alors que c\'est déjà l\'onglet d\'origine.');
+        return;
+      }
+      /* Éviter les doubles emprunts vers la même cible. */
+      var already=target.subjects.some(function(s){return s.id===b.subject.id;});
+      if(already){
+        problems.push('Sujet « '+b.subject.label+' » ('+b.subject.id+') : déjà présent dans « '+tName+' », emprunt ignoré.');
+        return;
+      }
+      target.subjects.push(b.subject);
+      /* On note l'alias sur le sujet lui-même, pour que le site puisse construire les
+         liens partageables spécifiques à la thématique d'emprunt. */
+      b.subject.aliasIn=(b.subject.aliasIn||[]).concat([tName]);
+    });
   });
 
   var editorial=[];
@@ -135,8 +178,12 @@ function convert(wb){
   var data={meta:{generated:today,title:'Comparateur 2027'},candidates:candidates,themes:themes,editorial:editorial,bibliography:bibliography};
   output='window.COMPARATEUR_DATA = '+JSON.stringify(data,null,1)+';\n';
 
-  var nSubj=themes.reduce(function(a,t){return a+t.subjects.length;},0);
-  var html='<span class="ok">Conversion réussie.</span> '+themes.length+' thématiques, '+nSubj+' sujets, '+editorial.length+' contenus éditoriaux, '+bibliography.length+' sources.';
+  /* Nombre de sujets UNIQUES (sans compter les emprunts, qui sont la même entité). */
+  var nSubjUnique=Object.keys(allIds).length;
+  var nBorrows=borrows.reduce(function(a,b){return a+b.targets.length;},0);
+  var html='<span class="ok">Conversion réussie.</span> '+themes.length+' thématiques, '+nSubjUnique+' sujets uniques'
+    +(nBorrows?' ('+nBorrows+' emprunt'+(nBorrows>1?'s':'')+' entre thématiques)':'')
+    +', '+editorial.length+' contenus éditoriaux, '+bibliography.length+' sources.';
   if(problems.length){
     html+='<br><br><span class="warn">Points à vérifier ('+problems.length+') :</span><ul>'+problems.map(function(p){return '<li>'+p.replace(/</g,'&lt;')+'</li>';}).join('')+'</ul><small>Ces points n\'empêchent pas la génération, mais corrigez-les dans Excel pour un site cohérent.</small>';
   } else {

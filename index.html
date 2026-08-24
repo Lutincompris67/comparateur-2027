@@ -470,15 +470,25 @@ function renderGrid(){
   h+='</tbody></table>';
   w.innerHTML=h;
   w.querySelectorAll('tr[data-sid]').forEach(function(tr){
-    tr.addEventListener('click',function(){openPanel(tr.getAttribute('data-sid'));});
+    tr.addEventListener('click',function(){openPanel(tr.getAttribute('data-sid'),state.theme);});
   });
   markClamped();
 }
 
 /* ===== Panneau ===== */
+/* Un même sujet peut être rattaché à plusieurs thématiques (colonne « Aussi dans »).
+   Son ID reste unique (défini dans son onglet d'origine). findSubject renvoie
+   la thématique d'origine ; findSubjectInTheme cible une thématique précise pour
+   les liens partageables du type #s/JUS-prisons/Sécurité. */
 function findSubject(sid){
   for(var i=0;i<D.themes.length;i++){var t=D.themes[i];
     for(var j=0;j<t.subjects.length;j++)if(t.subjects[j].id===sid)return{theme:t,subject:t.subjects[j]};}
+  return null;
+}
+function findSubjectInTheme(sid,themeName){
+  var t=themeByName(themeName);
+  if(!t)return null;
+  for(var j=0;j<t.subjects.length;j++)if(t.subjects[j].id===sid)return{theme:t,subject:t.subjects[j]};
   return null;
 }
 function footnotes(text, ids){
@@ -530,8 +540,12 @@ function renderPanelBody(){
   }
   body.innerHTML=h; body.scrollTop=0;
 }
-function openPanel(sid){
-  var f=findSubject(sid); if(!f)return;
+/* openPanel(sid, themeName?) : themeName force la thématique d'ouverture (le sujet
+   peut être emprunté par plusieurs). Sans themeName, on ouvre dans la thématique d'origine. */
+function openPanel(sid,themeName){
+  var f=themeName?findSubjectInTheme(sid,themeName):null;
+  if(!f)f=findSubject(sid);
+  if(!f)return;
   state.subject=sid; state.tab='positions';
   state.theme=f.theme.name;
   renderThemeView(); showView('theme');
@@ -542,7 +556,10 @@ function openPanel(sid){
   document.querySelectorAll('.p-tab').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')==='positions');});
   renderPanelBody();
   $('overlay').classList.add('open'); $('panel').classList.add('open');
-  location.hash='s/'+encodeURIComponent(sid);
+  /* Lien partageable : #s/ID pour la thématique d'origine, #s/ID/Thème pour un emprunt. */
+  var f0=findSubject(sid);
+  var isBorrowed=f0&&f0.theme.name!==f.theme.name;
+  location.hash='s/'+encodeURIComponent(sid)+(isBorrowed?'/'+encodeURIComponent(f.theme.name):'');
   $('pClose').focus();
 }
 function closePanel(){
@@ -564,9 +581,17 @@ document.querySelectorAll('.p-tab').forEach(function(b){
 
 /* ===== Liens partageables (hash) ===== */
 function applyHash(){
-  var h=decodeURIComponent(location.hash.replace(/^#/,''));
+  var raw=location.hash.replace(/^#/,'');
+  if(!raw){showView('accueil');return;}
+  var h=decodeURIComponent(raw);
   if(h==='methodologie'||h==='bibliographie'){showView(h);return;}
-  if(h.indexOf('s/')===0){var sid=h.slice(2);if(findSubject(sid)){openPanel(sid);return;}}
+  if(h.indexOf('s/')===0){
+    /* Deux formes acceptées : s/ID (thématique d'origine) et s/ID/Thème (thématique choisie). */
+    var rest=raw.slice(2), parts=rest.split('/');
+    var sid=decodeURIComponent(parts[0]);
+    var tName=parts.length>1?decodeURIComponent(parts.slice(1).join('/')):null;
+    if(findSubject(sid)){openPanel(sid,tName);return;}
+  }
   if(h.indexOf('t/')===0){var tn=h.slice(2);if(themeByName(tn)){state.theme=tn;renderThemeView();showView('theme');return;}}
   showView('accueil');
 }
@@ -584,7 +609,7 @@ sInput.addEventListener('input',function(){
   hits.forEach(function(x){
     var b=document.createElement('button');
     b.innerHTML=esc(x.s.label)+'<small>'+esc(x.t)+'</small>';
-    b.addEventListener('click',function(){sList.classList.remove('open');sInput.value='';openPanel(x.s.id);});
+    b.addEventListener('click',function(){sList.classList.remove('open');sInput.value='';openPanel(x.s.id,x.t);});
     sList.appendChild(b);
   });
   sList.classList.add('open');
