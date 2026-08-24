@@ -804,18 +804,22 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-recrutement-enseignants",
      "label": "Recrutement des enseignants",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Revaloriser massivement le métier de professeur […] en révisant le recrutement […]"
+     }
     },
     {
      "id": "ECO-formation-personnels",
      "label": "Formation des personnels",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Revaloriser massivement le métier de professeur […] en révisant […] la formation et l'accompagnement tout au long de la carrière."
+     }
     },
     {
      "id": "ECO-remuneration-personnels",
      "label": "Rémunération des personnels",
      "positions": {
-      "Édouard Philippe": "Revaloriser massivement le métier de professeur en augmentant les rémunérations et en révisant le recrutement, la formation et l'accompagnement tout au long de la carrière."
+      "Édouard Philippe": "Revaloriser massivement le métier de professeur en augmentant les rémunérations […]"
      }
     },
     {
