@@ -37,6 +37,20 @@ window.COMPARATEUR_DATA = {
      "id": "CON-article-49-3",
      "label": "Article 49.3 / pouvoirs du Parlement",
      "positions": {}
+    },
+    {
+     "id": "CON-charte-environnement",
+     "label": "Charte de l'environnement",
+     "positions": {
+      "Édouard Philippe": "Renforcer la compétitivité de notre agriculture : [...] inscription du développement agricole dans la Charte de l'environnement."
+     }
+    },
+    {
+     "id": "CON-regle-or-budgetaire",
+     "label": "Règle d'or budgétaire",
+     "positions": {
+      "Édouard Philippe": "Inscrire dans la Constitution une règle d'or de maîtrise des déficits [...]"
+     }
     }
    ]
   },
@@ -66,12 +80,16 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECN-protectionnisme",
      "label": "Protectionnisme",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Protéger le marché européen face à la concurrence déloyale chinoise, en imposant transferts de technologie, quotas de production et joint-ventures dans les secteurs stratégiques et permettre l'émergence de géants capables de sauver notre industrie automobile, sidérurgique et nucléaire."
+     }
     },
     {
      "id": "ECN-aides-publiques",
      "label": "Aides publiques",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Conclure un pacte fiscal inédit avec les entreprises : 50 Md€ de baisses d'impôts de production contre 50 Md€ d'aides publiques improductives en moins, le plus grand choc de compétitivité jamais réalisé."
+     }
     },
     {
      "id": "ECN-assurance",
@@ -87,6 +105,13 @@ window.COMPARATEUR_DATA = {
      "id": "ECN-caisse-depots",
      "label": "Caisse des dépôts",
      "positions": {}
+    },
+    {
+     "id": "ECN-dette-deficit",
+     "label": "Dette et déficit publics",
+     "positions": {
+      "Édouard Philippe": "[...] ramener le déficit de plus de 5 % à 2 % du PIB en fin de quinquennat, comme l'ont fait l'Allemagne ou les Pays-Bas."
+     }
     }
    ]
   },
@@ -183,7 +208,7 @@ window.COMPARATEUR_DATA = {
      "id": "SEC-renseignement",
      "label": "Renseignement intérieur",
      "positions": {
-      "Édouard Philippe": "Une modernisation du renseignement : DGSI mobilisée sur le narcotrafic"
+      "Édouard Philippe": "Une modernisation du renseignement : DGSI mobilisée sur le narcotrafic [...]"
      }
     },
     {
@@ -283,7 +308,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "SAN-economie-sante",
      "label": "Economie de la santé",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Stabiliser les dépenses de santé en dépensant mieux, en misant sur la prévention et les transformations technologiques plutôt que sur la seule hausse des moyens."
+     }
     },
     {
      "id": "SAN-batiments",
@@ -373,7 +400,7 @@ window.COMPARATEUR_DATA = {
      "id": "IMM-volume-accueil",
      "label": "Volume d'accueil",
      "positions": {
-      "Édouard Philippe": "Il faut reprendre le contrôle de nos frontières. La France a le droit de choisir qui entre et réside sur son territoire. Edouard Philippe mettra fin à l’immigration subie pour retrouver la maîtrise de notre destin migratoire et mieux intégrer ceux qui ont le droit de résider en France. — Mettre en place une politique de quotas migratoires permettant de choisir notre immigration économique."
+      "Édouard Philippe": "Edouard Philippe mettra fin à l’immigration subie pour retrouver la maîtrise de notre destin migratoire et mieux intégrer ceux qui ont le droit de résider en France. — Mettre en place une politique de quotas migratoires permettant de choisir notre immigration économique."
      }
     },
     {
@@ -438,7 +465,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "IMP-impots-production",
      "label": "Impôts de production",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Conclure un pacte fiscal inédit avec les entreprises : 50 Md€ de baisses d'impôts de production contre 50 Md€ d'aides publiques improductives en moins, le plus grand choc de compétitivité jamais réalisé."
+     }
     },
     {
      "id": "IMP-fiscalisation-heures",
@@ -458,7 +487,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "IMP-cotisations-sociales",
      "label": "Cotisations sociales",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Rééquilibrer le financement du modèle social pour qu'il ne repose plus uniquement sur le travail [...]"
+     }
     },
     {
      "id": "IMP-fiscalisation-primes",
@@ -510,7 +541,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "IMP-nouveaux-impots",
      "label": "Nouveaux impôts",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Sceller un moratoire normatif et fiscal : pas de nouvelle norme et de nouvel impôt sur le quinquennat."
+     }
     }
    ]
   },
@@ -609,7 +642,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "RET-financement",
      "label": "Financement",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Garantir l'équilibre de notre système de retraites pour protéger les générations futures : [...] créer un pilier de capitalisation à 10-15 % des pensions d'ici quinze ans [...]"
+     }
     },
     {
      "id": "RET-aide-personne",
@@ -619,7 +654,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "RET-age-depart-retraite",
      "label": "Age de départ à la retraite",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Garantir l'équilibre de notre système de retraites pour protéger les générations futures : travailler plus tout en prenant en compte la diversité des carrières [...]"
+     }
     },
     {
      "id": "RET-pensions",
@@ -630,6 +667,13 @@ window.COMPARATEUR_DATA = {
      "id": "RET-hopital-geriatrie",
      "label": "Hôpital - Gériatrie",
      "positions": {}
+    },
+    {
+     "id": "RET-gouvernance",
+     "label": "Gouvernance du système de retraites",
+     "positions": {
+      "Édouard Philippe": "Garantir l'équilibre de notre système de retraites pour protéger les générations futures : [...] confier la gestion du régime à l'équilibre aux partenaires sociaux."
+     }
     }
    ]
   },
@@ -639,7 +683,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "TRA-salaires",
      "label": "Salaires",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "[...] augmenter le salaire net des actifs."
+     }
     },
     {
      "id": "TRA-temps-travail",
@@ -815,21 +861,21 @@ window.COMPARATEUR_DATA = {
      "id": "ECO-recrutement-enseignants",
      "label": "Recrutement des enseignants",
      "positions": {
-      "Édouard Philippe": "Revaloriser massivement le métier de professeur […] en révisant le recrutement […]"
+      "Édouard Philippe": "Revaloriser massivement le métier de professeur [...] en révisant le recrutement [...]"
      }
     },
     {
      "id": "ECO-formation-personnels",
      "label": "Formation des personnels",
      "positions": {
-      "Édouard Philippe": "Revaloriser massivement le métier de professeur […] en révisant […] la formation et l'accompagnement tout au long de la carrière."
+      "Édouard Philippe": "Revaloriser massivement le métier de professeur [...] en révisant [...] la formation et l'accompagnement tout au long de la carrière."
      }
     },
     {
      "id": "ECO-remuneration-personnels",
      "label": "Rémunération des personnels",
      "positions": {
-      "Édouard Philippe": "Revaloriser massivement le métier de professeur en augmentant les rémunérations […]"
+      "Édouard Philippe": "Revaloriser massivement le métier de professeur en augmentant les rémunérations [...]"
      }
     },
     {
@@ -943,7 +989,7 @@ window.COMPARATEUR_DATA = {
      "id": "JUS-reformes",
      "label": "Réformes",
      "positions": {
-      "Édouard Philippe": "Il faut remettre de l’ordre chez nous, dans nos rues. Première mission régalienne de l'État, la Justice est devenue un facteur de désordre. Résultat, tout se délite. Les Français n’ont plus confiance en l’État. Entre dysfonctionnements à répétition, surcharges, lenteurs incompréhensibles, sanctions inadaptées, il faut refonder la Justice. De fond en comble. Pour qu'enfin elle puisse mettre fin aux fléaux qui minent notre société, à commencer par le narcotrafic et les agressions de nos enfants."
+      "Édouard Philippe": "Il faut refonder la Justice. De fond en comble. Pour qu'enfin elle puisse mettre fin aux fléaux qui minent notre société, à commencer par le narcotrafic et les agressions de nos enfants."
      }
     },
     {
@@ -1236,6 +1282,34 @@ window.COMPARATEUR_DATA = {
      "id": "AGR-abattoirs",
      "label": "Abattoirs",
      "positions": {}
+    },
+    {
+     "id": "AGR-normes",
+     "label": "Normes agricoles et surtransposition",
+     "positions": {
+      "Édouard Philippe": "Renforcer la compétitivité de notre agriculture : zéro surtransposition agricole [...]"
+     }
+    },
+    {
+     "id": "AGR-souverainete-alimentaire",
+     "label": "Souveraineté alimentaire",
+     "positions": {
+      "Édouard Philippe": "Renforcer la compétitivité de notre agriculture : [...] création de 100 territoires de souveraineté alimentaire [...]"
+     }
+    },
+    {
+     "id": "AGR-transmission",
+     "label": "Transmission des exploitations",
+     "positions": {
+      "Édouard Philippe": "Renforcer la compétitivité de notre agriculture : grand plan de transmission [...]"
+     }
+    },
+    {
+     "id": "AGR-modernisation",
+     "label": "Modernisation des exploitations",
+     "positions": {
+      "Édouard Philippe": "Renforcer la compétitivité de notre agriculture : grand plan [...] et de modernisation [...]"
+     }
     }
    ]
   },
@@ -1310,7 +1384,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "EUR-marche-europeen",
      "label": "Marché européen",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Achever le marché unique européen en supprimant les spécifications nationales qui agissent comme des droits de douane, pour permettre aux entreprises françaises d'opérer sur un marché de 450 millions de consommateurs."
+     }
     },
     {
      "id": "EUR-droit-europeen",
@@ -1356,6 +1432,13 @@ window.COMPARATEUR_DATA = {
      "id": "EUR-taxation-flux-financiers",
      "label": "Taxation des flux financiers",
      "positions": {}
+    },
+    {
+     "id": "EUR-marches-capitaux",
+     "label": "Union européenne des marchés de capitaux",
+     "positions": {
+      "Édouard Philippe": "Construire une union européenne des marchés de capitaux capable de rivaliser avec les géants américains."
+     }
     }
    ]
   },
@@ -1446,7 +1529,7 @@ window.COMPARATEUR_DATA = {
      "id": "MIL-budget-armee",
      "label": "Budget de l'armée",
      "positions": {
-      "Édouard Philippe": "La sécurité des Français se joue enfin au-delà de nos frontières. Dans un monde où la guerre est revenue en Europe, la France doit se réarmer et donner à ses armées la masse qui leur manque pour défendre notre souveraineté et dissuader nos adversaires. — Lancer une nouvelle LPM de la massification, au-delà de la LPM actuelle qui épaissit les armées sans les étendre."
+      "Édouard Philippe": "Lancer une nouvelle LPM de la massification, au-delà de la LPM actuelle qui épaissit les armées sans les étendre."
      }
     },
     {
@@ -1545,7 +1628,7 @@ window.COMPARATEUR_DATA = {
     },
     {
      "id": "IND-nationalisations",
-     "label": "Nationalisations",
+     "label": "Nationalisations et privatisations d'entreprises",
      "positions": {}
     },
     {
@@ -1670,6 +1753,13 @@ window.COMPARATEUR_DATA = {
      "label": "Probité et lutte anticorruption",
      "positions": {
       "Édouard Philippe": "Un grand plan anticorruption des fonctionnaires : criblage systématique de toutes les fonctions sensibles (greffiers, agents fiscaux, préfectures…) et réforme des habilitations. — La transparence pour les missions de service public : information systématique des employeurs publics lorsqu’une personne chargée de mission de service public est poursuivie pour usage de stupéfiant."
+     }
+    },
+    {
+     "id": "FPU-agences-operateurs",
+     "label": "Agences, opérateurs et périmètre de l'État",
+     "positions": {
+      "Édouard Philippe": "Réorganiser massivement l'État en regroupant ou privatisant les agences et opérateurs enchevêtrés, et en simplifiant drastiquement les procédures."
      }
     }
    ]
@@ -1851,7 +1941,7 @@ window.COMPARATEUR_DATA = {
      "id": "FRA-reformes",
      "label": "Réformes",
      "positions": {
-      "Édouard Philippe": "grande réforme du renseignement économique et financier pour mieux tracer les fonds et saisir les avoirs, physiques et numériques (cryptomonnaies)."
+      "Édouard Philippe": "Une modernisation du renseignement : [...] grande réforme du renseignement économique et financier pour mieux tracer les fonds et saisir les avoirs, physiques et numériques (cryptomonnaies)."
      }
     },
     {
@@ -2226,6 +2316,16 @@ window.COMPARATEUR_DATA = {
    "date": "2026",
    "url": "https://www.edouardphilippe.fr/priorites/pour-une-france-plus-attentive-a-ses-enfants",
    "consulted": "23/08/2026"
+  },
+  {
+   "id": "PHILIPPE-2026-03",
+   "authors": "Édouard Philippe",
+   "title": "Pour une France plus prospère — Les priorités",
+   "type": "programme",
+   "org": "Avec Édouard 2027",
+   "date": "2026",
+   "url": "https://www.edouardphilippe.fr/priorites/pour-une-france-plus-prospere",
+   "consulted": "24/08/2026"
   }
  ]
 };
