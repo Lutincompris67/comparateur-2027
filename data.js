@@ -844,7 +844,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ATT-emissions-ges",
      "label": "Émissions de gaz à effet de serre",
-     "positions": {}
+     "positions": {
+      "Édouard Philippe": "Accélérer la décarbonation du pays [...] pour limiter l'ampleur du réchauffement."
+     }
     },
     {
      "id": "ATT-investissements",
@@ -863,7 +865,7 @@ window.COMPARATEUR_DATA = {
      "id": "ATT-capture-carbone",
      "label": "Capture et stockage de carbone",
      "positions": {
-      "Édouard Philippe": "Accélérer la décarbonation du pays et investir massivement dans la capture de carbone pour limiter l'ampleur du réchauffement."
+      "Édouard Philippe": "[...] investir massivement dans la capture de carbone pour limiter l'ampleur du réchauffement."
      }
     },
     {
