@@ -192,6 +192,16 @@ window.COMPARATEUR_DATA = {
      "positions": {
       "Édouard Philippe": "Pour une “diplomatie narco” : liste noire européenne des pays non-coopératifs."
      }
+    },
+    {
+     "id": "JUS-prisons",
+     "label": "Prisons",
+     "positions": {
+      "Édouard Philippe": "Créer des établissements de réinsertion et de soin pour les mineurs condamnés pour narcotrafic."
+     },
+     "aliasIn": [
+      "Sécurité"
+     ]
     }
    ]
   },
@@ -974,7 +984,10 @@ window.COMPARATEUR_DATA = {
      "label": "Prisons",
      "positions": {
       "Édouard Philippe": "Créer des établissements de réinsertion et de soin pour les mineurs condamnés pour narcotrafic."
-     }
+     },
+     "aliasIn": [
+      "Sécurité"
+     ]
     },
     {
      "id": "JUS-justice-etrangers",
