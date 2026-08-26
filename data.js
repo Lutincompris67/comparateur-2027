@@ -1,6 +1,6 @@
 window.COMPARATEUR_DATA = {
  "meta": {
-  "generated": "2026-08-24",
+  "generated": "2026-08-26",
   "title": "Comparateur 2027"
  },
  "candidates": [
@@ -2465,54 +2465,26 @@ window.COMPARATEUR_DATA = {
  ],
  "editorial": [
   {
-   "id": "SAN-structuration-systeme-sante",
+   "id": "ATT-capture-carbone",
    "type": "analyse",
    "author": "",
    "initials": "",
-   "text": "[EXEMPLE à remplacer] Analyse factuelle : contexte du sujet et chiffres clés [1]. Comparaison avec des dispositifs existants ailleurs en Europe [2]. Texte neutre, sans jugement de valeur.",
+   "text": "Deux opérations distinctes sont désignées par « Capture de carbone ». La première consiste à capter le CO₂ dans les fumées d'un site industriel. Sa concentration y varie fortement selon le procédé : de 3 à 10 % pour l'agroalimentaire ou la biomasse-énergie, de 14 à 33 % pour une cimenterie, jusqu'à 100 % pour l'ammoniac ou le bioéthanol, dont les effluents sont du CO₂ quasi pur [1]. Plus le CO₂ est dilué, plus son extraction est coûteuse en énergie. Ce captage en post-combustion, le procédé le plus répandu, retient plus de 90 % du CO₂ des fumées traitées [1]. La seconde opération consiste à le capter directement dans l'air, où sa concentration est de 0,04 %, ce qui augmente de manière très conséquente son coût. Ces deux voies n'en sont pas au même stade de développement : le captage sur fumées concentrées est déployé, alors que le captage direct dans l'air en est aux premières installations pilotes : l'Académie des technologies évaluait en 2026 ce dernier à 0,01 MtCO₂ (M=million) captées par an dans le monde, quand l'AIE estime qu'il faudrait en capter 85 MtCO₂ dès 2030, soit 8500 fois plus [2].\r\nLe GIEC constate que le rythme mondial de déploiement du CCS (Capture du Carbone et Stockage) est très inférieur à celui des trajectoires limitant le réchauffement à 1,5 °C ou 2 °C, et que des conditions favorables (instruments de politique publique, soutien du public ou innovation) pourraient réduire ces obstacles. Il décrit le captage comme une option d'atténuation critique pour le ciment et la chimie, où la technologie reste peu mature [3]. Le Haut conseil pour le climat ajoute une hiérarchisation des leviers, en plaçant le captage en dernière étape d'une stratégie de décarbonation, après l'efficacité énergétique, la sobriété et les matériaux bas-carbone [4].\r\nLe coût se répartit très inégalement le long de la chaîne : la CRE évaluait en 2024 le captage jusqu'à 100 €/tCO₂, le transport entre 10 et 25 €/t selon qu'il s'effectue par canalisation ou par bateau, et le stockage entre 1 et 20 €/t selon qu'il soit terrestre ou en mer [5]. Les estimations de coût complet divergent fortement d'une source à l'autre : 60 à 150 €/tCO₂ pour le Haut conseil pour le climat en 2023 [4], 100 à 250 €/tCO₂ pour une mission du Conseil général de l'économie en 2024 [6], 150 à 300 €/tCO₂ pour Agora Industry et l'Öko-Institut en 2026 [7], qui estiment les coûts des projets existants ou planifiés supérieurs d'au moins 50 % aux prévisions antérieures. À titre de comparaison, le prix du quota carbone européen était d'environ 75 €/tCO₂ au moment de leur analyse. L'institut de recherche Öko-Institut et le think tank Agora Industry en concluent que cet écart rend les investissements dans la chaîne CCS économiquement non viables [7]. Le Haut conseil relève par ailleurs que le besoin en eau lié au captage, aux pénalités énergétiques et au refroidissement augmente de 37 à 150 % par rapport à une installation non équipée, ce qui peut imposer des fermetures périodiques dans les régions en tension hydrique [4].\r\nEn 2026, environ 50 MtCO₂ de capacité de captage sont opérationnelles dans le monde selon l'AIE [8]. Une étude publiée dans Nature Climate Change en 2024 évaluait qu'en retenant des hypothèses favorables, un doublement des projets annoncés et une division par deux de leur taux d'échec, cette capacité pourrait atteindre environ 370 MtCO₂/an en 2030, soit moins que la plupart des trajectoires 1,5 °C mais davantage que la plupart des trajectoires 2 °C [9].\r\nEn France, la séquestration par les forêts s'est fortement dégradée, passant de plus de 70 MtCO₂/an sur 2010-2015 à environ 30 MtCO₂/an sur 2020-2023 [2]. Cette baisse des puits naturels accroît mécaniquement la part attendue des puits technologiques. La troisième Stratégie nationale bas-carbone, adoptée par décret le 16 juillet 2026, retient à l'horizon 2050 une trajectoire de 63 MtCO₂e d'émissions résiduelles compensées par 66 MtCO₂e d'absorptions, réparties entre puits naturels, sols forestiers et puits technologiques, ces derniers constituant désormais une catégorie distincte de la comptabilité carbone nationale [10].\r\nIl faut noter que dans notre pays aucune chaîne complète de captage et de stockage n'est en opération. Un seul dispositif fonctionne, Cryocap à Port-Jérôme, qui capte environ 100 000 tonnes par an sans les stocker. Le pays ne dispose d'aucune infrastructure de transport de CO₂, et le projet de stockage Pycasso, dans le bassin de Lacq, a été suspendu en 2024 [2]. La stratégie nationale vise 4 à 8 MtCO₂ captées par an en 2030 ; le Haut conseil pour le climat juge ce jalon trop ambitieux au regard de la maturité des projets et recommande d'inscrire 2 à 4 MtCO₂/an [4]. L'Académie des technologies évalue pour sa part le besoin de stockage géologique à 24 MtCO₂/an en 2050, dont la moitié sur le territoire national [2].\r\nNéanmoins, à l'étranger, le reste de la chaîne complète existe : la Norvège a mis en service en 2025 le premier terminal commercial de transport et de stockage de CO₂ pour compte de tiers [8].",
    "sources": [
-    "EXEMPLE-2026-01",
-    "EXEMPLE-2026-02"
+    "DELPRAT-2022-01",
+    "ACADTECH-2026-01",
+    "GIEC-2022-01",
+    "HCC-2023-01",
+    "CRE-2024-01",
+    "CGE-2024-01",
+    "AGORA-2026-01",
+    "AIE-2026-01",
+    "KAZLOU-2024-01",
+    "SNBC3-2026-01"
    ]
-  },
-  {
-   "id": "SAN-structuration-systeme-sante",
-   "type": "parti pris",
-   "author": "Prénom Nom 1",
-   "initials": "PN",
-   "text": "[EXEMPLE à remplacer] Opinion assumée du premier contributeur sur ce sujet.",
-   "sources": []
-  },
-  {
-   "id": "SAN-structuration-systeme-sante",
-   "type": "parti pris",
-   "author": "Prénom Nom 2",
-   "initials": "PN",
-   "text": "[EXEMPLE à remplacer] Opinion d’un second contributeur, qui peut diverger de la première.",
-   "sources": []
   }
  ],
  "bibliography": [
-  {
-   "id": "EXEMPLE-2026-01",
-   "authors": "Organisme fictif",
-   "title": "[EXEMPLE à remplacer] Rapport sur l’accès aux soins",
-   "type": "rapport officiel",
-   "org": "Organisme public",
-   "date": "2026",
-   "url": "https://exemple.fr/rapport",
-   "consulted": "11/06/2026"
-  },
-  {
-   "id": "EXEMPLE-2026-02",
-   "authors": "Auteur fictif",
-   "title": "[EXEMPLE à remplacer] Étude comparative européenne",
-   "type": "étude/recherche",
-   "org": "Revue fictive",
-   "date": "2025",
-   "url": "https://exemple.fr/etude",
-   "consulted": "11/06/2026"
-  },
   {
    "id": "PHILIPPE-2026-01",
    "authors": "Édouard Philippe",
@@ -2552,6 +2524,106 @@ window.COMPARATEUR_DATA = {
    "date": "2026",
    "url": "https://www.edouardphilippe.fr/priorites/pour-une-france-plus-conquerante",
    "consulted": "24/08/2026"
+  },
+  {
+   "id": "DELPRAT-2022-01",
+   "authors": "Florence Delprat-Jannaud",
+   "title": "La capture et le stockage du carbone, comment ça marche ?",
+   "type": "article de vulgarisation scientifique",
+   "org": "The Conversation France",
+   "date": "2022",
+   "url": "https://theconversation.com/la-capture-et-le-stockage-du-carbone-comment-ca-marche-192673",
+   "consulted": "25/08/2026"
+  },
+  {
+   "id": "ACADTECH-2026-01",
+   "authors": "Académie des technologies (rapport dirigé par Florence Delprat-Jannaud)",
+   "title": "Le rôle du captage du CO2 dans la trajectoire française de décarbonation",
+   "type": "rapport officiel",
+   "org": "Académie des technologies",
+   "date": "2026",
+   "url": "https://www.academie-technologies.fr/wp-content/uploads/2026/07/202607_captage_CO2.pdf",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "GIEC-2022-01",
+   "authors": "GIEC (IPCC), Groupe de travail III",
+   "title": "Climate Change 2022: Mitigation of Climate Change — Summary for Policymakers (AR6)",
+   "type": "rapport scientifique",
+   "org": "Groupe d'experts intergouvernemental sur l'évolution du climat",
+   "date": "2022",
+   "url": "https://www.ipcc.ch/report/ar6/wg3/",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "HCC-2023-01",
+   "authors": "Haut conseil pour le climat",
+   "title": "Avis sur la stratégie de capture du carbone, son utilisation et son stockage (CCUS)",
+   "type": "avis officiel",
+   "org": "Haut conseil pour le climat",
+   "date": "2023",
+   "url": "https://www.hautconseilclimat.fr/publications/avis-sur-la-strategie-de-capture-du-carbone-son-utilisation-et-son-stockage-ccus/",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "CRE-2024-01",
+   "authors": "Commission de régulation de l'énergie",
+   "title": "Le captage et la chaîne de valeur du dioxyde de carbone",
+   "type": "rapport officiel",
+   "org": "Commission de régulation de l'énergie (CRE)",
+   "date": "2024",
+   "url": "https://www.cre.fr/fileadmin/Documents/Rapports_et_etudes/2024/Rapport_CCUS_CRE.pdf",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "CGE-2024-01",
+   "authors": "Conseil général de l'économie",
+   "title": "Mission sur les projets européens de stockage géologique de CO2",
+   "type": "rapport officiel",
+   "org": "Conseil général de l'économie, ministère de l'Économie",
+   "date": "2024",
+   "url": "https://www.economie.gouv.fr/files/files/directions_services/cge/stockage-geologique-carbone.pdf",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "AGORA-2026-01",
+   "authors": "Agora Industry et Öko-Institut",
+   "title": "CCS: how to successfully build an infrastructure for carbon capture and storage",
+   "type": "analyse de think tank",
+   "org": "Agora Industry",
+   "date": "2026",
+   "url": "https://www.agora-industry.org/news-events/ccs-how-to-successfully-build-an-infrastructure-for-carbon-capture-and-storage",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "AIE-2026-01",
+   "authors": "Agence internationale de l'énergie",
+   "title": "Policy and financing momentum sustain CCUS progress despite setbacks",
+   "type": "analyse d'agence internationale",
+   "org": "Agence internationale de l'énergie (IEA)",
+   "date": "2026",
+   "url": "https://www.iea.org/commentaries/policy-and-financing-momentum-sustain-ccus-progress-despite-setbacks",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "KAZLOU-2024-01",
+   "authors": "Tsimafei Kazlou, Aleh Cherp, Jessica Jewell",
+   "title": "Feasible deployment of carbon capture and storage and the requirements of climate targets",
+   "type": "étude/recherche (revue à comité de lecture)",
+   "org": "Nature Climate Change, vol. 14 n° 10, p. 1047-1055",
+   "date": "2024",
+   "url": "https://www.nature.com/articles/s41558-024-02104-0",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "SNBC3-2026-01",
+   "authors": "Ministère de la Transition écologique / Direction générale de l'énergie et du climat",
+   "title": "Troisième Stratégie nationale bas-carbone (SNBC 3), décret n° 2026-636 du 16 juillet 2026",
+   "type": "texte officiel",
+   "org": "Ministères Transition écologique, Aménagement du Territoire, Transports, Ville et Logement",
+   "date": "2026",
+   "url": "https://www.ecologie.gouv.fr/strategie-nationale-bas-carbone",
+   "consulted": "26/08/2026"
   }
  ]
 };
