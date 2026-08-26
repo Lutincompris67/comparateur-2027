@@ -5,7 +5,7 @@ window.COMPARATEUR_DATA = {
  },
  "candidates": [
   "Édouard Philippe",
-  "Candidat B",
+  "Gabriel Attal",
   "Candidat C",
   "Candidat D"
  ],
@@ -243,9 +243,7 @@ window.COMPARATEUR_DATA = {
     {
      "id": "SAN-structuration-systeme-sante",
      "label": "Structuration du système de santé",
-     "positions": {
-      "Candidat B": "[EXEMPLE à remplacer] Texte littéral du programme du candidat B, qui peut différer fortement du précédent."
-     }
+     "positions": {}
     },
     {
      "id": "SAN-remuneration-soignants",
@@ -337,7 +335,12 @@ window.COMPARATEUR_DATA = {
     {
      "id": "SAN-sante-mentale",
      "label": "Santé mentale",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Une école qui protège, c'est une école qui se soucie de la santé mentale de chacun [...]"
+     },
+     "aliasIn": [
+      "Ecole"
+     ]
     },
     {
      "id": "SAN-pharmaco",
@@ -378,6 +381,17 @@ window.COMPARATEUR_DATA = {
      "id": "SAN-contraception-ivg",
      "label": "Contraception et IVG",
      "positions": {}
+    },
+    {
+     "id": "NUM-reseaux-sociaux-mineurs",
+     "label": "Réseaux sociaux et mineurs",
+     "positions": {
+      "Gabriel Attal": "[...] je veux aussi libérer notre jeunesse de l'addiction aux réseaux sociaux. [...] nous irons au bout de leur interdiction pour les moins de 15 ans, pour les protéger."
+     },
+     "aliasIn": [
+      "Ecole",
+      "Santé"
+     ]
     }
    ]
   },
@@ -1019,6 +1033,13 @@ window.COMPARATEUR_DATA = {
      "positions": {}
     },
     {
+     "id": "ECO-eleves-par-classe",
+     "label": "Nombre d'élèves par classe",
+     "positions": {
+      "Gabriel Attal": "D'ici 10 ans, on estime qu'il y aura 1,7 million d'élèves de moins dans nos établissements scolaires du fait de la baisse de la natalité. Je n'y vois pas une source d'économies mais au contraire une opportunité pour avoir moins d'élèves par classe notamment en primaire où nous devons viser moins de 20 élèves par classe comme dans les meilleurs systèmes éducatifs européens."
+     }
+    },
+    {
      "id": "ECO-recrutement-enseignants",
      "label": "Recrutement des enseignants",
      "positions": {
@@ -1036,7 +1057,8 @@ window.COMPARATEUR_DATA = {
      "id": "ECO-remuneration-personnels",
      "label": "Rémunération des personnels",
      "positions": {
-      "Édouard Philippe": "Revaloriser massivement le métier de professeur en augmentant les rémunérations [...]"
+      "Édouard Philippe": "Revaloriser massivement le métier de professeur en augmentant les rémunérations [...]",
+      "Gabriel Attal": "Ces moyens supplémentaires dégagés par cette baisse démographique devront aussi servir à mieux rémunérer nos professeurs et nos personnels tels que les accompagnants d'élèves en situation de handicap."
      }
     },
     {
@@ -1058,7 +1080,8 @@ window.COMPARATEUR_DATA = {
      "id": "ECO-reformes",
      "label": "Réformes",
      "positions": {
-      "Édouard Philippe": "Nous ferons la révolution scolaire la plus importante depuis Jules Ferry : construire l'école du 21e siècle, libre, performante et moderne."
+      "Édouard Philippe": "Nous ferons la révolution scolaire la plus importante depuis Jules Ferry : construire l'école du 21e siècle, libre, performante et moderne.",
+      "Gabriel Attal": "Comme ministre de l'Éducation nationale, j'ai pris des décisions fortes en lançant le Choc des savoirs et comme président de la République, l'une de mes premières décisions sera d'en rétablir les mesures."
      }
     },
     {
@@ -1071,13 +1094,23 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-vie-scolaire",
      "label": "Vie scolaire",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Je veux une école qui transmet. C'est-à-dire une école où l'autorité du professeur est respectée, où les valeurs de la République sont la règle jamais discutée."
+     }
+    },
+    {
+     "id": "ECO-harcelement",
+     "label": "Harcèlement scolaire",
+     "positions": {
+      "Gabriel Attal": "Et puis je veux une école qui protège, une école où aucun jeune n'a peur d'aller en classe, où il peut apprendre et étudier en toute quiétude. C'est le sens de mon combat acharné contre le harcèlement à l'école."
+     }
     },
     {
      "id": "ECO-calendrier-scolaire",
      "label": "Calendrier scolaire",
      "positions": {
-      "Édouard Philippe": "Adapter les rythmes scolaires aux seuls besoins des enfants : journées moins longues, plus de sport et de culture, vacances d'été raccourcies pour éviter la déperdition des savoirs."
+      "Édouard Philippe": "Adapter les rythmes scolaires aux seuls besoins des enfants : journées moins longues, plus de sport et de culture, vacances d'été raccourcies pour éviter la déperdition des savoirs.",
+      "Gabriel Attal": "Une école qui protège, c'est une école qui [...] adapte ses rythmes au rythme de nos jeunes."
      }
     },
     {
@@ -1147,6 +1180,27 @@ window.COMPARATEUR_DATA = {
      "positions": {
       "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés."
      }
+    },
+    {
+     "id": "SAN-sante-mentale",
+     "label": "Santé mentale",
+     "positions": {
+      "Gabriel Attal": "Une école qui protège, c'est une école qui se soucie de la santé mentale de chacun [...]"
+     },
+     "aliasIn": [
+      "Ecole"
+     ]
+    },
+    {
+     "id": "NUM-reseaux-sociaux-mineurs",
+     "label": "Réseaux sociaux et mineurs",
+     "positions": {
+      "Gabriel Attal": "[...] je veux aussi libérer notre jeunesse de l'addiction aux réseaux sociaux. [...] nous irons au bout de leur interdiction pour les moins de 15 ans, pour les protéger."
+     },
+     "aliasIn": [
+      "Ecole",
+      "Santé"
+     ]
     }
    ]
   },
@@ -2209,6 +2263,17 @@ window.COMPARATEUR_DATA = {
      "positions": {
       "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés."
      }
+    },
+    {
+     "id": "NUM-reseaux-sociaux-mineurs",
+     "label": "Réseaux sociaux et mineurs",
+     "positions": {
+      "Gabriel Attal": "[...] je veux aussi libérer notre jeunesse de l'addiction aux réseaux sociaux. [...] nous irons au bout de leur interdiction pour les moins de 15 ans, pour les protéger."
+     },
+     "aliasIn": [
+      "Ecole",
+      "Santé"
+     ]
     }
    ]
   },
@@ -2467,8 +2532,8 @@ window.COMPARATEUR_DATA = {
   {
    "id": "ATT-capture-carbone",
    "type": "analyse",
-   "author": "",
-   "initials": "",
+   "author": "Lucas",
+   "initials": "LB",
    "text": "Deux opérations distinctes sont désignées par « Capture de carbone ». La première consiste à capter le CO₂ dans les fumées d'un site industriel. Sa concentration y varie fortement selon le procédé : de 3 à 10 % pour l'agroalimentaire ou la biomasse-énergie, de 14 à 33 % pour une cimenterie, jusqu'à 100 % pour l'ammoniac ou le bioéthanol, dont les effluents sont du CO₂ quasi pur [1]. Plus le CO₂ est dilué, plus son extraction est coûteuse en énergie. Ce captage en post-combustion, le procédé le plus répandu, retient plus de 90 % du CO₂ des fumées traitées [1]. La seconde opération consiste à le capter directement dans l'air, où sa concentration est de 0,04 %, ce qui augmente de manière très conséquente son coût. Ces deux voies n'en sont pas au même stade de développement : le captage sur fumées concentrées est déployé, alors que le captage direct dans l'air en est aux premières installations pilotes : l'Académie des technologies évaluait en 2026 ce dernier à 0,01 MtCO₂ (M=million) captées par an dans le monde, quand l'AIE estime qu'il faudrait en capter 85 MtCO₂ dès 2030, soit 8500 fois plus [2].\r\nLe GIEC constate que le rythme mondial de déploiement du CCS (Capture du Carbone et Stockage) est très inférieur à celui des trajectoires limitant le réchauffement à 1,5 °C ou 2 °C, et que des conditions favorables (instruments de politique publique, soutien du public ou innovation) pourraient réduire ces obstacles. Il décrit le captage comme une option d'atténuation critique pour le ciment et la chimie, où la technologie reste peu mature [3]. Le Haut conseil pour le climat ajoute une hiérarchisation des leviers, en plaçant le captage en dernière étape d'une stratégie de décarbonation, après l'efficacité énergétique, la sobriété et les matériaux bas-carbone [4].\r\nLe coût se répartit très inégalement le long de la chaîne : la CRE évaluait en 2024 le captage jusqu'à 100 €/tCO₂, le transport entre 10 et 25 €/t selon qu'il s'effectue par canalisation ou par bateau, et le stockage entre 1 et 20 €/t selon qu'il soit terrestre ou en mer [5]. Les estimations de coût complet divergent fortement d'une source à l'autre : 60 à 150 €/tCO₂ pour le Haut conseil pour le climat en 2023 [4], 100 à 250 €/tCO₂ pour une mission du Conseil général de l'économie en 2024 [6], 150 à 300 €/tCO₂ pour Agora Industry et l'Öko-Institut en 2026 [7], qui estiment les coûts des projets existants ou planifiés supérieurs d'au moins 50 % aux prévisions antérieures. À titre de comparaison, le prix du quota carbone européen était d'environ 75 €/tCO₂ au moment de leur analyse. L'institut de recherche Öko-Institut et le think tank Agora Industry en concluent que cet écart rend les investissements dans la chaîne CCS économiquement non viables [7]. Le Haut conseil relève par ailleurs que le besoin en eau lié au captage, aux pénalités énergétiques et au refroidissement augmente de 37 à 150 % par rapport à une installation non équipée, ce qui peut imposer des fermetures périodiques dans les régions en tension hydrique [4].\r\nEn 2026, environ 50 MtCO₂ de capacité de captage sont opérationnelles dans le monde selon l'AIE [8]. Une étude publiée dans Nature Climate Change en 2024 évaluait qu'en retenant des hypothèses favorables, un doublement des projets annoncés et une division par deux de leur taux d'échec, cette capacité pourrait atteindre environ 370 MtCO₂/an en 2030, soit moins que la plupart des trajectoires 1,5 °C mais davantage que la plupart des trajectoires 2 °C [9].\r\nEn France, la séquestration par les forêts s'est fortement dégradée, passant de plus de 70 MtCO₂/an sur 2010-2015 à environ 30 MtCO₂/an sur 2020-2023 [2]. Cette baisse des puits naturels accroît mécaniquement la part attendue des puits technologiques. La troisième Stratégie nationale bas-carbone, adoptée par décret le 16 juillet 2026, retient à l'horizon 2050 une trajectoire de 63 MtCO₂e d'émissions résiduelles compensées par 66 MtCO₂e d'absorptions, réparties entre puits naturels, sols forestiers et puits technologiques, ces derniers constituant désormais une catégorie distincte de la comptabilité carbone nationale [10].\r\nIl faut noter que dans notre pays aucune chaîne complète de captage et de stockage n'est en opération. Un seul dispositif fonctionne, Cryocap à Port-Jérôme, qui capte environ 100 000 tonnes par an sans les stocker. Le pays ne dispose d'aucune infrastructure de transport de CO₂, et le projet de stockage Pycasso, dans le bassin de Lacq, a été suspendu en 2024 [2]. La stratégie nationale vise 4 à 8 MtCO₂ captées par an en 2030 ; le Haut conseil pour le climat juge ce jalon trop ambitieux au regard de la maturité des projets et recommande d'inscrire 2 à 4 MtCO₂/an [4]. L'Académie des technologies évalue pour sa part le besoin de stockage géologique à 24 MtCO₂/an en 2050, dont la moitié sur le territoire national [2].\r\nNéanmoins, à l'étranger, le reste de la chaîne complète existe : la Norvège a mis en service en 2025 le premier terminal commercial de transport et de stockage de CO₂ pour compte de tiers [8].",
    "sources": [
     "DELPRAT-2022-01",
@@ -2623,6 +2688,16 @@ window.COMPARATEUR_DATA = {
    "org": "Ministères Transition écologique, Aménagement du Territoire, Transports, Ville et Logement",
    "date": "2026",
    "url": "https://www.ecologie.gouv.fr/strategie-nationale-bas-carbone",
+   "consulted": "26/08/2026"
+  },
+  {
+   "id": "ATTAL-2026-01",
+   "authors": "Gabriel Attal",
+   "title": "École — Chantier capital 01",
+   "type": "programme",
+   "org": "Attal Président",
+   "date": "2026",
+   "url": "https://attalpresident.fr/programme/education",
    "consulted": "26/08/2026"
   }
  ]
