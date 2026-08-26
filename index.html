@@ -336,6 +336,11 @@ function initials(e){if(e.initials)return e.initials.slice(0,3);var p=(e.author|
 /* ===== Navigation entre vues ===== */
 var views = ['accueil','theme','methodologie','bibliographie'];
 function showView(v){
+  /* Tout changement de vue referme le panneau et libère le défilement : sans cela, le
+     bouton « retour » du navigateur laisserait la page figée derrière un panneau ouvert.
+     openPanel appelle showView AVANT d'ouvrir le panneau, l'ordre est donc sans effet. */
+  $('overlay').classList.remove('open'); $('panel').classList.remove('open');
+  lockPageScroll(false);
   views.forEach(function(name){ $('view-'+name).classList.toggle('hidden', name!==v); });
   document.querySelectorAll('[data-nav]').forEach(function(a){
     a.classList.toggle('on', a.getAttribute('data-nav')===v);
@@ -532,6 +537,19 @@ function renderPanelBody(){
   }
   body.innerHTML=h; body.scrollTop=0;
 }
+/* Fige le défilement de la page pendant que le panneau est ouvert, pour qu'une seule
+   barre de défilement soit active. La largeur libérée par la barre du navigateur est
+   compensée par un padding, afin d'éviter que la mise en page ne saute à l'ouverture. */
+function lockPageScroll(on){
+  if(on){
+    var sw=window.innerWidth-document.documentElement.clientWidth;
+    document.body.style.overflow='hidden';
+    if(sw>0)document.body.style.paddingRight=sw+'px';
+  } else {
+    document.body.style.overflow='';
+    document.body.style.paddingRight='';
+  }
+}
 function openPanel(sid){
   var f=findSubject(sid); if(!f)return;
   state.subject=sid; state.tab='positions';
@@ -544,6 +562,7 @@ function openPanel(sid){
   document.querySelectorAll('.p-tab').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')==='positions');});
   renderPanelBody();
   $('overlay').classList.add('open'); $('panel').classList.add('open');
+  lockPageScroll(true);
   location.hash='s/'+encodeURIComponent(sid);
   $('pClose').focus();
 }
@@ -551,6 +570,7 @@ function closePanel(){
   var wasOpen=$('panel').classList.contains('open');
   state.subject=null;
   $('overlay').classList.remove('open'); $('panel').classList.remove('open');
+  lockPageScroll(false);
   if(wasOpen&&state.theme)location.hash='t/'+encodeURIComponent(state.theme);
 }
 $('overlay').addEventListener('click',closePanel);
