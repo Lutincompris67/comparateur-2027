@@ -1,6 +1,6 @@
 window.COMPARATEUR_DATA = {
  "meta": {
-  "generated": "2026-08-26",
+  "generated": "2026-08-27",
   "title": "Comparateur 2027"
  },
  "candidates": [
@@ -117,7 +117,8 @@ window.COMPARATEUR_DATA = {
      "id": "ECN-epargne",
      "label": "Épargne des ménages",
      "positions": {
-      "Édouard Philippe": "Créer un « livret capital France » pour mobiliser l'épargne dormante des Français, et utiliser la capitalisation retraite pour financer nos champions technologiques."
+      "Édouard Philippe": "Créer un « livret capital France » pour mobiliser l'épargne dormante des Français, et utiliser la capitalisation retraite pour financer nos champions technologiques.",
+      "Gabriel Attal": "Je propose un nouveau livret d'épargne, sur le modèle du livret A, pour orienter l'épargne des Français vers le financement de nouvelles places en crèche."
      }
     }
    ]
@@ -509,7 +510,8 @@ window.COMPARATEUR_DATA = {
      "id": "IMP-cotisations-sociales",
      "label": "Cotisations sociales",
      "positions": {
-      "Édouard Philippe": "Rééquilibrer le financement du modèle social pour qu'il ne repose plus uniquement sur le travail [...]"
+      "Édouard Philippe": "Rééquilibrer le financement du modèle social pour qu'il ne repose plus uniquement sur le travail [...]",
+      "Gabriel Attal": "Nous y arriverons enfin en réduisant les charges salariales pour faire monter le salaire net. Nos dépenses sociales ne peuvent plus reposer autant sur les Français qui travaillent."
      }
     },
     {
@@ -676,7 +678,8 @@ window.COMPARATEUR_DATA = {
      "id": "RET-age-depart-retraite",
      "label": "Age de départ à la retraite",
      "positions": {
-      "Édouard Philippe": "Garantir l'équilibre de notre système de retraites pour protéger les générations futures : travailler plus tout en prenant en compte la diversité des carrières [...]"
+      "Édouard Philippe": "Garantir l'équilibre de notre système de retraites pour protéger les générations futures : travailler plus tout en prenant en compte la diversité des carrières [...]",
+      "Gabriel Attal": "Pour augmenter le taux d'emploi des seniors, l'enjeu ne sera plus l'âge de départ à la retraite, mais la durée de cotisation."
      }
     },
     {
@@ -705,13 +708,16 @@ window.COMPARATEUR_DATA = {
      "id": "TRA-salaires",
      "label": "Salaires",
      "positions": {
-      "Édouard Philippe": "[...] augmenter le salaire net des actifs."
+      "Édouard Philippe": "[...] augmenter le salaire net des actifs.",
+      "Gabriel Attal": "Alors mon combat, ce sera de faire monter les salaires. Un vrai choc pour les salaires. D'ici peu, dans notre programme, je vous proposerai une stratégie complète pour une hausse massive des salaires."
      }
     },
     {
      "id": "TRA-temps-travail",
      "label": "Temps de travail",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Je proposerai de supprimer le plafond d'heures supplémentaires fixé par le Code du travail, aujourd'hui fixé, à défaut d'accord collectif, à deux cent vingt heures par an et par salarié. — Adapter le monde du travail à la réalité des vies. Cela passe par la promotion, là où c'est possible, de la semaine en quatre jours et une meilleure adaptation des horaires entre l'employeur et le salarié pour les rendre compatibles avec la situation personnelle, garde alternée, accompagnement d'un proche dépendant, tout en maintenant le nombre d'heures mensuelles et le bon fonctionnement de l'entreprise."
+     }
     },
     {
      "id": "TRA-medecine-travail",
@@ -722,7 +728,8 @@ window.COMPARATEUR_DATA = {
      "id": "TRA-chomage",
      "label": "Chômage",
      "positions": {
-      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés."
+      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés.",
+      "Gabriel Attal": "Ensuite, nous ferons monter les salaires en renforçant encore nos efforts pour faire baisser le chômage. Nous allons amplifier la politique de l'offre. — [...] je porte une réforme de l'assurance chômage qui incite au travail et qui créerait 100 000 emplois supplémentaires."
      }
     },
     {
@@ -738,7 +745,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "TRA-jeunes-actifs",
      "label": "Jeunes actifs",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Pour résorber cet écart, je propose de démassifier l'enseignement supérieur, de valoriser les métiers manuels, techniques et industriels et de réduire la durée initiale des études."
+     }
     },
     {
      "id": "TRA-primes",
@@ -753,7 +762,16 @@ window.COMPARATEUR_DATA = {
     {
      "id": "TRA-droit-salaries",
      "label": "Droit des salariés",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Par ailleurs, je veux que chaque Français qui le souhaite puisse travailler, sans que la loi l'en empêche. À côté du droit du travail, il faut instaurer un droit au travail."
+     }
+    },
+    {
+     "id": "TRA-droit-travail",
+     "label": "Droit du travail",
+     "positions": {
+      "Gabriel Attal": "Je propose que le Gouvernement, des experts et les partenaires sociaux réécrivent un code plus simple, structuré autour de quelques articles fondamentaux, une Constitution du travail, le reste relevant des branches et des entreprises."
+     }
     },
     {
      "id": "TRA-jours-feries",
@@ -763,7 +781,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "TRA-syndicats",
      "label": "Syndicats",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "[...] donner ensuite plus de liberté au dialogue social pour fixer l'organisation du travail."
+     }
     },
     {
      "id": "TRA-associatif",
@@ -1121,7 +1141,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-enseignement-professionnel",
      "label": "Enseignement professionnel et agricole",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Pour résorber cet écart, je propose [...] de valoriser les métiers manuels, techniques et industriels [...]"
+     }
     },
     {
      "id": "ECO-accompagnement-decrocheurs",
@@ -1153,7 +1175,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ECO-creches",
      "label": "Crèches",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Je propose un nouveau livret d'épargne, sur le modèle du livret A, pour orienter l'épargne des Français vers le financement de nouvelles places en crèche. — Je propose également de former 200 000 professionnels de la petite enfance d'ici 2030."
+     }
     },
     {
      "id": "ECO-administration",
@@ -1880,6 +1904,13 @@ window.COMPARATEUR_DATA = {
      "positions": {}
     },
     {
+     "id": "IND-investissements",
+     "label": "Investissements, productivité et innovation",
+     "positions": {
+      "Gabriel Attal": "Alors mon combat, ce sera de faire monter les salaires. [...] Nous allons agir sur trois leviers. D'abord en investissant dans la productivité et dans l'innovation."
+     }
+    },
+    {
      "id": "IND-valorisation-produits-francais",
      "label": "Valorisation des produits français",
      "positions": {}
@@ -2122,7 +2153,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "RES-reformes",
      "label": "Réformes",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Pour résorber cet écart, je propose de démassifier l'enseignement supérieur, [...] et de réduire la durée initiale des études."
+     }
     },
     {
      "id": "RES-financements",
@@ -2699,6 +2732,16 @@ window.COMPARATEUR_DATA = {
    "date": "2026",
    "url": "https://attalpresident.fr/programme/education",
    "consulted": "26/08/2026"
+  },
+  {
+   "id": "ATTAL-2026-02",
+   "authors": "Gabriel Attal",
+   "title": "Travail & salaires — Chantier capital 02",
+   "type": "programme",
+   "org": "Attal Président",
+   "date": "2026",
+   "url": "https://attalpresident.fr/programme/travail-salaires",
+   "consulted": "27/08/2026"
   }
  ]
 };
