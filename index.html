@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Comparateur 2027 — Les programmes, mot à mot</title>
-<meta name="description" content="Comparateur des programmes écrits des candidats à l'élection présidentielle 2027 : transcription littérale, analyses sourcées, partis pris signés.">
+<meta name="description" content="Comparateur des programmes écrits des candidats à l'élection présidentielle 2027 : transcription littérale, analyses sourcées, partis pris assumés.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -210,7 +210,7 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
     <div class="registres" aria-label="Les trois registres du site">
       <div class="r1"><b>« Le programme, mot à mot »</b>Parce qu'en France près de 60% des promesses ont été réalisées depuis 1995</div>
       <div class="r2"><b>L'analyse</b>Éclairage factuel et sourcé : explication des concepts, faisabilité, comparaisons. Sans jugement ou avis.</div>
-      <div class="r3"><b>Les partis pris</b>Opinions assumées et signées par leurs auteurs sur un sujet</div>
+      <div class="r3"><b>Les partis pris</b>Opinions assumées, publiées sous les initiales de leur auteur, sur les idées et non sur les candidats</div>
     </div>
     <div class="tools">
       <div class="search">
@@ -259,7 +259,7 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
     <p>Chaque sujet est traité selon trois registres, visuellement distincts sur tout le site :</p>
     <div class="rg"><b>« Le programme, mot à mot ».</b> Les cases du tableau contiennent la transcription littérale des programmes, dans le vocabulaire des candidats, sans reformulation. Ce registre est affiché en caractères serif, entre guillemets.</div>
     <div class="rg"><b>L'analyse.</b> Elle va au-delà des mots sans verser dans l'opinion : clarification des concepts, liens avec le reste du système social et institutionnel, évaluation de la faisabilité ou du coût lorsque des indicateurs existent, comparaison avec des dispositifs déjà en œuvre ailleurs. Chaque affirmation est sourcée par des appels de note renvoyant à la bibliographie. Une analyse rapporte des faits vérifiables ; elle ne conclut jamais sur la désirabilité d'une mesure.</div>
-    <div class="rg"><b>Les partis pris.</b> Toute appréciation — favorable ou critique — relève de ce registre. Chaque parti pris est signé par son auteur, qui assume sa ligne. Plusieurs partis pris peuvent coexister sur un même sujet : la pluralité des regards fait partie du projet.</div>
+    <div class="rg"><b>Les partis pris.</b> Toute appréciation — favorable ou critique — relève de ce registre. Un parti pris porte sur une idée, jamais sur un candidat, un parti ou une personne : aucun nom n'y figure. Son auteur est identifié par le projet, majeur, et l'assume ; il est publié sous ses seules initiales et son âge, afin que le lecteur juge l'argument sans le rapporter à celui qui le porte. Deux relecteurs indépendants valident chaque texte avant publication. Plusieurs partis pris, y compris contradictoires, peuvent coexister sur un même sujet : la pluralité des regards fait partie du projet.</div>
 
     <h2>Le sourçage</h2>
     <p>Les analyses suivent une exigence de type universitaire : les affirmations factuelles sont reliées à des sources identifiées (rapports officiels, études, textes juridiques, données statistiques, programmes eux-mêmes), réunies dans une bibliographie centralisée et consultable. Chaque source est datée et accompagnée de son lien d'origine, pour que chacun puisse vérifier par lui-même.</p>
@@ -540,7 +540,7 @@ function renderPanelBody(){
   }
   if(state.tab==='partis'){
     var pp=ed.filter(function(e){return e.type==='parti pris';});
-    h+='<p class="p-section-label">Partis pris — opinions signées</p>';
+    h+='<p class="p-section-label">Partis pris — opinions assumées</p>';
     if(!pp.length)h+='<p class="p-empty">Pas encore de parti pris sur ce sujet. Les contributions arrivent au fil du projet.</p>';
     pp.forEach(function(p){
       var col=ppColor(p.author||'?');
