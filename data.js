@@ -111,7 +111,8 @@ window.COMPARATEUR_DATA = {
      "id": "ECN-dette-deficit",
      "label": "Dette et déficit publics",
      "positions": {
-      "Édouard Philippe": "[...] ramener le déficit de plus de 5 % à 2 % du PIB en fin de quinquennat, comme l'ont fait l'Allemagne ou les Pays-Bas."
+      "Édouard Philippe": "[...] ramener le déficit de plus de 5 % à 2 % du PIB en fin de quinquennat, comme l'ont fait l'Allemagne ou les Pays-Bas.",
+      "Gabriel Attal": "L'objectif est clair : zéro déficit en 10 ans maximum. — Nous devons commencer par enrayer cette spirale de la dette. — Trois priorités claires seront fixées : l'éducation, l'écologie et la défense. — Toutes les propositions que nous formulerons durant la campagne seront financées. Nous ne ferons aucune promesse dont nous ne pourrions pas garantir le respect."
      }
     },
     {
@@ -590,6 +591,13 @@ window.COMPARATEUR_DATA = {
    "name": "Aide Sociale",
    "subjects": [
     {
+     "id": "AID-reformes",
+     "label": "Réforme du modèle social",
+     "positions": {
+      "Gabriel Attal": "Pour cela, l'effort devra d'abord porter sur la dépense sociale, qui représente plus de la moitié des dépenses publiques en France. Réformer le modèle social pour inciter davantage à l'activité et réduire son coût budgétaire : c'est possible et d'autres pays l'ont fait en Europe."
+     }
+    },
+    {
      "id": "AID-allocations-familiales",
      "label": "Allocations familiales",
      "positions": {
@@ -745,7 +753,7 @@ window.COMPARATEUR_DATA = {
      "label": "Chômage",
      "positions": {
       "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés.",
-      "Gabriel Attal": "Ensuite, nous ferons monter les salaires en renforçant encore nos efforts pour faire baisser le chômage. Nous allons amplifier la politique de l'offre. — [...] je porte une réforme de l'assurance chômage qui incite au travail et qui créerait 100 000 emplois supplémentaires."
+      "Gabriel Attal": "Ensuite, nous ferons monter les salaires en renforçant encore nos efforts pour faire baisser le chômage. Nous allons amplifier la politique de l'offre. — [...] je porte une réforme de l'assurance chômage qui incite au travail et qui créerait 100 000 emplois supplémentaires. — Je veux donc former l'ensemble des Français à l'IA, du primaire à la reconversion professionnelle. La formation à l'IA doit devenir une nouvelle forme d'alphabétisation : universelle, obligatoire, exigeante."
      }
     },
     {
@@ -895,7 +903,8 @@ window.COMPARATEUR_DATA = {
      "id": "ATT-emissions-ges",
      "label": "Émissions de gaz à effet de serre",
      "positions": {
-      "Édouard Philippe": "Accélérer la décarbonation du pays [...] pour limiter l'ampleur du réchauffement."
+      "Édouard Philippe": "Accélérer la décarbonation du pays [...] pour limiter l'ampleur du réchauffement.",
+      "Gabriel Attal": "Pour respecter nos engagements climatiques, nous devons tripler notre rythme annuel de réduction des émissions entre maintenant et 2030 : passer de 1,8 % à 5 % par an."
      }
     },
     {
@@ -906,7 +915,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ATT-isolation-batiments",
      "label": "Isolation et rénovation des bâtiments",
-     "positions": {},
+     "positions": {
+      "Gabriel Attal": "Je veux une France qui continue à montrer la voie : une rénovation thermique massive pour que chaque foyer soit protégé des canicules comme du froid [...]"
+     },
      "aliasIn": [
       "Climat — adaptation"
      ]
@@ -922,7 +933,8 @@ window.COMPARATEUR_DATA = {
      "id": "ATT-priorites-sectorielles",
      "label": "Priorités sectorielles de décarbonation",
      "positions": {
-      "Édouard Philippe": "Concentrer l'action climatique sur ce qui réduit vraiment les émissions et crée de la croissance : fret de marchandises, rénovation, grande industrie."
+      "Édouard Philippe": "Concentrer l'action climatique sur ce qui réduit vraiment les émissions et crée de la croissance : fret de marchandises, rénovation, grande industrie.",
+      "Gabriel Attal": "Je veux une France qui continue à montrer la voie : [...] une industrie décarbonée qui crée les emplois de demain sur notre territoire."
      }
     },
     {
@@ -978,7 +990,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ATT-isolation-batiments",
      "label": "Isolation et rénovation des bâtiments",
-     "positions": {},
+     "positions": {
+      "Gabriel Attal": "Je veux une France qui continue à montrer la voie : une rénovation thermique massive pour que chaque foyer soit protégé des canicules comme du froid [...]"
+     },
      "aliasIn": [
       "Climat — adaptation"
      ]
@@ -1218,7 +1232,8 @@ window.COMPARATEUR_DATA = {
      "id": "ECO-intelligence-artificielle",
      "label": "Intelligence artificielle à l'école",
      "positions": {
-      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés."
+      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés.",
+      "Gabriel Attal": "Je veux donc former l'ensemble des Français à l'IA, du primaire à la reconversion professionnelle. La formation à l'IA doit devenir une nouvelle forme d'alphabétisation : universelle, obligatoire, exigeante."
      }
     },
     {
@@ -1584,7 +1599,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "ENE-reformes",
      "label": "Réformes",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Cet effort, nous devons aller plus loin. En sortant notamment de notre dépendance aux énergies fossiles. — Je veux une France qui continue à montrer la voie : [...] l'électrique développé massivement et accessible à tous [...]"
+     }
     },
     {
      "id": "ENE-enr-energies-renouvelables",
@@ -1669,7 +1686,7 @@ window.COMPARATEUR_DATA = {
      "label": "Numérique",
      "positions": {
       "Édouard Philippe": "Peser à l'échelle européenne avec un Buy European Tech Act et des achats technologiques groupés entre États membres.",
-      "Gabriel Attal": "Reprendre l'offensive, c'est faire de l'Europe un acteur de premier plan dans les technologies qui compteront demain : l'intelligence artificielle, le quantique [...] Cela suppose des investissements massifs, menés en commun, au niveau européen, en s'appuyant sur les pays membres les plus déterminés, sans attendre l'accord unanime des 27."
+      "Gabriel Attal": "Reprendre l'offensive, c'est faire de l'Europe un acteur de premier plan dans les technologies qui compteront demain : l'intelligence artificielle, le quantique [...] Cela suppose des investissements massifs, menés en commun, au niveau européen, en s'appuyant sur les pays membres les plus déterminés, sans attendre l'accord unanime des 27. — [...] nous devons maîtriser toute la chaîne de l'IA. Cela exige de nous une véritable stratégie globale, qui va [...] en passant par [...] la préférence européenne dans les marchés publics [...]"
      }
     },
     {
@@ -2087,7 +2104,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "FPU-reformes",
      "label": "Réformes",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Pour reprendre en main nos finances publiques et notre destin, la France doit agir maintenant et agir fort. Aucune dépense ne doit être un tabou. Toutes les administrations devront participer à l'effort collectif."
+     }
     },
     {
      "id": "FPU-audiovisuel-public",
@@ -2230,7 +2249,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "RES-effectifs-personnels",
      "label": "Effectifs des personnels",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Nous devons devenir la première puissance d'Europe sur l'intelligence artificielle. Pour cela, nous allons [...] attirer les meilleurs chercheurs [...]"
+     }
     },
     {
      "id": "RES-reformes",
@@ -2336,17 +2357,23 @@ window.COMPARATEUR_DATA = {
     {
      "id": "NUM-investissements",
      "label": "Investissements",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Nous devons devenir la première puissance d'Europe sur l'intelligence artificielle. Pour cela, nous allons [...] donner à nos entreprises les moyens de grandir, d'investir dans le calcul, les données, les infrastructures, les semi-conducteurs [...]"
+     }
     },
     {
      "id": "NUM-reformes",
      "label": "Réformes",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Nous ne subirons pas la révolution de l'IA. Nous la piloterons. Et c'est précisément le rôle de l'État que de piloter ce changement. — Mais pour que cet écosystème d'innovation prospère, il faut que l'adoption de l'IA par nos entreprises change de dimension."
+     }
     },
     {
      "id": "NUM-hebergement-donnees",
      "label": "Hébergement des données",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "[...] nous devons maîtriser toute la chaîne de l'IA. Cela exige de nous une véritable stratégie globale, qui va [...] aux data centers [...]"
+     }
     },
     {
      "id": "NUM-acces-haut-debit",
@@ -2362,21 +2389,24 @@ window.COMPARATEUR_DATA = {
      "id": "NUM-souverainete-ia",
      "label": "Souveraineté et infrastructure en intelligence artificielle",
      "positions": {
-      "Édouard Philippe": "Développer une infrastructure d'intelligence artificielle européenne souveraine, en soutenant nos champions et en doublant notre capacité de calcul en cinq ans. — Créer un « livret capital France » pour mobiliser l'épargne dormante des Français, et utiliser la capitalisation retraite pour financer nos champions technologiques."
+      "Édouard Philippe": "Développer une infrastructure d'intelligence artificielle européenne souveraine, en soutenant nos champions et en doublant notre capacité de calcul en cinq ans. — Créer un « livret capital France » pour mobiliser l'épargne dormante des Français, et utiliser la capitalisation retraite pour financer nos champions technologiques.",
+      "Gabriel Attal": "[...] je veux au contraire faire de la France la patrie de l'intelligence artificielle. — Tout comme la dissuasion nucléaire en son temps a exigé du pays la maîtrise totale de la chaîne technologique, nous devons maîtriser toute la chaîne de l'IA. Cela exige de nous une véritable stratégie globale, qui va de la production énergétique, un atout décisif pour la France car son mix électrique est décarboné à 95%, aux data centers, en passant par la sécurisation des approvisionnements et des infrastructures critiques, la préférence européenne dans les marchés publics et le soutien aux acteurs souverains comme Mistral."
      }
     },
     {
      "id": "NUM-regulation-ia",
      "label": "Régulation de l'intelligence artificielle",
      "positions": {
-      "Édouard Philippe": "Simplifier le cadre juridique européen applicable à l'IA, sans renoncer à une régulation éthique et protectrice des enfants."
+      "Édouard Philippe": "Simplifier le cadre juridique européen applicable à l'IA, sans renoncer à une régulation éthique et protectrice des enfants.",
+      "Gabriel Attal": "Nous devons devenir la première puissance d'Europe sur l'intelligence artificielle. Pour cela, nous allons [...] développer une IA française et européenne, une IA de confiance, une IA au service de l'humanité."
      }
     },
     {
      "id": "NUM-ia-emploi",
      "label": "Intelligence artificielle et emploi",
      "positions": {
-      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés."
+      "Édouard Philippe": "Adapter l'enseignement, le recrutement et la formation continue à l'IA, en instaurant un droit à la reconversion pour les métiers menacés.",
+      "Gabriel Attal": "Je veux donc former l'ensemble des Français à l'IA, du primaire à la reconversion professionnelle. La formation à l'IA doit devenir une nouvelle forme d'alphabétisation : universelle, obligatoire, exigeante."
      }
     },
     {
@@ -2844,6 +2874,36 @@ window.COMPARATEUR_DATA = {
    "org": "Attal Président",
    "date": "2026",
    "url": "https://attalpresident.fr/programme/frontieres",
+   "consulted": "27/08/2026"
+  },
+  {
+   "id": "ATTAL-2026-04",
+   "authors": "Gabriel Attal",
+   "title": "Intelligence artificielle — Chantier capital 04",
+   "type": "programme",
+   "org": "Attal Président",
+   "date": "2026",
+   "url": "https://attalpresident.fr/programme/intelligence-artificielle",
+   "consulted": "27/08/2026"
+  },
+  {
+   "id": "ATTAL-2026-05",
+   "authors": "Gabriel Attal",
+   "title": "Dette de l'État — Dette à résorber 01",
+   "type": "programme",
+   "org": "Attal Président",
+   "date": "2026",
+   "url": "https://attalpresident.fr/programme/dette-de-letat",
+   "consulted": "27/08/2026"
+  },
+  {
+   "id": "ATTAL-2026-06",
+   "authors": "Gabriel Attal",
+   "title": "Dette écologique — Dette à résorber 02",
+   "type": "programme",
+   "org": "Attal Président",
+   "date": "2026",
+   "url": "https://attalpresident.fr/programme/dette-ecologique",
    "consulted": "27/08/2026"
   }
  ]
