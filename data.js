@@ -81,7 +81,8 @@ window.COMPARATEUR_DATA = {
      "id": "ECN-protectionnisme",
      "label": "Protectionnisme",
      "positions": {
-      "Édouard Philippe": "Protéger le marché européen face à la concurrence déloyale chinoise, en imposant transferts de technologie, quotas de production et joint-ventures dans les secteurs stratégiques et permettre l'émergence de géants capables de sauver notre industrie automobile, sidérurgique et nucléaire."
+      "Édouard Philippe": "Protéger le marché européen face à la concurrence déloyale chinoise, en imposant transferts de technologie, quotas de production et joint-ventures dans les secteurs stratégiques et permettre l'émergence de géants capables de sauver notre industrie automobile, sidérurgique et nucléaire.",
+      "Gabriel Attal": "Se protéger, c'est accepter de mettre en place des barrières commerciales claires : des taxes à l'importation ciblées sur les produits chinois vendus à perte (acier, voitures électriques, panneaux solaires), un contrôle strict des investissements chinois dans nos infrastructures les plus sensibles (ports, réseaux de télécommunications, centres de données) et une plus grande imperméabilité européenne (lorsqu'une entreprise chinoise est interdite de marchés publics dans un pays car elle bénéficie trop fortement de subvention d'État, elle doit être automatiquement interdite dans tous les autres)."
      }
     },
     {
@@ -234,6 +235,17 @@ window.COMPARATEUR_DATA = {
      },
      "aliasIn": [
       "Sécurité"
+     ]
+    },
+    {
+     "id": "NUM-cybersecurite",
+     "label": "Cybersécurité et cyberdéfense",
+     "positions": {
+      "Gabriel Attal": "Si le pays, dans son ensemble, devient une cible, alors le pays, dans son ensemble, doit se préparer à résister."
+     },
+     "aliasIn": [
+      "Sécurité",
+      "Militaire"
      ]
     }
    ]
@@ -422,7 +434,8 @@ window.COMPARATEUR_DATA = {
      "id": "IMM-volume-accueil",
      "label": "Volume d'accueil",
      "positions": {
-      "Édouard Philippe": "Edouard Philippe mettra fin à l’immigration subie pour retrouver la maîtrise de notre destin migratoire et mieux intégrer ceux qui ont le droit de résider en France. — Mettre en place une politique de quotas migratoires permettant de choisir notre immigration économique."
+      "Édouard Philippe": "Edouard Philippe mettra fin à l’immigration subie pour retrouver la maîtrise de notre destin migratoire et mieux intégrer ceux qui ont le droit de résider en France. — Mettre en place une politique de quotas migratoires permettant de choisir notre immigration économique.",
+      "Gabriel Attal": "Protéger nos frontières, c'est aussi maîtriser les flux migratoires, qui sont, aujourd'hui, trop souvent subis. — Notre ligne est claire, ce que nous voulons, c'est accueillir moins pour accueillir mieux [...]"
      }
     },
     {
@@ -436,7 +449,8 @@ window.COMPARATEUR_DATA = {
      "id": "IMM-conditions-demande-accueil",
      "label": "Conditions de demande d'accueil",
      "positions": {
-      "Édouard Philippe": "Mettre fin au dévoiement de l’asile en faisant voter chaque année par le Parlement une liste de pays sûrs. — Restreindre l’immigration familiale."
+      "Édouard Philippe": "Mettre fin au dévoiement de l’asile en faisant voter chaque année par le Parlement une liste de pays sûrs. — Restreindre l’immigration familiale.",
+      "Gabriel Attal": "Notre ligne est claire, ce que nous voulons, c'est [...] le regroupement familial, qui doit être mieux encadré et qui doit donc diminuer."
      }
     },
     {
@@ -452,7 +466,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "IMM-visas-travail-titres-sejours",
      "label": "Visas de travail et titres de séjours",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Notre ligne est claire, ce que nous voulons, c'est [...] privilégier l'immigration de travail au détriment d'autres types d'immigration [...] — Ce que nous voulons, c'est la préférence travail, où l'on accueille les compétences, les talents dont nous avons besoin sur la base d'un système à points comme au Canada, fondé sur des critères simples, une offre d'emploi stable, un logement, parler français, connaître nos valeurs et les respecter."
+     }
     }
    ]
   },
@@ -1622,7 +1638,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "EUR-industrie",
      "label": "Industrie",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Reprendre l'offensive, c'est faire de l'Europe un acteur de premier plan dans les technologies qui compteront demain : l'intelligence artificielle, le quantique, les énergies propres. [...] Cela suppose des investissements massifs, menés en commun, au niveau européen, en s'appuyant sur les pays membres les plus déterminés, sans attendre l'accord unanime des 27."
+     }
     },
     {
      "id": "EUR-transition-climat",
@@ -1650,7 +1668,8 @@ window.COMPARATEUR_DATA = {
      "id": "EUR-numerique",
      "label": "Numérique",
      "positions": {
-      "Édouard Philippe": "Peser à l'échelle européenne avec un Buy European Tech Act et des achats technologiques groupés entre États membres."
+      "Édouard Philippe": "Peser à l'échelle européenne avec un Buy European Tech Act et des achats technologiques groupés entre États membres.",
+      "Gabriel Attal": "Reprendre l'offensive, c'est faire de l'Europe un acteur de premier plan dans les technologies qui compteront demain : l'intelligence artificielle, le quantique [...] Cela suppose des investissements massifs, menés en commun, au niveau européen, en s'appuyant sur les pays membres les plus déterminés, sans attendre l'accord unanime des 27."
      }
     },
     {
@@ -1745,12 +1764,24 @@ window.COMPARATEUR_DATA = {
     {
      "id": "INT-chine",
      "label": "Chine",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "La Chine n'est pas un ennemi avec qui tout partenariat serait impossible, mais elle est un interlocuteur avec lequel il ne faut pas faire preuve de faiblesse."
+     }
     },
     {
      "id": "INT-russie",
      "label": "Russie",
      "positions": {}
+    },
+    {
+     "id": "INT-ukraine",
+     "label": "Ukraine",
+     "positions": {
+      "Gabriel Attal": "Nous allons continuer sans relâche à soutenir l'Ukraine."
+     },
+     "aliasIn": [
+      "Militaire"
+     ]
     },
     {
      "id": "INT-reseau-francais-etranger",
@@ -1791,20 +1822,29 @@ window.COMPARATEUR_DATA = {
      "id": "MIL-budget-armee",
      "label": "Budget de l'armée",
      "positions": {
-      "Édouard Philippe": "Lancer une nouvelle LPM de la massification, au-delà de la LPM actuelle qui épaissit les armées sans les étendre."
+      "Édouard Philippe": "Lancer une nouvelle LPM de la massification, au-delà de la LPM actuelle qui épaissit les armées sans les étendre.",
+      "Gabriel Attal": "Nous avons commencé notre réarmement avec des hausses historiques en matière de défense depuis 2017. Il faut poursuivre et amplifier ce réarmement."
      }
     },
     {
      "id": "MIL-investissements",
      "label": "Investissements",
      "positions": {
-      "Édouard Philippe": "Massifier notre production et nos achats de drones tactiques, sur le modèle du programme américain de 300 000 drones. — Lancer un grand plan munitions pour dépasser l'objectif actuel de 100 000 obus par an et atteindre l'échelle des 700 000 produits par l'Allemagne. — Renforcer notre flotte navale, notamment en doublant le nombre de navires aux Antilles pour lutter contre le narcotrafic et sécuriser nos outre-mer."
+      "Édouard Philippe": "Massifier notre production et nos achats de drones tactiques, sur le modèle du programme américain de 300 000 drones. — Lancer un grand plan munitions pour dépasser l'objectif actuel de 100 000 obus par an et atteindre l'échelle des 700 000 produits par l'Allemagne. — Renforcer notre flotte navale, notamment en doublant le nombre de navires aux Antilles pour lutter contre le narcotrafic et sécuriser nos outre-mer.",
+      "Gabriel Attal": "Pour affirmer notre force, je développerai quatre grands vecteurs de puissance : nos capacités militaires ; [...]"
      }
     },
     {
      "id": "MIL-vente-arme",
      "label": "Vente d'arme",
      "positions": {}
+    },
+    {
+     "id": "MIL-industrie-defense",
+     "label": "Industrie de défense",
+     "positions": {
+      "Gabriel Attal": "Pour affirmer notre force, je développerai quatre grands vecteurs de puissance : [...] notre outil industriel ; [...]"
+     }
     },
     {
      "id": "MIL-porte-avions",
@@ -1822,6 +1862,14 @@ window.COMPARATEUR_DATA = {
      "positions": {}
     },
     {
+     "id": "MIL-effectifs",
+     "label": "Effectifs militaires et réserves",
+     "positions": {
+      "Édouard Philippe": "Porter le nombre de réservistes de 45 000 à 250 000 [...]",
+      "Gabriel Attal": "Pour affirmer notre force, je développerai quatre grands vecteurs de puissance : [...] nos réserves humaines et opérationnelles ; [...]"
+     }
+    },
+    {
      "id": "MIL-salaires-personnels",
      "label": "Salaires des personnels",
      "positions": {}
@@ -1830,7 +1878,7 @@ window.COMPARATEUR_DATA = {
      "id": "MIL-service-militaire",
      "label": "Service militaire",
      "positions": {
-      "Édouard Philippe": "Porter le nombre de réservistes de 45 000 à 250 000 et le service militaire volontaire de 3 000 à 50 000 places par an."
+      "Édouard Philippe": "Porter le nombre [...] le service militaire volontaire de 3 000 à 50 000 places par an."
      }
     },
     {
@@ -1841,7 +1889,9 @@ window.COMPARATEUR_DATA = {
     {
      "id": "MIL-armes-nucleaires",
      "label": "Armes nucléaires",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Notre dissuasion nucléaire doit être un outil de puissance, à travers notamment la doctrine de dissuasion nucléaire avancée proposée par le président de la République."
+     }
     },
     {
      "id": "MIL-militarisation-espace",
@@ -1851,12 +1901,37 @@ window.COMPARATEUR_DATA = {
     {
      "id": "MIL-reformes",
      "label": "Réformes",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "[...] nous devons continuer à augmenter les moyens de notre défense et surtout, surtout, la préparer aux guerres de demain."
+     }
     },
     {
      "id": "MIL-europe",
      "label": "Europe",
-     "positions": {}
+     "positions": {
+      "Gabriel Attal": "Car la France doit être capable de dissuader, de se projeter, elle et ses alliés, de commander. La défense de l'Europe repose en partie sur nos épaules, nous devons les renforcer. — Pour affirmer notre force, je développerai quatre grands vecteurs de puissance : [...] nos alliances."
+     }
+    },
+    {
+     "id": "INT-ukraine",
+     "label": "Ukraine",
+     "positions": {
+      "Gabriel Attal": "Nous allons continuer sans relâche à soutenir l'Ukraine."
+     },
+     "aliasIn": [
+      "Militaire"
+     ]
+    },
+    {
+     "id": "NUM-cybersecurite",
+     "label": "Cybersécurité et cyberdéfense",
+     "positions": {
+      "Gabriel Attal": "Si le pays, dans son ensemble, devient une cible, alors le pays, dans son ensemble, doit se préparer à résister."
+     },
+     "aliasIn": [
+      "Sécurité",
+      "Militaire"
+     ]
     }
    ]
   },
@@ -1914,6 +1989,13 @@ window.COMPARATEUR_DATA = {
      "id": "IND-valorisation-produits-francais",
      "label": "Valorisation des produits français",
      "positions": {}
+    },
+    {
+     "id": "IND-souverainete-industrielle",
+     "label": "Souveraineté industrielle et dépendances stratégiques",
+     "positions": {
+      "Gabriel Attal": "Il faut aussi réduire notre dépendance aux approvisionnements chinois dans des domaines critiques, comme les matières premières rares, les composants électroniques ou les médicaments, en relocalisant une partie de la production et en diversifiant nos fournisseurs à l'échelle européenne."
+     }
     }
    ]
   },
@@ -2306,6 +2388,17 @@ window.COMPARATEUR_DATA = {
      "aliasIn": [
       "Ecole",
       "Santé"
+     ]
+    },
+    {
+     "id": "NUM-cybersecurite",
+     "label": "Cybersécurité et cyberdéfense",
+     "positions": {
+      "Gabriel Attal": "Si le pays, dans son ensemble, devient une cible, alors le pays, dans son ensemble, doit se préparer à résister."
+     },
+     "aliasIn": [
+      "Sécurité",
+      "Militaire"
      ]
     }
    ]
@@ -2741,6 +2834,16 @@ window.COMPARATEUR_DATA = {
    "org": "Attal Président",
    "date": "2026",
    "url": "https://attalpresident.fr/programme/travail-salaires",
+   "consulted": "27/08/2026"
+  },
+  {
+   "id": "ATTAL-2026-03",
+   "authors": "Gabriel Attal",
+   "title": "Frontières — Chantier capital 03",
+   "type": "programme",
+   "org": "Attal Président",
+   "date": "2026",
+   "url": "https://attalpresident.fr/programme/frontieres",
    "consulted": "27/08/2026"
   }
  ]
