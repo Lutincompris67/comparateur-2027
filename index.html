@@ -182,6 +182,11 @@ tbody tr:hover td.subj{background:#F6F0E9}
 .bib-item .bt{font-family:var(--serif);font-weight:600;font-size:15px;margin:2px 0}
 .bib-item .bm{color:var(--ink-2);font-size:13px}
 .bib-item a{word-break:break-all;font-size:13px}
+.corpus-cand{font-family:var(--serif);font-size:16.5px;font-weight:600;margin:22px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--rule);display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.corpus-cand span{font-family:var(--sans);font-size:11.5px;font-weight:500;color:var(--ink-3);letter-spacing:.3px;white-space:nowrap}
+.cited-in{margin-top:9px;padding-top:8px;border-top:1px dashed var(--rule);font-size:12.5px;color:var(--ink-3)}
+.cite-link{background:none;border:none;padding:0;font-family:var(--sans);font-size:12.5px;color:var(--terre);text-decoration:underline;text-underline-offset:2px}
+.cite-link:hover{color:var(--terre-deep)}
 footer{border-top:1px solid var(--rule);padding:20px 0 34px;margin-top:10px}
 footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .hidden{display:none!important}
@@ -194,7 +199,7 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
     <a class="brand" href="#" id="brandLink"><b>Comparateur 2027</b><span>Parce qu'en France, près de 60% des promesses ont été réalisées depuis 1995</span></a>
     <nav>
       <a href="#methodologie" data-nav="methodologie">Méthodologie</a>
-      <a href="#bibliographie" data-nav="bibliographie">Bibliographie</a>
+      <a href="#sources" data-nav="sources">Sources</a>
     </nav>
   </div>
 </header>
@@ -264,12 +269,19 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
   </div>
 </main>
 
-<!-- ===== Vue bibliographie ===== -->
-<main id="view-bibliographie" class="hidden">
+<!-- ===== Vue sources : corpus des programmes + bibliographie des analyses ===== -->
+<main id="view-sources" class="hidden">
   <div class="page">
-    <h1>Bibliographie</h1>
-    <p class="lede">Toutes les sources citées dans les analyses, réunies en un seul endroit. Chaque entrée indique sa nature, sa date et son lien d'origine.</p>
-    <div id="bibList"></div>
+    <h1>Sources</h1>
+    <p class="lede">Deux ensembles de nature différente, tenus séparés : les programmes eux-mêmes, qui forment le corpus comparé, et les références sur lesquelles s'appuient les analyses.</p>
+
+    <h2>Corpus des programmes</h2>
+    <p>Les textes transcrits dans le comparateur, tels que publiés par les candidats. Chaque entrée porte son adresse d'origine et la date à laquelle elle a été consultée, pour que la fidélité de la transcription puisse être vérifiée mot à mot.</p>
+    <div id="corpusList"></div>
+
+    <h2>Bibliographie des analyses</h2>
+    <p>Les références appelées en note dans les analyses. Chaque entrée indique sa nature, sa date, son lien d'origine et les sujets où elle est citée.</p>
+    <div id="anaList"></div>
   </div>
 </main>
 
@@ -334,7 +346,7 @@ function ppColor(name){var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCo
 function initials(e){if(e.initials)return e.initials.slice(0,3);var p=(e.author||'?').split(/\s+/);return p.map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';}
 
 /* ===== Navigation entre vues ===== */
-var views = ['accueil','theme','methodologie','bibliographie'];
+var views = ['accueil','theme','methodologie','sources'];
 function showView(v){
   /* Tout changement de vue referme le panneau et libère le défilement : sans cela, le
      bouton « retour » du navigateur laisserait la page figée derrière un panneau ouvert.
@@ -587,7 +599,10 @@ document.querySelectorAll('.p-tab').forEach(function(b){
 /* ===== Liens partageables (hash) ===== */
 function applyHash(){
   var h=decodeURIComponent(location.hash.replace(/^#/,''));
-  if(h==='methodologie'||h==='bibliographie'){showView(h);return;}
+  if(h==='methodologie'){showView(h);return;}
+  /* « bibliographie » est conservé : les liens partagés avant la refonte
+     de la page Sources doivent continuer de fonctionner. */
+  if(h==='sources'||h==='bibliographie'){showView('sources');return;}
   if(h.indexOf('s/')===0){var sid=h.slice(2);if(findSubject(sid)){openPanel(sid);return;}}
   if(h.indexOf('t/')===0){var tn=h.slice(2);if(themeByName(tn)){state.theme=tn;renderThemeView();showView('theme');return;}}
   showView('accueil');
@@ -613,13 +628,77 @@ sInput.addEventListener('input',function(){
 });
 document.addEventListener('click',function(e){if(!e.target.closest('.search'))sList.classList.remove('open');});
 
-/* ===== Bibliographie ===== */
-function renderBib(){
-  var w=$('bibList');
-  if(!(D.bibliography||[]).length){w.innerHTML='<p class="p-empty">La bibliographie se remplira au fil des analyses.</p>';return;}
-  w.innerHTML=D.bibliography.map(function(b){
-    return '<div class="bib-item"><div class="bid">'+esc(b.id)+(b.type?' · '+esc(b.type):'')+'</div><div class="bt">'+esc(b.title)+'</div><div class="bm">'+esc(b.authors)+(b.org?' — '+esc(b.org):'')+(b.date?' · '+esc(b.date):'')+(b.consulted?' · consulté le '+esc(b.consulted):'')+'</div>'+(b.url?'<a href="'+esc(b.url)+'" target="_blank" rel="noopener">'+esc(b.url)+'</a>':'')+'</div>';
-  }).join('');
+/* ===== Sources : corpus des programmes + bibliographie des analyses ===== */
+/* Le registre sépare deux objets de nature différente : le corpus que le site
+   compare, et l'appareil critique qui étaye les analyses. */
+function bibRegistre(b){
+  /* Rétrocompatibilité : un data.js généré avant la colonne « Registre » n'a pas
+     ce champ ; on le déduit alors du Type, pour que la page reste affichable. */
+  if(b.registre==='programme'||b.registre==='analyse')return b.registre;
+  return String(b.type||'').toLowerCase()==='programme'?'programme':'analyse';
+}
+/* Index inverse : pour chaque ID_source, les sujets dont une analyse la cite. */
+var citedBy={};
+(D.editorial||[]).forEach(function(e){
+  (e.sources||[]).forEach(function(s){
+    if(!citedBy[s])citedBy[s]=[];
+    if(e.id&&citedBy[s].indexOf(e.id)<0)citedBy[s].push(e.id);
+  });
+});
+function citedInHtml(sid){
+  var ids=citedBy[sid]||[];
+  if(!ids.length)return '';
+  var parts=ids.map(function(id){
+    var f=findSubject(id);
+    return f?'<button class="cite-link" data-sid="'+esc(id)+'">'+esc(f.subject.label)+'</button>':esc(id);
+  });
+  return '<div class="cited-in">Cité dans : '+parts.join(' · ')+'</div>';
+}
+function bibItem(b,showCited){
+  return '<div class="bib-item"><div class="bid">'+esc(b.id)+(b.type?' · '+esc(b.type):'')+'</div>'
+    +'<div class="bt">'+esc(b.title)+'</div>'
+    +'<div class="bm">'+esc(b.authors)+(b.org?' — '+esc(b.org):'')+(b.date?' · '+esc(b.date):'')+(b.consulted?' · consulté le '+esc(b.consulted):'')+'</div>'
+    +(b.url?'<a href="'+esc(b.url)+'" target="_blank" rel="noopener">'+esc(b.url)+'</a>':'')
+    +(showCited?citedInHtml(b.id):'')
+    +'</div>';
+}
+function renderSources(){
+  var all=D.bibliography||[];
+  var progs=all.filter(function(b){return bibRegistre(b)==='programme';});
+  var anas=all.filter(function(b){return bibRegistre(b)==='analyse';});
+
+  /* Corpus groupé par candidat, dans l'ordre des colonnes du comparateur pour
+     qu'aucun candidat ne bénéficie d'un rang différent de celui de la grille. */
+  var wc=$('corpusList');
+  if(!progs.length){
+    wc.innerHTML='<p class="p-empty">Le corpus se remplira à mesure que les candidats publieront leurs programmes.</p>';
+  } else {
+    var byCand={},order=[];
+    progs.forEach(function(b){
+      var k=b.authors||'Auteur non précisé';
+      if(!byCand[k]){byCand[k]=[];order.push(k);}
+      byCand[k].push(b);
+    });
+    order.sort(function(a,b){
+      var ia=D.candidates.indexOf(a),ib=D.candidates.indexOf(b);
+      if(ia<0)ia=9999; if(ib<0)ib=9999;
+      return ia-ib || a.localeCompare(b,'fr');
+    });
+    wc.innerHTML=order.map(function(k){
+      var n=byCand[k].length;
+      return '<h3 class="corpus-cand">'+esc(k)+'<span>'+n+' document'+(n>1?'s':'')+'</span></h3>'
+        +byCand[k].map(function(b){return bibItem(b,false);}).join('');
+    }).join('');
+  }
+
+  var wa=$('anaList');
+  wa.innerHTML = anas.length
+    ? anas.map(function(b){return bibItem(b,true);}).join('')
+    : '<p class="p-empty">La bibliographie se remplira au fil des analyses.</p>';
+
+  wa.querySelectorAll('.cite-link').forEach(function(btn){
+    btn.addEventListener('click',function(){openPanel(btn.getAttribute('data-sid'));});
+  });
 }
 
 /* ===== Bandeau Constitution ===== */
@@ -636,7 +715,7 @@ function renderBib(){
 /* ===== Init ===== */
 $('majDate').textContent = D.meta && D.meta.generated ? 'Données du '+D.meta.generated : '';
 $('footMeta').textContent = 'Comparateur 2027 — données mises à jour le '+(D.meta?D.meta.generated:'');
-renderCards(); renderBib(); applyHash();
+renderCards(); renderSources(); applyHash();
 })();
 </script>
 </body>

@@ -14,6 +14,7 @@ p{margin-bottom:12px;color:#4A5468}
 .report.show{display:block}
 .ok{color:#1D7A5F;font-weight:600}
 .warn{color:#A14E2B;font-weight:600}
+.stop{color:#A31D1D;font-weight:600}
 ul{margin:8px 0 8px 20px;font-size:14px}
 button.dl{background:#1F3864;color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;display:none}
 button.dl.show{display:inline-block}
@@ -37,10 +38,14 @@ small{color:#8A8F9C}
 "use strict";
 var SPECIAL={'Lisez-moi':1,'Analyses & partis pris':1,'Bibliographie':1,'Journal':1};
 /* Onglets de travail ignorés : nom exact ci-dessus, ou nom commençant par
-   « Journal » ou par « _ » (convention pour tout onglet hors données). */
+   « Journal » ou par « _ » (convention pour tout onglet hors données,
+   par exemple _Organismes qui porte la liste contrôlée des éditeurs). */
 function isWorkSheet(name){
   return !!SPECIAL[name] || /^journal/i.test(name) || name.charAt(0)==='_';
 }
+/* Onglets dont l'absence signale que le fichier déposé n'est pas le classeur source. */
+var REQUIRED_SHEETS=['Bibliographie','Analyses & partis pris'];
+
 var drop=document.getElementById('drop'),fileIn=document.getElementById('file'),
     report=document.getElementById('report'),dlBtn=document.getElementById('dl'),
     output=null;
@@ -60,12 +65,43 @@ function findCol(headers,name){
   var low=headers.map(function(h){return String(h).toLowerCase().trim();});
   return low.indexOf(name.toLowerCase());
 }
+/* Comparaison d'URL tolérante aux différences sans portée : casse, espaces,
+   barre oblique finale. Sert uniquement à repérer les doublons. */
+function normUrl(u){
+  return cellStr(u).toLowerCase().replace(/\/+$/,'');
+}
+function fail(msg,detail){
+  dlBtn.className='dl';
+  output=null;
+  report.className='report show';
+  report.innerHTML='<span class="stop">'+msg+'</span>'+(detail?'<br><br><small>'+detail+'</small>':'');
+}
 
 function handle(file){
+  /* Garde-fou 1 : extension. Déposer data.js produisait auparavant un rapport
+     absurde (chaque ligne de JSON lue comme un sujet) au lieu d'une erreur. */
+  if(!/\.xlsx$/i.test(file.name)){
+    fail('Ce n\'est pas un fichier .xlsx.',
+         'Vous avez déposé « '+file.name.replace(/</g,'&lt;')+' ». Le convertisseur attend le classeur source Comparateur_2027_source.xlsx — et non le fichier data.js, qui est ce qu\'il produit.');
+    return;
+  }
   var reader=new FileReader();
   reader.onload=function(e){
-    try{ convert(XLSX.read(new Uint8Array(e.target.result),{type:'array'})); }
-    catch(err){ report.className='report show'; report.innerHTML='<span class="warn">Erreur de lecture :</span> '+err.message; }
+    var wb;
+    try{ wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'}); }
+    catch(err){ fail('Erreur de lecture : '+err.message); return; }
+    /* Garde-fou 2 : présence des onglets attendus. */
+    var names=wb.SheetNames.map(function(n){return n.trim();});
+    var missing=REQUIRED_SHEETS.filter(function(r){return names.indexOf(r)<0;});
+    if(missing.length){
+      fail('Ce classeur n\'est pas le fichier source du comparateur.',
+           'Onglet'+(missing.length>1?'s':'')+' manquant'+(missing.length>1?'s':'')+' : '
+           +missing.map(function(m){return '« '+m+' »';}).join(', ')
+           +'. Vérifiez que vous déposez bien Comparateur_2027_source.xlsx.');
+      return;
+    }
+    try{ convert(wb); }
+    catch(err){ fail('Erreur pendant la conversion : '+err.message); }
   };
   reader.readAsArrayBuffer(file);
 }
@@ -108,6 +144,14 @@ function convert(wb){
     }
     themes.push({name:clean,subjects:subjects});
   });
+
+  /* Garde-fou 3 : un classeur source compte des dizaines de thématiques.
+     Un chiffre très bas signale presque toujours un fichier qui n'est pas le bon. */
+  if(themes.length<=2){
+    fail('Seulement '+themes.length+' thématique'+(themes.length>1?'s':'')+' détectée'+(themes.length>1?'s':'')+'.',
+         'Le classeur source en compte plusieurs dizaines. Vérifiez que vous déposez bien Comparateur_2027_source.xlsx, et non un extrait ou un autre fichier.');
+    return;
+  }
 
   /* Application des emprunts : pour chaque emprunt, on insère une RÉFÉRENCE au sujet dans
      les thématiques cibles (même objet JavaScript, donc contenu strictement identique).
@@ -157,20 +201,58 @@ function convert(wb){
   }
 
   var bibliography=[];
+  var registreMissing=false;
   if(wb.SheetNames.some(function(n){return n.trim()==='Bibliographie';})){
     var wsb=wb.Sheets[wb.SheetNames.filter(function(n){return n.trim()==='Bibliographie';})[0]];
     var rb=sheetRows(wsb),hb=rb[0].map(cellStr);
-    var cb={id:findCol(hb,'ID_source'),authors:findCol(hb,'Auteurs'),title:findCol(hb,'Titre'),type:findCol(hb,'Type'),org:findCol(hb,'Éditeur/Organisme'),date:findCol(hb,'Date de publication'),url:findCol(hb,'URL'),consulted:findCol(hb,'Date de consultation')};
+    var cb={id:findCol(hb,'ID_source'),registre:findCol(hb,'Registre'),authors:findCol(hb,'Auteurs'),title:findCol(hb,'Titre'),type:findCol(hb,'Type'),org:findCol(hb,'Éditeur/Organisme'),date:findCol(hb,'Date de publication'),url:findCol(hb,'URL'),consulted:findCol(hb,'Date de consultation')};
+    /* La colonne « Registre » sépare le corpus des programmes de l'appareil critique
+       des analyses. Si elle est absente (classeur antérieur à la refonte), on déduit
+       le registre du Type, pour que le site reste affichable sans erreur. */
+    if(cb.registre<0)registreMissing=true;
     for(var r2=1;r2<rb.length;r2++){
       var bid=cb.id>=0?cellStr(rb[r2][cb.id]):'';
       if(!bid)continue;
-      bibliography.push({id:bid,
+      var btype=cb.type>=0?cellStr(rb[r2][cb.type]):'';
+      var breg=cb.registre>=0?cellStr(rb[r2][cb.registre]).toLowerCase():'';
+      if(breg!=='programme'&&breg!=='analyse'){
+        if(cb.registre>=0&&breg){
+          problems.push('Bibliographie ligne '+(r2+1)+' ('+bid+') : Registre « '+breg+' » non reconnu. Valeurs attendues : programme ou analyse.');
+        }
+        breg = btype.toLowerCase()==='programme' ? 'programme' : 'analyse';
+      }
+      bibliography.push({id:bid,registre:breg,
         authors:cb.authors>=0?cellStr(rb[r2][cb.authors]):'',title:cb.title>=0?cellStr(rb[r2][cb.title]):'',
-        type:cb.type>=0?cellStr(rb[r2][cb.type]):'',org:cb.org>=0?cellStr(rb[r2][cb.org]):'',
+        type:btype,org:cb.org>=0?cellStr(rb[r2][cb.org]):'',
         date:cb.date>=0?cellStr(rb[r2][cb.date]):'',url:cb.url>=0?cellStr(rb[r2][cb.url]):'',
         consulted:cb.consulted>=0?cellStr(rb[r2][cb.consulted]):''});
     }
   }
+  if(registreMissing){
+    problems.push('L\'onglet Bibliographie n\'a pas de colonne « Registre ». Le registre a été déduit du Type — ajoutez la colonne pour fiabiliser la séparation programmes / analyses.');
+  }
+
+  /* Doublons d'ID_source. */
+  var seenBibIds={};
+  bibliography.forEach(function(b){
+    if(seenBibIds[b.id])problems.push('ID_source en doublon : '+b.id);
+    seenBibIds[b.id]=1;
+  });
+
+  /* Doublons d'URL : deux entrées qui pointent vers la même page sont presque
+     toujours la même source saisie deux fois. Risque de qualité principal à volume élevé. */
+  var byUrl={};
+  bibliography.forEach(function(b){
+    var u=normUrl(b.url);
+    if(!u)return;
+    (byUrl[u]=byUrl[u]||[]).push(b.id);
+  });
+  Object.keys(byUrl).forEach(function(u){
+    if(byUrl[u].length>1){
+      problems.push('Même URL pour '+byUrl[u].length+' entrées de bibliographie : '+byUrl[u].join(', ')+'. Vérifiez qu\'il ne s\'agit pas d\'une source saisie plusieurs fois.');
+    }
+  });
+
   var bibIds={};bibliography.forEach(function(b){bibIds[b.id]=1;});
   editorial.forEach(function(e){(e.sources||[]).forEach(function(s){if(!bibIds[s])problems.push('Source « '+s+' » citée mais absente de la Bibliographie');});});
 
@@ -181,9 +263,12 @@ function convert(wb){
   /* Nombre de sujets UNIQUES (sans compter les emprunts, qui sont la même entité). */
   var nSubjUnique=Object.keys(allIds).length;
   var nBorrows=borrows.reduce(function(a,b){return a+b.targets.length;},0);
+  var nProg=bibliography.filter(function(b){return b.registre==='programme';}).length;
+  var nAna=bibliography.length-nProg;
   var html='<span class="ok">Conversion réussie.</span> '+themes.length+' thématiques, '+nSubjUnique+' sujets uniques'
     +(nBorrows?' ('+nBorrows+' emprunt'+(nBorrows>1?'s':'')+' entre thématiques)':'')
-    +', '+editorial.length+' contenus éditoriaux, '+bibliography.length+' sources.';
+    +', '+editorial.length+' contenus éditoriaux, '+bibliography.length+' sources ('
+    +nProg+' programme'+(nProg>1?'s':'')+', '+nAna+' analyse'+(nAna>1?'s':'')+').';
   if(problems.length){
     html+='<br><br><span class="warn">Points à vérifier ('+problems.length+') :</span><ul>'+problems.map(function(p){return '<li>'+p.replace(/</g,'&lt;')+'</li>';}).join('')+'</ul><small>Ces points n\'empêchent pas la génération, mais corrigez-les dans Excel pour un site cohérent.</small>';
   } else {

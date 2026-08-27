@@ -2708,6 +2708,7 @@ window.COMPARATEUR_DATA = {
  "bibliography": [
   {
    "id": "PHILIPPE-2026-01",
+   "registre": "programme",
    "authors": "Édouard Philippe",
    "title": "Pour une France plus sûre — Les priorités",
    "type": "programme",
@@ -2718,6 +2719,7 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "PHILIPPE-2026-02",
+   "registre": "programme",
    "authors": "Édouard Philippe",
    "title": "Pour une France plus attentive à ses enfants — Les priorités",
    "type": "programme",
@@ -2728,6 +2730,7 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "PHILIPPE-2026-03",
+   "registre": "programme",
    "authors": "Édouard Philippe",
    "title": "Pour une France plus prospère — Les priorités",
    "type": "programme",
@@ -2738,6 +2741,7 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "PHILIPPE-2026-04",
+   "registre": "programme",
    "authors": "Édouard Philippe",
    "title": "Pour une France plus conquérante — Les priorités",
    "type": "programme",
@@ -2748,9 +2752,10 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "DELPRAT-2022-01",
+   "registre": "analyse",
    "authors": "Florence Delprat-Jannaud",
    "title": "La capture et le stockage du carbone, comment ça marche ?",
-   "type": "article de vulgarisation scientifique",
+   "type": "Presse et vulgarisation",
    "org": "The Conversation France",
    "date": "2022",
    "url": "https://theconversation.com/la-capture-et-le-stockage-du-carbone-comment-ca-marche-192673",
@@ -2758,9 +2763,10 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "ACADTECH-2026-01",
+   "registre": "analyse",
    "authors": "Académie des technologies (rapport dirigé par Florence Delprat-Jannaud)",
    "title": "Le rôle du captage du CO2 dans la trajectoire française de décarbonation",
-   "type": "rapport officiel",
+   "type": "Rapport institutionnel",
    "org": "Académie des technologies",
    "date": "2026",
    "url": "https://www.academie-technologies.fr/wp-content/uploads/2026/07/202607_captage_CO2.pdf",
@@ -2768,9 +2774,10 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "GIEC-2022-01",
+   "registre": "analyse",
    "authors": "GIEC (IPCC), Groupe de travail III",
    "title": "Climate Change 2022: Mitigation of Climate Change — Summary for Policymakers (AR6)",
-   "type": "rapport scientifique",
+   "type": "Rapport institutionnel",
    "org": "Groupe d'experts intergouvernemental sur l'évolution du climat",
    "date": "2022",
    "url": "https://www.ipcc.ch/report/ar6/wg3/",
@@ -2778,9 +2785,10 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "HCC-2023-01",
+   "registre": "analyse",
    "authors": "Haut conseil pour le climat",
    "title": "Avis sur la stratégie de capture du carbone, son utilisation et son stockage (CCUS)",
-   "type": "avis officiel",
+   "type": "Rapport institutionnel",
    "org": "Haut conseil pour le climat",
    "date": "2023",
    "url": "https://www.hautconseilclimat.fr/publications/avis-sur-la-strategie-de-capture-du-carbone-son-utilisation-et-son-stockage-ccus/",
@@ -2788,29 +2796,32 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "CRE-2024-01",
+   "registre": "analyse",
    "authors": "Commission de régulation de l'énergie",
    "title": "Le captage et la chaîne de valeur du dioxyde de carbone",
-   "type": "rapport officiel",
-   "org": "Commission de régulation de l'énergie (CRE)",
+   "type": "Rapport institutionnel",
+   "org": "Commission de régulation de l'énergie",
    "date": "2024",
    "url": "https://www.cre.fr/fileadmin/Documents/Rapports_et_etudes/2024/Rapport_CCUS_CRE.pdf",
    "consulted": "26/08/2026"
   },
   {
    "id": "CGE-2024-01",
+   "registre": "analyse",
    "authors": "Conseil général de l'économie",
    "title": "Mission sur les projets européens de stockage géologique de CO2",
-   "type": "rapport officiel",
-   "org": "Conseil général de l'économie, ministère de l'Économie",
+   "type": "Rapport institutionnel",
+   "org": "Conseil général de l'économie",
    "date": "2024",
    "url": "https://www.economie.gouv.fr/files/files/directions_services/cge/stockage-geologique-carbone.pdf",
    "consulted": "26/08/2026"
   },
   {
    "id": "AGORA-2026-01",
+   "registre": "analyse",
    "authors": "Agora Industry et Öko-Institut",
    "title": "CCS: how to successfully build an infrastructure for carbon capture and storage",
-   "type": "analyse de think tank",
+   "type": "Analyse d'organisation",
    "org": "Agora Industry",
    "date": "2026",
    "url": "https://www.agora-industry.org/news-events/ccs-how-to-successfully-build-an-infrastructure-for-carbon-capture-and-storage",
@@ -2818,36 +2829,40 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "AIE-2026-01",
+   "registre": "analyse",
    "authors": "Agence internationale de l'énergie",
    "title": "Policy and financing momentum sustain CCUS progress despite setbacks",
-   "type": "analyse d'agence internationale",
-   "org": "Agence internationale de l'énergie (IEA)",
+   "type": "Analyse d'organisation",
+   "org": "Agence internationale de l'énergie",
    "date": "2026",
    "url": "https://www.iea.org/commentaries/policy-and-financing-momentum-sustain-ccus-progress-despite-setbacks",
    "consulted": "26/08/2026"
   },
   {
    "id": "KAZLOU-2024-01",
+   "registre": "analyse",
    "authors": "Tsimafei Kazlou, Aleh Cherp, Jessica Jewell",
    "title": "Feasible deployment of carbon capture and storage and the requirements of climate targets",
-   "type": "étude/recherche (revue à comité de lecture)",
-   "org": "Nature Climate Change, vol. 14 n° 10, p. 1047-1055",
+   "type": "Étude scientifique",
+   "org": "Nature Climate Change",
    "date": "2024",
    "url": "https://www.nature.com/articles/s41558-024-02104-0",
    "consulted": "26/08/2026"
   },
   {
    "id": "SNBC3-2026-01",
+   "registre": "analyse",
    "authors": "Ministère de la Transition écologique / Direction générale de l'énergie et du climat",
    "title": "Troisième Stratégie nationale bas-carbone (SNBC 3), décret n° 2026-636 du 16 juillet 2026",
-   "type": "texte officiel",
-   "org": "Ministères Transition écologique, Aménagement du Territoire, Transports, Ville et Logement",
+   "type": "Texte officiel",
+   "org": "Ministère de la Transition écologique",
    "date": "2026",
    "url": "https://www.ecologie.gouv.fr/strategie-nationale-bas-carbone",
    "consulted": "26/08/2026"
   },
   {
    "id": "ATTAL-2026-01",
+   "registre": "programme",
    "authors": "Gabriel Attal",
    "title": "École — Chantier capital 01",
    "type": "programme",
@@ -2858,6 +2873,7 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "ATTAL-2026-02",
+   "registre": "programme",
    "authors": "Gabriel Attal",
    "title": "Travail & salaires — Chantier capital 02",
    "type": "programme",
@@ -2868,6 +2884,7 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "ATTAL-2026-03",
+   "registre": "programme",
    "authors": "Gabriel Attal",
    "title": "Frontières — Chantier capital 03",
    "type": "programme",
@@ -2878,6 +2895,7 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "ATTAL-2026-04",
+   "registre": "programme",
    "authors": "Gabriel Attal",
    "title": "Intelligence artificielle — Chantier capital 04",
    "type": "programme",
@@ -2888,6 +2906,7 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "ATTAL-2026-05",
+   "registre": "programme",
    "authors": "Gabriel Attal",
    "title": "Dette de l'État — Dette à résorber 01",
    "type": "programme",
@@ -2898,6 +2917,7 @@ window.COMPARATEUR_DATA = {
   },
   {
    "id": "ATTAL-2026-06",
+   "registre": "programme",
    "authors": "Gabriel Attal",
    "title": "Dette écologique — Dette à résorber 02",
    "type": "programme",
