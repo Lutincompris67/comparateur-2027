@@ -1,6 +1,6 @@
 window.COMPARATEUR_DATA = {
  "meta": {
-  "generated": "2026-08-28",
+  "generated": "2026-09-17",
   "title": "Comparateur 2027"
  },
  "candidates": [
@@ -2925,6 +2925,620 @@ window.COMPARATEUR_DATA = {
    "date": "2026",
    "url": "https://attalpresident.fr/programme/dette-ecologique",
    "consulted": "27/08/2026"
+  },
+  {
+   "id": "CITEPA-2026-01",
+   "registre": "analyse",
+   "authors": "Centre interprofessionnel technique d'études de la pollution atmosphérique (Citepa)",
+   "title": "Rapport Secten, édition 2026 — Émissions de gaz à effet de serre en France, données par substance (1990-2025)",
+   "type": "Rapport institutionnel",
+   "org": "Centre interprofessionnel technique d'études de la pollution atmosphérique",
+   "date": "2026",
+   "url": "https://www.citepa.org/donnees-air-climat/donnees-gaz-a-effet-de-serre/secten/",
+   "consulted": "16/09/2026"
+  },
+  {
+   "id": "JORF-2026-01",
+   "registre": "analyse",
+   "authors": "Premier ministre",
+   "title": "Décret n° 2026-636 du 16 juillet 2026 relatif aux budgets carbone nationaux et à la stratégie nationale bas-carbone",
+   "type": "Texte officiel",
+   "org": "Journal officiel de la République française",
+   "date": "16/07/2026",
+   "url": "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054440907",
+   "consulted": "16/09/2026"
+  },
+  {
+   "id": "SDES-2025-01",
+   "registre": "analyse",
+   "authors": "Institut national de la statistique et des études économiques ; Service des données et études statistiques",
+   "title": "L'empreinte carbone de la France de 1990 à 2024 (données des graphiques)",
+   "type": "Rapport institutionnel",
+   "org": "Service des données et études statistiques",
+   "date": "16/10/2025",
+   "url": "https://www.statistiques.developpement-durable.gouv.fr/lempreinte-carbone-de-la-france-de-1990-2024",
+   "consulted": "16/09/2026"
+  },
+  {
+   "id": "SDES-2025-02",
+   "registre": "analyse",
+   "authors": "Manuel Baude (SDES), Sylvain Larrieu (Insee)",
+   "title": "Estimation de l'empreinte carbone de la France entre 1990 et 2024 — Note méthodologique",
+   "type": "Rapport institutionnel",
+   "org": "Service des données et études statistiques",
+   "date": "2025",
+   "url": "https://www.statistiques.developpement-durable.gouv.fr/media/8720/download?inline",
+   "consulted": "16/09/2026"
+  }
+ ],
+ "figures": [
+  {
+   "id": "FIG-ges-territoriales",
+   "type": "courbe",
+   "title": "Émissions de gaz à effet de serre sur le territoire français et budgets carbone",
+   "unit": "MtCO₂e par an",
+   "axisMin": 0,
+   "axisMax": 900,
+   "note": "Émissions de gaz à effet de serre sur le territoire, hors puits de carbone (hors utilisation des terres et forêts). Périmètre : France hexagonale et Outre-mer inclus dans l'Union européenne, hors transports aérien et maritime internationaux. Panier de Kyoto de 7 gaz, pouvoirs de réchauffement à 100 ans du 5e rapport du GIEC. 1990 est l'année de référence des engagements climatiques. Données consolidées jusqu'en 2024 (Citepa, édition 2026) ; 2025, en pointillé, est une estimation provisoire. Les budgets carbone sont des plafonds d'émissions annuels moyens par période de cinq ans ; les tranches indicatives les découpent année par année (décret n° 2026-636 du 16 juillet 2026, qui prévoit leur ajustement annuel). Ces émissions ne comptent pas celles des biens et services importés : voir la figure sur l'empreinte carbone.",
+   "sources": [
+    "CITEPA-2026-01",
+    "JORF-2026-01"
+   ],
+   "edition": "Citepa, format Secten, édition 2026 ; décret n° 2026-636 du 16/07/2026",
+   "file": "",
+   "alt": "Courbe des émissions territoriales brutes de la France : 547 MtCO₂e en 1990, 367 en 2024 et 359 en 2025 (estimation provisoire). Elle est prolongée par les budgets carbone du décret : 342 MtCO₂e par an sur 2024-2028, 262 sur 2029-2033 et 194 sur 2034-2038, avec des tranches indicatives annuelles descendant de 367 en 2024 à 167 en 2038.",
+   "series": [
+    {
+     "name": "Émissions territoriales brutes (Citepa)",
+     "render": "mesure",
+     "points": [
+      {
+       "x": 1990,
+       "v": 546.9
+      },
+      {
+       "x": 1991,
+       "v": 572.5
+      },
+      {
+       "x": 1992,
+       "v": 561.5
+      },
+      {
+       "x": 1993,
+       "v": 540
+      },
+      {
+       "x": 1994,
+       "v": 531.7
+      },
+      {
+       "x": 1995,
+       "v": 538.1
+      },
+      {
+       "x": 1996,
+       "v": 556.4
+      },
+      {
+       "x": 1997,
+       "v": 548.6
+      },
+      {
+       "x": 1998,
+       "v": 562.5
+      },
+      {
+       "x": 1999,
+       "v": 557.2
+      },
+      {
+       "x": 2000,
+       "v": 551.9
+      },
+      {
+       "x": 2001,
+       "v": 557
+      },
+      {
+       "x": 2002,
+       "v": 550.6
+      },
+      {
+       "x": 2003,
+       "v": 554.7
+      },
+      {
+       "x": 2004,
+       "v": 554.3
+      },
+      {
+       "x": 2005,
+       "v": 555.6
+      },
+      {
+       "x": 2006,
+       "v": 544.9
+      },
+      {
+       "x": 2007,
+       "v": 535.2
+      },
+      {
+       "x": 2008,
+       "v": 530.3
+      },
+      {
+       "x": 2009,
+       "v": 509.2
+      },
+      {
+       "x": 2010,
+       "v": 513.1
+      },
+      {
+       "x": 2011,
+       "v": 488
+      },
+      {
+       "x": 2012,
+       "v": 490.7
+      },
+      {
+       "x": 2013,
+       "v": 490.2
+      },
+      {
+       "x": 2014,
+       "v": 457.4
+      },
+      {
+       "x": 2015,
+       "v": 460.8
+      },
+      {
+       "x": 2016,
+       "v": 463.7
+      },
+      {
+       "x": 2017,
+       "v": 466.1
+      },
+      {
+       "x": 2018,
+       "v": 446.5
+      },
+      {
+       "x": 2019,
+       "v": 437.7
+      },
+      {
+       "x": 2020,
+       "v": 398
+      },
+      {
+       "x": 2021,
+       "v": 422.4
+      },
+      {
+       "x": 2022,
+       "v": 405.8
+      },
+      {
+       "x": 2023,
+       "v": 378.2
+      },
+      {
+       "x": 2024,
+       "v": 367
+      },
+      {
+       "x": 2025,
+       "v": 359.4,
+       "s": "provisoire"
+      }
+     ]
+    },
+    {
+     "name": "Budgets carbone, plafond annuel moyen par période (décret n° 2026-636)",
+     "render": "palier",
+     "points": [
+      {
+       "x": 2024,
+       "v": 342
+      },
+      {
+       "x": 2025,
+       "v": 342
+      },
+      {
+       "x": 2026,
+       "v": 342
+      },
+      {
+       "x": 2027,
+       "v": 342
+      },
+      {
+       "x": 2028,
+       "v": 342
+      },
+      {
+       "x": 2029,
+       "v": 262
+      },
+      {
+       "x": 2030,
+       "v": 262
+      },
+      {
+       "x": 2031,
+       "v": 262
+      },
+      {
+       "x": 2032,
+       "v": 262
+      },
+      {
+       "x": 2033,
+       "v": 262
+      },
+      {
+       "x": 2034,
+       "v": 194
+      },
+      {
+       "x": 2035,
+       "v": 194
+      },
+      {
+       "x": 2036,
+       "v": 194
+      },
+      {
+       "x": 2037,
+       "v": 194
+      },
+      {
+       "x": 2038,
+       "v": 194
+      }
+     ]
+    },
+    {
+     "name": "Tranches indicatives annuelles (décret n° 2026-636)",
+     "render": "repère",
+     "points": [
+      {
+       "x": 2024,
+       "v": 367
+      },
+      {
+       "x": 2025,
+       "v": 359
+      },
+      {
+       "x": 2026,
+       "v": 348
+      },
+      {
+       "x": 2027,
+       "v": 328
+      },
+      {
+       "x": 2028,
+       "v": 308
+      },
+      {
+       "x": 2029,
+       "v": 292
+      },
+      {
+       "x": 2030,
+       "v": 276
+      },
+      {
+       "x": 2031,
+       "v": 262
+      },
+      {
+       "x": 2032,
+       "v": 248
+      },
+      {
+       "x": 2033,
+       "v": 234
+      },
+      {
+       "x": 2034,
+       "v": 221
+      },
+      {
+       "x": 2035,
+       "v": 207
+      },
+      {
+       "x": 2036,
+       "v": 194
+      },
+      {
+       "x": 2037,
+       "v": 180
+      },
+      {
+       "x": 2038,
+       "v": 167
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "FIG-ges-empreinte",
+   "type": "courbe",
+   "title": "Empreinte carbone de la France et budgets indicatifs en empreinte",
+   "unit": "MtCO₂e par an",
+   "axisMin": 0,
+   "axisMax": 900,
+   "note": "Émissions de gaz à effet de serre induites par la demande finale intérieure : émissions directes des ménages, émissions de la production intérieure hors exportations et émissions associées aux importations. Hors puits de carbone. Champ : France et Saint-Martin ; pour les transports, émissions des unités résidentes, y compris à l'étranger. Les valeurs 1990-2009, en teinte claire, sont rétropolées à partir du calcul de 2010 ; 2024, en pointillé, est provisoire (Insee-SDES, octobre 2025). L'estimation est révisée chaque année : en 2025, la révision des données internationales a abaissé son niveau d'environ 7 % sur l'ensemble de la période. Les budgets indicatifs en empreinte sont fixés sous forme de fourchettes par le décret n° 2026-636 du 16 juillet 2026. Même échelle verticale que la figure sur les émissions territoriales.",
+   "sources": [
+    "SDES-2025-01",
+    "SDES-2025-02",
+    "JORF-2026-01"
+   ],
+   "edition": "Insee-SDES, octobre 2025 (données 1990-2024) ; décret n° 2026-636 du 16/07/2026",
+   "file": "",
+   "alt": "Courbe de l'empreinte carbone de la France : 702 MtCO₂e en 1990, un maximum de 816 en 2008, puis 563 en 2024 (provisoire). Elle est prolongée par les fourchettes indicatives du décret : 516 à 531 MtCO₂e par an sur 2024-2028, 408 à 446 sur 2029-2033 et 312 à 358 sur 2034-2038.",
+   "series": [
+    {
+     "name": "Empreinte carbone (Insee-SDES)",
+     "render": "mesure",
+     "points": [
+      {
+       "x": 1990,
+       "v": 702.1,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1991,
+       "v": 703.1,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1992,
+       "v": 692.6,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1993,
+       "v": 646,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1994,
+       "v": 641,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1995,
+       "v": 660.3,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1996,
+       "v": 669.4,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1997,
+       "v": 637.2,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1998,
+       "v": 701.6,
+       "s": "rétropolé"
+      },
+      {
+       "x": 1999,
+       "v": 698,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2000,
+       "v": 691.9,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2001,
+       "v": 700.4,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2002,
+       "v": 703.1,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2003,
+       "v": 739.1,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2004,
+       "v": 769.4,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2005,
+       "v": 782.4,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2006,
+       "v": 790.7,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2007,
+       "v": 806.9,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2008,
+       "v": 815.7,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2009,
+       "v": 747.6,
+       "s": "rétropolé"
+      },
+      {
+       "x": 2010,
+       "v": 749
+      },
+      {
+       "x": 2011,
+       "v": 740.1
+      },
+      {
+       "x": 2012,
+       "v": 712.7
+      },
+      {
+       "x": 2013,
+       "v": 705
+      },
+      {
+       "x": 2014,
+       "v": 670.4
+      },
+      {
+       "x": 2015,
+       "v": 647.9
+      },
+      {
+       "x": 2016,
+       "v": 648.5
+      },
+      {
+       "x": 2017,
+       "v": 655.5
+      },
+      {
+       "x": 2018,
+       "v": 654.3
+      },
+      {
+       "x": 2019,
+       "v": 637.3
+      },
+      {
+       "x": 2020,
+       "v": 580.5
+      },
+      {
+       "x": 2021,
+       "v": 619.8
+      },
+      {
+       "x": 2022,
+       "v": 620.7
+      },
+      {
+       "x": 2023,
+       "v": 582.6
+      },
+      {
+       "x": 2024,
+       "v": 562.8,
+       "s": "provisoire"
+      }
+     ]
+    },
+    {
+     "name": "Budgets indicatifs en empreinte, fourchette (décret n° 2026-636)",
+     "render": "bande",
+     "points": [
+      {
+       "x": 2024,
+       "v": 516,
+       "hi": 531
+      },
+      {
+       "x": 2025,
+       "v": 516,
+       "hi": 531
+      },
+      {
+       "x": 2026,
+       "v": 516,
+       "hi": 531
+      },
+      {
+       "x": 2027,
+       "v": 516,
+       "hi": 531
+      },
+      {
+       "x": 2028,
+       "v": 516,
+       "hi": 531
+      },
+      {
+       "x": 2029,
+       "v": 408,
+       "hi": 446
+      },
+      {
+       "x": 2030,
+       "v": 408,
+       "hi": 446
+      },
+      {
+       "x": 2031,
+       "v": 408,
+       "hi": 446
+      },
+      {
+       "x": 2032,
+       "v": 408,
+       "hi": 446
+      },
+      {
+       "x": 2033,
+       "v": 408,
+       "hi": 446
+      },
+      {
+       "x": 2034,
+       "v": 312,
+       "hi": 358
+      },
+      {
+       "x": 2035,
+       "v": 312,
+       "hi": 358
+      },
+      {
+       "x": 2036,
+       "v": 312,
+       "hi": 358
+      },
+      {
+       "x": 2037,
+       "v": 312,
+       "hi": 358
+      },
+      {
+       "x": 2038,
+       "v": 312,
+       "hi": 358
+      }
+     ]
+    }
+   ]
   }
  ]
 };

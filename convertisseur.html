@@ -15,6 +15,7 @@ p{margin-bottom:12px;color:#4A5468}
 .ok{color:#1D7A5F;font-weight:600}
 .warn{color:#A14E2B;font-weight:600}
 .stop{color:#A31D1D;font-weight:600}
+.info{color:#1F3864;font-weight:600}
 ul{margin:8px 0 8px 20px;font-size:14px}
 button.dl{background:#1F3864;color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;display:none}
 button.dl.show{display:inline-block}
@@ -23,7 +24,7 @@ small{color:#8A8F9C}
 </head>
 <body>
 <h1>Convertisseur Excel → data.js</h1>
-<p>Déposez ici votre fichier <b>Comparateur_2027_source.xlsx</b>. La page vérifie la cohérence des données (ID orphelins, sources manquantes…) puis génère le fichier <b>data.js</b> à déposer dans votre dépôt GitHub, à côté de index.html.</p>
+<p>Déposez ici votre fichier <b>Comparateur_2027_source.xlsx</b>. La page vérifie la cohérence des données (ID orphelins, sources manquantes, figures…) puis génère le fichier <b>data.js</b> à déposer dans votre dépôt GitHub, à côté de index.html.</p>
 <p><small>Tout se passe dans votre navigateur : le fichier n'est envoyé nulle part.</small></p>
 
 <div class="drop" id="drop">Cliquez ou glissez votre fichier Excel ici</div>
@@ -36,7 +37,7 @@ small{color:#8A8F9C}
 <script>
 (function(){
 "use strict";
-var SPECIAL={'Lisez-moi':1,'Analyses & partis pris':1,'Bibliographie':1,'Journal':1};
+var SPECIAL={'Lisez-moi':1,'Analyses & partis pris':1,'Bibliographie':1,'Journal':1,'Figures':1,'Données des figures':1};
 /* Onglets de travail ignorés : nom exact ci-dessus, ou nom commençant par
    « Journal » ou par « _ » (convention pour tout onglet hors données,
    par exemple _Organismes qui porte la liste contrôlée des éditeurs). */
@@ -256,8 +257,133 @@ function convert(wb){
   var bibIds={};bibliography.forEach(function(b){bibIds[b.id]=1;});
   editorial.forEach(function(e){(e.sources||[]).forEach(function(s){if(!bibIds[s])problems.push('Source « '+s+' » citée mais absente de la Bibliographie');});});
 
+
+  /* ===== Figures =====
+     Onglet « Figures » : une ligne par figure. Onglet « Données des figures » : une ligne
+     par point (format long). Les figures chiffrées sont dessinées par le site à partir
+     de ces données ; seules les images (cartes, schémas) sont des fichiers du dépôt. */
+  var figures=[],figById={},imageFiles=[];
+  var FIG_TYPES={courbe:1,barres:1,tableau:1,image:1};
+  var RENDUS={mesure:1,palier:1,'repère':1,bande:1};
+  var STATUTS={'consolidé':1,provisoire:1,'rétropolé':1};
+  var getSheet=function(n){var m=wb.SheetNames.filter(function(x){return x.trim()===n;});return m.length?wb.Sheets[m[0]]:null;};
+  /* Lecture d'un nombre : accepte une cellule numérique, ou un texte « 546,9 » converti
+     (signalé, car une valeur stockée comme texte trahit souvent une saisie fragile). */
+  var parseNum=function(v){
+    if(typeof v==='number')return {n:v,text:false};
+    var t=cellStr(v); if(!t)return null;
+    var c=t.replace(/[\s\u00a0\u202f]/g,'').replace(',','.');
+    if(/^-?\d+(\.\d+)?$/.test(c))return {n:parseFloat(c),text:true};
+    return {n:NaN,text:true,raw:t};
+  };
+  var wsF=getSheet('Figures'),wsDF=getSheet('Données des figures');
+  if(!wsF&&wsDF)problems.push('Onglet « Données des figures » présent sans onglet « Figures » : les données sont ignorées.');
+  if(wsF){
+    var rf=sheetRows(wsF),hf=(rf[0]||[]).map(cellStr);
+    var cf={id:findCol(hf,'ID_figure'),type:findCol(hf,'Type'),title:findCol(hf,'Titre'),unit:findCol(hf,'Unité'),
+      amin:findCol(hf,'Axe_min'),amax:findCol(hf,'Axe_max'),note:findCol(hf,'Note de lecture'),sources:findCol(hf,'Sources'),
+      edition:findCol(hf,'Édition des données'),file:findCol(hf,'Fichier'),alt:findCol(hf,'Texte alternatif')};
+    var gv=function(row,c){return c>=0?cellStr(row[c]):'';};
+    for(var f=1;f<rf.length;f++){
+      var fid=gv(rf[f],cf.id);
+      if(!fid){
+        if(rf[f].some(function(x){return cellStr(x);}))problems.push('Figures ligne '+(f+1)+' : ligne sans ID_figure, ignorée.');
+        continue;
+      }
+      if(figById[fid]){problems.push('ID_figure en doublon : '+fid);continue;}
+      var ftype=gv(rf[f],cf.type).toLowerCase();
+      if(!FIG_TYPES[ftype])problems.push('Figure '+fid+' : Type « '+ftype+' » non reconnu (courbe, barres, tableau ou image).');
+      var amin=cf.amin>=0?parseNum(rf[f][cf.amin]):null,amax=cf.amax>=0?parseNum(rf[f][cf.amax]):null;
+      if(amin&&isNaN(amin.n)){problems.push('Figure '+fid+' : Axe_min non numérique.');amin=null;}
+      if(amax&&isNaN(amax.n)){problems.push('Figure '+fid+' : Axe_max non numérique.');amax=null;}
+      var fig={id:fid,type:ftype,title:gv(rf[f],cf.title),unit:gv(rf[f],cf.unit),
+        axisMin:amin?amin.n:null,axisMax:amax?amax.n:null,note:gv(rf[f],cf.note),
+        sources:gv(rf[f],cf.sources).split(',').map(function(x){return x.trim();}).filter(Boolean),
+        edition:gv(rf[f],cf.edition),file:gv(rf[f],cf.file),alt:gv(rf[f],cf.alt),series:[]};
+      figures.push(fig);figById[fid]=fig;
+    }
+    if(wsDF){
+      var rd=sheetRows(wsDF),hd=(rd[0]||[]).map(cellStr);
+      var cd={id:findCol(hd,'ID_figure'),serie:findCol(hd,'Série'),rendu:findCol(hd,'Rendu'),x:findCol(hd,'X'),
+        v:findCol(hd,'Valeur'),hi:findCol(hd,'Valeur_haute'),st:findCol(hd,'Statut')};
+      var textCells={},unknownFig={};
+      for(var d=1;d<rd.length;d++){
+        var row=rd[d],did=gv(row,cd.id);
+        if(!did){ if(row.some(function(x){return cellStr(x);}))problems.push('Données des figures ligne '+(d+1)+' : ligne sans ID_figure, ignorée.'); continue; }
+        var fg=figById[did];
+        if(!fg){ if(!unknownFig[did]){problems.push('Données des figures : ID_figure « '+did+' » absent de l\'onglet « Figures ».');unknownFig[did]=1;} continue; }
+        var sname=gv(row,cd.serie)||'Série',rendu=gv(row,cd.rendu).toLowerCase()||'mesure';
+        if(!RENDUS[rendu]){problems.push('Données des figures ligne '+(d+1)+' ('+did+') : Rendu « '+rendu+' » non reconnu (mesure, palier, repère ou bande).');rendu='mesure';}
+        var ser=fg.series.filter(function(x){return x.name===sname;})[0];
+        if(!ser){ser={name:sname,render:rendu,points:[]};fg.series.push(ser);}
+        else if(ser.render!==rendu)problems.push('Données des figures ligne '+(d+1)+' ('+did+') : la série « '+sname+' » change de Rendu (« '+ser.render+' » puis « '+rendu+' »).');
+        var xraw=cd.x>=0?row[cd.x]:'',xv;
+        if(typeof xraw==='number')xv=xraw; else { xv=cellStr(xraw); if(/^-?\d+$/.test(xv))xv=parseInt(xv,10); }
+        if(xv===''){problems.push('Données des figures ligne '+(d+1)+' ('+did+') : X vide.');continue;}
+        if(ser.points.some(function(p){return String(p.x)===String(xv);}))problems.push('Données des figures ligne '+(d+1)+' ('+did+') : X « '+xv+' » en double dans la série « '+sname+' ».');
+        var vv=cd.v>=0?parseNum(row[cd.v]):null;
+        if(!vv){problems.push('Données des figures ligne '+(d+1)+' ('+did+') : Valeur vide.');continue;}
+        if(isNaN(vv.n)){problems.push('Données des figures ligne '+(d+1)+' ('+did+') : Valeur « '+vv.raw+' » non numérique.');continue;}
+        if(vv.text)textCells[did]=(textCells[did]||0)+1;
+        var pt={x:xv,v:vv.n};
+        var hv=cd.hi>=0?parseNum(row[cd.hi]):null;
+        if(rendu==='bande'){
+          if(!hv||isNaN(hv.n))problems.push('Données des figures ligne '+(d+1)+' ('+did+') : une bande exige une Valeur_haute numérique.');
+          else { if(hv.text)textCells[did]=(textCells[did]||0)+1; if(hv.n<vv.n)problems.push('Données des figures ligne '+(d+1)+' ('+did+') : Valeur_haute inférieure à Valeur.'); pt.hi=hv.n; }
+        }
+        var st=gv(row,cd.st).toLowerCase();
+        if(st){
+          if(!STATUTS[st])problems.push('Données des figures ligne '+(d+1)+' ('+did+') : Statut « '+st+' » non reconnu (consolidé, provisoire ou rétropolé).');
+          else if(rendu==='mesure'&&st!=='consolidé')pt.s=st;
+        }
+        ser.points.push(pt);
+      }
+      Object.keys(textCells).forEach(function(k){
+        problems.push('Figure '+k+' : '+textCells[k]+' valeur'+(textCells[k]>1?'s':'')+' stockée'+(textCells[k]>1?'s':'')+' comme texte dans Excel (converties, mais à enregistrer comme nombres).');
+      });
+    }
+    /* Appels {{FIG-…}} dans les analyses et partis pris. */
+    var called={};
+    editorial.forEach(function(e){
+      var where=(e.type==='analyse'?'Analyse':'Parti pris')+' ('+(e.id||'sans ID')+')';
+      String(e.text||'').split(/\r?\n/).forEach(function(line){
+        if(line.indexOf('{{')<0)return;
+        var re=/\{\{\s*([^}]*?)\s*\}\}/g,m,n=0;
+        while((m=re.exec(line))){
+          n++;
+          if(!figById[m[1]])problems.push(where+' : appelle la figure « '+m[1]+' », absente de l\'onglet « Figures ».');
+          else called[m[1]]=(called[m[1]]||0)+1;
+        }
+        if(n&&!/^\s*\{\{[^}]*\}\}\s*$/.test(line))problems.push(where+' : un appel de figure doit être seul sur sa ligne (sinon il s\'affiche en clair).');
+      });
+    });
+    figures.forEach(function(fg){
+      var chiffree=fg.type!=='image';
+      if(chiffree&&!fg.series.length)problems.push('Figure '+fg.id+' : aucune donnée dans « Données des figures ».');
+      if(fg.type==='image'){
+        if(!fg.file)problems.push('Figure '+fg.id+' : Type image sans nom de fichier.');
+        else imageFiles.push(fg.file);
+        if(fg.series.length)problems.push('Figure '+fg.id+' : Type image, les données saisies sont ignorées.');
+      }
+      if(!fg.title)problems.push('Figure '+fg.id+' : Titre manquant.');
+      if(!fg.alt)problems.push('Figure '+fg.id+' : Texte alternatif manquant.');
+      if(!fg.sources.length)problems.push('Figure '+fg.id+' : aucune source.');
+      fg.sources.forEach(function(sid){ if(!bibIds[sid])problems.push('Figure '+fg.id+' : source « '+sid+' » absente de la Bibliographie.'); });
+      if(fg.type==='barres'&&fg.axisMin!==null&&fg.axisMin!==0)problems.push('Figure '+fg.id+' : un histogramme doit partir de zéro (Axe_min = '+fg.axisMin+').');
+      if(chiffree&&fg.series.length){
+        var vals=[];
+        fg.series.forEach(function(sr){sr.points.forEach(function(p){vals.push(p.v);if(p.hi!=null)vals.push(p.hi);});});
+        var lo=Math.min.apply(null,vals),hi=Math.max.apply(null,vals);
+        if(fg.axisMin!==null&&lo<fg.axisMin)problems.push('Figure '+fg.id+' : des valeurs ('+lo+') sont sous Axe_min ('+fg.axisMin+').');
+        if(fg.axisMax!==null&&hi>fg.axisMax)problems.push('Figure '+fg.id+' : des valeurs ('+hi+') dépassent Axe_max ('+fg.axisMax+').');
+        if(fg.type==='courbe'&&fg.axisMin!==null&&fg.axisMin!==0&&!/axe|origine|échelle/i.test(fg.note))problems.push('Figure '+fg.id+' : axe qui ne part pas de zéro, à signaler dans la note de lecture.');
+      }
+      if(!called[fg.id])problems.push('Figure '+fg.id+' : appelée par aucun texte, elle n\'apparaît donc pas sur le site.');
+    });
+  }
+
   var today=new Date().toISOString().slice(0,10);
-  var data={meta:{generated:today,title:'Comparateur 2027'},candidates:candidates,themes:themes,editorial:editorial,bibliography:bibliography};
+  var data={meta:{generated:today,title:'Comparateur 2027'},candidates:candidates,themes:themes,editorial:editorial,bibliography:bibliography,figures:figures};
   output='window.COMPARATEUR_DATA = '+JSON.stringify(data,null,1)+';\n';
 
   /* Nombre de sujets UNIQUES (sans compter les emprunts, qui sont la même entité). */
@@ -268,11 +394,15 @@ function convert(wb){
   var html='<span class="ok">Conversion réussie.</span> '+themes.length+' thématiques, '+nSubjUnique+' sujets uniques'
     +(nBorrows?' ('+nBorrows+' emprunt'+(nBorrows>1?'s':'')+' entre thématiques)':'')
     +', '+editorial.length+' contenus éditoriaux, '+bibliography.length+' sources ('
-    +nProg+' programme'+(nProg>1?'s':'')+', '+nAna+' analyse'+(nAna>1?'s':'')+').';
+    +nProg+' programme'+(nProg>1?'s':'')+', '+nAna+' analyse'+(nAna>1?'s':'')+')'
+    +(figures.length?', '+figures.length+' figure'+(figures.length>1?'s':''):'')+'.';
   if(problems.length){
     html+='<br><br><span class="warn">Points à vérifier ('+problems.length+') :</span><ul>'+problems.map(function(p){return '<li>'+p.replace(/</g,'&lt;')+'</li>';}).join('')+'</ul><small>Ces points n\'empêchent pas la génération, mais corrigez-les dans Excel pour un site cohérent.</small>';
   } else {
     html+='<br><span class="ok">Aucune incohérence détectée.</span>';
+  }
+  if(imageFiles.length){
+    html+='<br><br><span class="info">Fichiers image attendus dans le dossier figures/ du dépôt ('+imageFiles.length+') :</span><ul>'+imageFiles.map(function(f){return '<li>'+f.replace(/</g,'&lt;')+'</li>';}).join('')+'</ul><small>Le convertisseur ne peut pas vérifier leur présence : cochez-les au moment du commit.</small>';
   }
   report.className='report show';report.innerHTML=html;
   dlBtn.className='dl show';

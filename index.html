@@ -168,6 +168,38 @@ tbody tr:hover td.subj{background:#F6F0E9}
 .pp-tag{font-size:10.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--terre);font-weight:600;margin-left:auto}
 .pp-card p{font-size:14px;line-height:1.65}
 .p-empty{color:var(--ink-3);font-size:13.5px;font-style:italic;padding:14px 4px}
+/* ===== Figures (analyses et partis pris) =====
+   Palette neutre imposée par le site : aucune couleur n'est choisie par l'auteur,
+   aucune n'est associée à un candidat. */
+.fig{margin:1.1em 0;padding:13px 14px 12px;background:var(--paper);border:1px solid var(--rule);border-radius:var(--r);line-height:1.5}
+.fig-cap{display:flex;flex-direction:column;gap:1px;margin-bottom:9px}
+.fig-num{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.fig-title{font-size:14px;font-weight:600;color:var(--ink);line-height:1.35}
+.fig-unit{font-size:12px;color:var(--ink-2)}
+.fig-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+.fig-chart{min-width:260px}
+.fig-chart svg{display:block;width:100%;height:auto}
+.fig-chart svg text{font-family:var(--sans);font-size:11px;fill:var(--ink-3)}
+.fig-legend{display:flex;flex-wrap:wrap;gap:5px 15px;margin:9px 0 2px;font-size:12px;color:var(--ink-2);line-height:1.35}
+.fig-legend span{display:inline-flex;align-items:center;gap:6px}
+.fig-legend svg{flex:0 0 auto}
+.fig-legend .fig-leg-st{color:var(--ink-3)}
+.fig-legend-st{margin-top:3px}
+.fig p.fig-note{font-size:12.5px;line-height:1.55;color:var(--ink-2);margin-top:9px}
+.fig p.fig-src{font-size:12px;line-height:1.5;color:var(--ink-3);margin-top:6px}
+.fig-src a{text-decoration:none}
+.fig-toggle{margin-top:9px;border:1px solid var(--rule);background:var(--card);border-radius:7px;padding:5px 11px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.fig-toggle:hover{border-color:var(--graphite);color:var(--ink)}
+.fig-data{margin-top:8px;max-height:320px;overflow:auto;border:1px solid var(--rule-soft);border-radius:8px;background:var(--card)}
+.fig-table{border-collapse:separate;border-spacing:0;width:100%}
+.fig-table th,.fig-table td{padding:4px 10px;font-size:12px;line-height:1.4;border-bottom:1px solid var(--rule-soft);white-space:nowrap;text-align:right;vertical-align:bottom}
+.fig-table thead th{position:sticky;top:0;z-index:1;background:var(--graphite-soft);color:var(--ink-2);text-transform:none;letter-spacing:0;font-size:11.5px;font-weight:600;white-space:normal;min-width:96px}
+.fig-table tbody th{text-align:left;font-weight:600;color:var(--ink);position:static;background:none}
+.fig-table tbody tr{cursor:default}
+.fig-table tbody tr:hover td{background:none}
+.fig-st{font-size:10px;color:var(--ink-3);font-style:italic}
+.fig-img img{display:block;max-width:100%;height:auto;border-radius:6px}
+
 
 /* ===== Pages texte ===== */
 .page{max-width:780px;margin:26px auto 60px;padding:0 16px}
@@ -263,6 +295,9 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
 
     <h2>Le sourçage</h2>
     <p>Les analyses suivent une exigence de type universitaire : les affirmations factuelles sont reliées à des sources identifiées (rapports officiels, études, textes juridiques, données statistiques, programmes eux-mêmes), réunies dans une bibliographie centralisée et consultable. Chaque source est datée et accompagnée de son lien d'origine, pour que chacun puisse vérifier par lui-même.</p>
+
+    <h2>Les figures</h2>
+    <p>Certaines analyses et certains partis pris s'appuient sur des graphiques ou des tableaux. Les graphiques ne sont pas des images : le site les dessine à partir de données saisies dans le même fichier que le reste du contenu, et le bouton « Voir les données » affiche sous chacun les valeurs qui le composent. Leur construction suit des règles fixes, identiques pour les analyses et les partis pris : axe des valeurs partant de zéro pour les histogrammes, et pour les courbes sauf mention dans la note de lecture ; unité et sources toujours indiquées ; choix de la période expliqué ; données provisoires en pointillé et reconstitutions rétrospectives en teinte claire ; couleurs imposées par le site, jamais associées à un candidat ou à un parti. Un parti pris juge dans ses mots, jamais par la construction d'un graphique.</p>
 
     <h2>La neutralité, rendue vérifiable</h2>
     <p>Nous ne prétendons pas être sans opinions : nous les signons et les séparons. Aucun candidat ne reçoit de traitement visuel distinctif ; les colonnes du tableau sont strictement identiques. La fidélité de la restitution est vérifiable par les liens vers les programmes d'origine. Si vous constatez une erreur de transcription ou d'attribution, signalez-la nous.</p>
@@ -499,17 +534,218 @@ function findSubject(sid){
     for(var j=0;j<t.subjects.length;j++)if(t.subjects[j].id===sid)return{theme:t,subject:t.subjects[j]};}
   return null;
 }
-function footnotes(text, ids){
-  return esc(text).replace(/\[(\d+)\]/g,function(m,n){
-    var i=parseInt(n,10)-1, sid=ids[i];
-    if(sid===undefined)return '<sup>['+n+']</sup>';
-    return '<sup><a href="#src-'+esc(sid)+'" title="'+esc(sid)+'">['+n+']</a></sup>';
-  }).split(/\r?\n+/).map(function(p){return p.trim();}).filter(Boolean)
-    .map(function(p){return '<p>'+p+'</p>';}).join('');
+/* ===== Figures =====
+   Une ligne de texte réduite à {{FIG-…}} est remplacée par la figure correspondante.
+   Les courbes et histogrammes sont dessinés ici en SVG à partir de data.js : aucune
+   image de graphique, donc des valeurs toujours vérifiables (bouton « Voir les données »). */
+var figById={};
+(D.figures||[]).forEach(function(f){figById[f.id]=f;});
+var FIG_INK=['#27221B','#4F6B82','#8A6A3B'], FIG_GREY='#6B6459', FIG_BAND='#D6CEC0';
+var figCounter=0;
+function fmtNum(v,dec){dec=dec||0;return v.toLocaleString('fr-FR',{minimumFractionDigits:dec,maximumFractionDigits:dec});}
+function decOf(nums){var d=0;nums.forEach(function(n){var t=String(n),i=t.indexOf('.');if(i>=0)d=Math.max(d,t.length-i-1);});return Math.min(d,2);}
+var figTargetW=560;
+function figNumX(f){return f.series.every(function(s){return s.points.every(function(p){return typeof p.x==='number';});});}
+function niceStep(range,target){
+  if(range<=0)return 1;
+  var raw=range/target,p=Math.pow(10,Math.floor(Math.log(raw)/Math.LN10)),m=raw/p;
+  return (m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*p;
 }
+function figXs(f){
+  var xs=[],seen={};
+  f.series.forEach(function(s){s.points.forEach(function(p){var k=String(p.x);if(!seen[k]){seen[k]=1;xs.push(p.x);}});});
+  if(figNumX(f))xs.sort(function(a,b){return a-b;});
+  return xs;
+}
+function figTable(f){
+  var xs=figXs(f),cols=[];
+  f.series.forEach(function(s){
+    if(s.render==='bande'){cols.push({s:s,k:'v',label:s.name+' — bas'});cols.push({s:s,k:'hi',label:s.name+' — haut'});}
+    else cols.push({s:s,k:'v',label:s.name});
+  });
+  var h='<table class="fig-table"><thead><tr><th scope="col"></th>';
+  cols.forEach(function(c){h+='<th scope="col">'+esc(c.label)+'</th>';});
+  h+='</tr></thead><tbody>';
+  xs.forEach(function(x){
+    h+='<tr><th scope="row">'+esc(x)+'</th>';
+    cols.forEach(function(c){
+      if(c.dec==null)c.dec=decOf(c.s.points.map(function(q){return q[c.k];}).filter(function(n){return n!=null;}));
+      var p=c.s.points.filter(function(q){return String(q.x)===String(x);})[0],cell='';
+      if(p&&p[c.k]!=null){
+        cell=fmtNum(p[c.k],c.dec);
+        if(p.s==='provisoire')cell+=' <span class="fig-st">provisoire</span>';
+        else if(p.s==='rétropolé')cell+=' <span class="fig-st">rétropolé</span>';
+      }
+      h+='<td>'+cell+'</td>';
+    });
+    h+='</tr>';
+  });
+  return h+'</tbody></table>';
+}
+function figSVG(f){
+  var W=figTargetW,H=W<420?250:300,m={l:W<420?38:48,r:10,t:12,b:28},iw=W-m.l-m.r,ih=H-m.t-m.b;
+  var vals=[];
+  f.series.forEach(function(s){s.points.forEach(function(p){vals.push(p.v);if(p.hi!=null)vals.push(p.hi);});});
+  var ymin=f.axisMin!=null?f.axisMin:Math.min(0,Math.min.apply(null,vals));
+  var ymax=f.axisMax!=null?f.axisMax:Math.max.apply(null,vals);
+  if(f.axisMax==null){var s0=niceStep(ymax-ymin,5);ymax=Math.ceil(ymax/s0)*s0;}
+  if(ymax<=ymin)ymax=ymin+1;
+  var Y=function(v){return m.t+ih-(v-ymin)/(ymax-ymin)*ih;};
+  var bars=f.type==='barres', numX=figNumX(f)&&!bars, xs=figXs(f), X, half, xmin, xmax;
+  if(numX){
+    xmin=xs[0];xmax=xs[xs.length-1];
+    var pad=f.series.some(function(s){return s.render==='palier'||s.render==='bande';})?0.5:0;
+    xmin-=pad;xmax+=pad; if(xmax===xmin)xmax=xmin+1;
+    X=function(x){return m.l+(x-xmin)/(xmax-xmin)*iw;};
+    half=iw/(xmax-xmin)/2;
+  } else {
+    var cats=xs.map(String),bw=iw/cats.length;
+    X=function(x){return m.l+(cats.indexOf(String(x))+0.5)*bw;};
+    half=bw/2;
+  }
+  var r=function(n){return Math.round(n*10)/10;};
+  var h='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(f.alt||f.title)+'" xmlns="http://www.w3.org/2000/svg"><title>'+esc(f.alt||f.title)+'</title>';
+  /* Grille et axe des valeurs */
+  /* Pas de graduation : un pas « rond » qui tombe juste sur les bornes, 4 à 10 graduations. */
+  var ys=niceStep(ymax-ymin,W<420?4:6),rng=ymax-ymin;
+  [1,2,2.5,3,5,10].some(function(k){
+    var p10=Math.pow(10,Math.floor(Math.log(rng/6)/Math.LN10));
+    return [p10*k,p10*k*10].some(function(st){var n=rng/st;if(Math.abs(n-Math.round(n))<1e-9&&n>=(W<420?3:4)&&n<=(W<420?6:10)){ys=st;return true;}return false;});
+  });
+  for(var v=Math.ceil(ymin/ys)*ys;v<=ymax+1e-9;v+=ys){
+    var yy=r(Y(v));
+    h+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+yy+'" y2="'+yy+'" stroke="'+(Math.abs(v)<1e-9?'#B3ADA1':'#ECE8DF')+'" stroke-width="1"/>';
+    h+='<text x="'+(m.l-7)+'" y="'+(yy+3.5)+'" text-anchor="end">'+fmtNum(v,decOf([ys]))+'</text>';
+  }
+  /* Axe des abscisses */
+  if(numX){
+    var pxu=iw/(xmax-xmin),xst=[1,2,5,10,20,25,50,100].filter(function(k){return k*pxu>=42;})[0]||100;
+    for(var xt=Math.ceil(xmin/xst)*xst;xt<=xmax;xt+=xst){
+      var xx=r(X(xt));
+      h+='<line x1="'+xx+'" x2="'+xx+'" y1="'+(m.t+ih)+'" y2="'+(m.t+ih+4)+'" stroke="#B3ADA1"/>';
+      h+='<text x="'+xx+'" y="'+(H-8)+'" text-anchor="middle">'+xt+'</text>';
+    }
+  } else {
+    var every=Math.ceil(xs.length/Math.max(2,Math.floor(iw/48)));
+    xs.forEach(function(x,i){ if(i%every)return; h+='<text x="'+r(X(x))+'" y="'+(H-8)+'" text-anchor="middle">'+esc(x)+'</text>'; });
+  }
+  var order={bande:0,palier:1,'repère':2,mesure:3},ink=0,inkOf={};
+  f.series.forEach(function(s){if(s.render==='mesure'){inkOf[s.name]=FIG_INK[ink%FIG_INK.length];ink++;}});
+  var sorted=f.series.slice().sort(function(a,b){return order[a.render]-order[b.render];});
+  var nBarSeries=f.series.filter(function(s){return s.render==='mesure';}).length||1,barIdx=0;
+  sorted.forEach(function(s){
+    var pts=s.points.slice();
+    if(numX)pts.sort(function(a,b){return a.x-b.x;});
+    if(s.render==='bande'){
+      var top='',bot=[];
+      pts.forEach(function(p){
+        var x0=r(X(p.x)-half),x1=r(X(p.x)+half);
+        top+=(top?'L':'M')+x0+' '+r(Y(p.hi))+'L'+x1+' '+r(Y(p.hi));
+        bot.unshift('L'+x1+' '+r(Y(p.v))+'L'+x0+' '+r(Y(p.v)));
+      });
+      h+='<path d="'+top+bot.join('')+'Z" fill="'+FIG_BAND+'" fill-opacity=".85"/>';
+    } else if(s.render==='palier'){
+      var i=0;
+      while(i<pts.length){
+        var j=i;
+        while(j+1<pts.length&&pts[j+1].v===pts[i].v&&(!numX||pts[j+1].x-pts[j].x===1))j++;
+        h+='<line x1="'+r(X(pts[i].x)-half)+'" x2="'+r(X(pts[j].x)+half)+'" y1="'+r(Y(pts[i].v))+'" y2="'+r(Y(pts[i].v))+'" stroke="'+FIG_GREY+'" stroke-width="2.6"/>';
+        i=j+1;
+      }
+    } else if(s.render==='repère'){
+      h+='<polyline points="'+pts.map(function(p){return r(X(p.x))+','+r(Y(p.v));}).join(' ')+'" fill="none" stroke="'+FIG_GREY+'" stroke-width="1.2"/>';
+    } else if(bars){
+      var col=inkOf[s.name],w=half*1.4/nBarSeries,off=-half*0.7+barIdx*w;
+      pts.forEach(function(p){
+        var y0=Y(Math.max(0,p.v)),y1=Y(Math.min(0,p.v));
+        var op=p.s==='rétropolé'?.4:p.s==='provisoire'?.55:1;
+        h+='<rect x="'+r(X(p.x)+off)+'" y="'+r(y0)+'" width="'+r(w*0.92)+'" height="'+r(y1-y0)+'" fill="'+col+'" fill-opacity="'+op+'"'+(p.s==='provisoire'?' stroke="'+col+'" stroke-dasharray="3 2"':'')+'/>';
+      });
+      barIdx++;
+    } else {
+      /* Courbe : segments regroupés par style. Pointillé si une extrémité est provisoire,
+         teinte claire si une extrémité est rétropolée. */
+      var colr=inkOf[s.name],runs=[];
+      for(var k=1;k<pts.length;k++){
+        var a=pts[k-1],b=pts[k],sty=(a.s==='provisoire'||b.s==='provisoire')?'p':(a.s==='rétropolé'||b.s==='rétropolé')?'r':'c';
+        var last=runs[runs.length-1];
+        if(last&&last.sty===sty)last.pts.push(b); else runs.push({sty:sty,pts:[a,b]});
+      }
+      runs.forEach(function(run){
+        h+='<polyline points="'+run.pts.map(function(p){return r(X(p.x))+','+r(Y(p.v));}).join(' ')+'" fill="none" stroke="'+colr+'" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"'
+          +(run.sty==='p'?' stroke-dasharray="3 3"':'')+(run.sty==='r'?' stroke-opacity=".38"':'')+'/>';
+      });
+      if(pts.length===1)h+='<circle cx="'+r(X(pts[0].x))+'" cy="'+r(Y(pts[0].v))+'" r="3" fill="'+colr+'"/>';
+      pts.forEach(function(p){ if(p.s==='provisoire')h+='<circle cx="'+r(X(p.x))+'" cy="'+r(Y(p.v))+'" r="3" fill="#F7F5F0" stroke="'+colr+'" stroke-width="1.6"/>'; });
+    }
+  });
+  return h+'</svg>';
+}
+function figLegend(f){
+  var h='<div class="fig-legend">',ink=0,st={};
+  f.series.forEach(function(s){
+    var sw;
+    if(s.render==='bande')sw='<rect x="0" y="1" width="26" height="10" fill="'+FIG_BAND+'"/>';
+    else if(s.render==='palier')sw='<line x1="0" x2="26" y1="6" y2="6" stroke="'+FIG_GREY+'" stroke-width="2.6"/>';
+    else if(s.render==='repère')sw='<line x1="0" x2="26" y1="6" y2="6" stroke="'+FIG_GREY+'" stroke-width="1.2"/>';
+    else {
+      var c=FIG_INK[ink%FIG_INK.length];ink++;
+      sw=f.type==='barres'?'<rect x="6" y="1" width="14" height="10" fill="'+c+'"/>':'<line x1="0" x2="26" y1="6" y2="6" stroke="'+c+'" stroke-width="2.2"/>';
+      s.points.forEach(function(p){if(p.s)st[p.s]=1;});
+    }
+    h+='<span><svg width="26" height="12" aria-hidden="true">'+sw+'</svg>'+esc(s.name)+'</span>';
+  });
+  if(f.type!=='barres'&&(st['provisoire']||st['rétropolé'])){
+    h+='</div><div class="fig-legend fig-legend-st"><span class="fig-leg-st">Statut des données :</span><span class="fig-leg-st"><svg width="26" height="12" aria-hidden="true"><line x1="0" x2="26" y1="6" y2="6" stroke="#27221B" stroke-width="2.2"/></svg>consolidées</span>';
+    if(st['provisoire'])h+='<span class="fig-leg-st"><svg width="26" height="12" aria-hidden="true"><line x1="0" x2="26" y1="6" y2="6" stroke="#27221B" stroke-width="2.2" stroke-dasharray="3 3"/></svg>provisoires</span>';
+    if(st['rétropolé'])h+='<span class="fig-leg-st"><svg width="26" height="12" aria-hidden="true"><line x1="0" x2="26" y1="6" y2="6" stroke="#27221B" stroke-width="2.2" stroke-opacity=".38"/></svg>rétropolées</span>';
+  }
+  return h+'</div>';
+}
+function figureHTML(f){
+  figCounter++;
+  var h='<figure class="fig"><figcaption class="fig-cap"><span class="fig-num">Figure '+figCounter+'</span><span class="fig-title">'+esc(f.title)+'</span>'+(f.unit?'<span class="fig-unit">'+esc(f.unit)+'</span>':'')+'</figcaption>';
+  if(f.type==='image'){
+    h+='<div class="fig-img"><img src="figures/'+esc(f.file)+'" alt="'+esc(f.alt)+'" loading="lazy"></div>';
+  } else if(f.type==='tableau'){
+    h+='<div class="fig-scroll">'+figTable(f)+'</div>';
+  } else if(f.series&&f.series.length){
+    h+='<div class="fig-scroll"><div class="fig-chart">'+figSVG(f)+'</div></div>'+figLegend(f);
+  }
+  if(f.note)h+='<p class="fig-note">'+esc(f.note)+'</p>';
+  if(f.sources&&f.sources.length){
+    h+='<p class="fig-src"><b>Source'+(f.sources.length>1?'s':'')+' :</b> '+f.sources.map(function(sid){
+      var b=bibById[sid]; if(!b)return esc(sid);
+      return (b.authors?esc(b.authors)+', ':'')+'<i>'+esc(b.title)+'</i>'+(b.date?' ('+esc(b.date)+')':'')+(b.url?' <a href="'+esc(b.url)+'" target="_blank" rel="noopener" aria-label="Consulter la source">↗</a>':'');
+    }).join(' ; ')+'</p>';
+  }
+  if((f.type==='courbe'||f.type==='barres')&&f.series&&f.series.length){
+    h+='<button class="fig-toggle" type="button" aria-expanded="false">Voir les données</button><div class="fig-data hidden">'+figTable(f)+'</div>';
+  }
+  return h+'</figure>';
+}
+/* Texte éditorial : paragraphes, appels de note (si ids fournis) et figures. */
+function richText(text, ids){
+  return String(text||'').split(/\r?\n+/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){
+    var fm=l.match(/^\{\{\s*([^}]+?)\s*\}\}$/);
+    if(fm){ var fg=figById[fm[1]]; return fg?figureHTML(fg):''; }
+    var html=esc(l);
+    if(ids)html=html.replace(/\[(\d+)\]/g,function(m,n){
+      var i=parseInt(n,10)-1, sid=ids[i];
+      if(sid===undefined)return '<sup>['+n+']</sup>';
+      return '<sup><a href="#src-'+esc(sid)+'" title="'+esc(sid)+'">['+n+']</a></sup>';
+    });
+    return '<p>'+html+'</p>';
+  }).join('');
+}
+function footnotes(text, ids){ return richText(text, ids||[]); }
 function renderPanelBody(){
   var f=findSubject(state.subject); if(!f)return;
   var s=f.subject, ed=edBySubject[s.id]||[], body=$('pBody'), h='';
+  figCounter=0;
+  /* Largeur réelle disponible pour un graphique : on dessine à cette largeur pour que
+     les graduations restent lisibles sur mobile, sans défilement horizontal. */
+  figTargetW=Math.max(260,Math.min(560,(body.clientWidth||560)-(state.tab==='analyse'?118:114)));
   if(state.tab==='positions'){
     h+='<p class="p-section-label">« Le programme, mot à mot » — transcription littérale</p>';
     var any=false;
@@ -544,7 +780,7 @@ function renderPanelBody(){
     if(!pp.length)h+='<p class="p-empty">Pas encore de parti pris sur ce sujet. Les contributions arrivent au fil du projet.</p>';
     pp.forEach(function(p){
       var col=ppColor(p.author||'?');
-      h+='<div class="pp-card" style="--pp:'+col+'"><div class="pp-head"><span class="pp-av">'+esc(initials(p))+'</span><span class="pp-name">L\'avis de '+esc(p.author||'Anonyme')+'</span><span class="pp-tag">Opinion</span></div><p>'+esc(p.text)+'</p></div>';
+      h+='<div class="pp-card" style="--pp:'+col+'"><div class="pp-head"><span class="pp-av">'+esc(initials(p))+'</span><span class="pp-name">L\'avis de '+esc(p.author||'Anonyme')+'</span><span class="pp-tag">Opinion</span></div>'+richText(p.text,null)+'</div>';
     });
   }
   body.innerHTML=h; body.scrollTop=0;
@@ -715,6 +951,14 @@ function renderSources(){
 /* ===== Init ===== */
 $('majDate').textContent = D.meta && D.meta.generated ? 'Données du '+D.meta.generated : '';
 $('footMeta').textContent = 'Comparateur 2027 — données mises à jour le '+(D.meta?D.meta.generated:'');
+/* Bouton « Voir les données » des figures (délégation : le contenu du panneau est régénéré). */
+$('pBody').addEventListener('click',function(e){
+  var b=e.target.closest('.fig-toggle'); if(!b)return;
+  var d=b.nextElementSibling, open=d.classList.contains('hidden');
+  d.classList.toggle('hidden',!open);
+  b.setAttribute('aria-expanded',open?'true':'false');
+  b.textContent=open?'Masquer les données':'Voir les données';
+});
 renderCards(); renderSources(); applyHash();
 })();
 </script>
