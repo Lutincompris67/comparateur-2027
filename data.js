@@ -3039,14 +3039,14 @@ window.COMPARATEUR_DATA = {
    "unit": "MtCO₂e par an",
    "axisMin": 0,
    "axisMax": 900,
-   "note": "Émissions de gaz à effet de serre sur le territoire, hors puits de carbone (hors utilisation des terres et forêts). Périmètre : France hexagonale et Outre-mer inclus dans l'Union européenne, hors transports aérien et maritime internationaux. Panier de Kyoto de 7 gaz, pouvoirs de réchauffement à 100 ans du 5e rapport du GIEC. 1990 est l'année de référence des engagements climatiques. Données consolidées jusqu'en 2024 (Citepa, édition 2026) ; 2025, en pointillé, est une estimation provisoire. Les budgets carbone sont des plafonds d'émissions annuels moyens par période de cinq ans ; les tranches indicatives les découpent année par année (décret n° 2026-636 du 16 juillet 2026). Ces émissions ne comptent pas celles des biens et services importés : voir la figure sur l'empreinte carbone.",
+   "note": "Émissions de gaz à effet de serre sur le territoire, hors puits de carbone (hors utilisation des terres et forêts). Périmètre : France hexagonale et Outre-mer inclus dans l'Union européenne, hors transports aérien et maritime internationaux. Panier de Kyoto de 7 gaz, pouvoirs de réchauffement à 100 ans du 5e rapport du GIEC. 1990 est l'année de référence des engagements climatiques. Données consolidées jusqu'en 2024 (Citepa, édition 2026) ; 2025, en pointillé, est une estimation provisoire. Les budgets carbone sont des seuils d'émissions exprimés en moyenne annuelle par période de cinq ans ; les tranches indicatives les découpent année par année (décret n° 2026-636 du 16 juillet 2026). Ces émissions ne comptent pas celles des biens et services importés : voir la figure sur l'empreinte carbone.",
    "sources": [
     "CITEPA-2026-01",
     "JORF-2026-01"
    ],
    "edition": "Citepa, format Secten, édition 2026 ; décret n° 2026-636 du 16/07/2026",
    "file": "",
-   "alt": "Courbe des émissions territoriales brutes de la France : 547 MtCO₂e en 1990, 367 en 2024 et 359 en 2025 (estimation provisoire). Elle est prolongée par les budgets carbone du décret : 342 MtCO₂e par an sur 2024-2028, 262 sur 2029-2033 et 194 sur 2034-2038, avec des tranches indicatives annuelles descendant de 367 en 2024 à 167 en 2038.",
+   "alt": "Courbe des émissions territoriales brutes de la France : 547 MtCO₂e en 1990, 367 en 2024 et 359 en 2025 (estimation provisoire). Elle est prolongée par les tranches indicatives annuelles du décret, qui descendent de 367 MtCO₂e en 2024 à 167 en 2038.",
    "series": [
     {
      "name": "Émissions territoriales brutes (Citepa)",
@@ -3200,72 +3200,6 @@ window.COMPARATEUR_DATA = {
      ]
     },
     {
-     "name": "Budgets carbone, plafond annuel moyen par période (décret n° 2026-636)",
-     "render": "palier",
-     "points": [
-      {
-       "x": 2024,
-       "v": 342
-      },
-      {
-       "x": 2025,
-       "v": 342
-      },
-      {
-       "x": 2026,
-       "v": 342
-      },
-      {
-       "x": 2027,
-       "v": 342
-      },
-      {
-       "x": 2028,
-       "v": 342
-      },
-      {
-       "x": 2029,
-       "v": 262
-      },
-      {
-       "x": 2030,
-       "v": 262
-      },
-      {
-       "x": 2031,
-       "v": 262
-      },
-      {
-       "x": 2032,
-       "v": 262
-      },
-      {
-       "x": 2033,
-       "v": 262
-      },
-      {
-       "x": 2034,
-       "v": 194
-      },
-      {
-       "x": 2035,
-       "v": 194
-      },
-      {
-       "x": 2036,
-       "v": 194
-      },
-      {
-       "x": 2037,
-       "v": 194
-      },
-      {
-       "x": 2038,
-       "v": 194
-      }
-     ]
-    },
-    {
      "name": "Tranches indicatives annuelles (décret n° 2026-636)",
      "render": "repère",
      "points": [
@@ -3340,7 +3274,7 @@ window.COMPARATEUR_DATA = {
    "unit": "MtCO₂e par an",
    "axisMin": 0,
    "axisMax": 900,
-   "note": "Émissions de gaz à effet de serre induites par la demande finale intérieure : émissions directes des ménages, émissions de la production intérieure hors exportations et émissions associées aux importations. Hors puits de carbone. Champ : France et Saint-Martin ; pour les transports, émissions des unités résidentes, y compris à l'étranger. Les valeurs 1990-2009, en teinte claire, sont rétropolées à partir du calcul de 2010 ; 2024, en pointillé, est provisoire (Insee-SDES, octobre 2025). L'estimation est révisée chaque année : en 2025, la révision des données internationales a abaissé son niveau d'environ 7 % sur l'ensemble de la période. Les budgets indicatifs en empreinte sont fixés sous forme de fourchettes par le décret n° 2026-636 du 16 juillet 2026. Même échelle verticale que la figure sur les émissions territoriales.",
+   "note": "Émissions de gaz à effet de serre induites par la demande finale intérieure : émissions directes des ménages, émissions de la production intérieure hors exportations et émissions associées aux importations. Hors puits de carbone. Champ : France et Saint-Martin ; pour les transports, émissions des unités résidentes, y compris à l'étranger. Les valeurs 1990-2009, en teinte claire, sont rétropolées à partir du calcul de 2010 ; 2024, en pointillé, est provisoire (Insee-SDES, octobre 2025). L'estimation est révisée chaque année : en 2025, la révision des données internationales a abaissé son niveau d'environ 7 % sur l'ensemble de la période. Les budgets indicatifs en empreinte sont fixés sous forme d'intervalles par le décret n° 2026-636 du 16 juillet 2026. Même échelle verticale que la figure sur les émissions territoriales.",
    "sources": [
     "SDES-2025-01",
     "SDES-2025-02",
@@ -3348,7 +3282,7 @@ window.COMPARATEUR_DATA = {
    ],
    "edition": "Insee-SDES, octobre 2025 (données 1990-2024) ; décret n° 2026-636 du 16/07/2026",
    "file": "",
-   "alt": "Courbe de l'empreinte carbone de la France : 702 MtCO₂e en 1990, un maximum de 816 en 2008, puis 563 en 2024 (provisoire). Elle est prolongée par les fourchettes indicatives du décret : 516 à 531 MtCO₂e par an sur 2024-2028, 408 à 446 sur 2029-2033 et 312 à 358 sur 2034-2038.",
+   "alt": "Courbe de l'empreinte carbone de la France : 702 MtCO₂e en 1990, un maximum de 816 en 2008, puis 563 en 2024 (provisoire). Elle est prolongée par les intervalles indicatifs du décret : 516 à 531 MtCO₂e par an sur 2024-2028, 408 à 446 sur 2029-2033 et 312 à 358 sur 2034-2038.",
    "series": [
     {
      "name": "Empreinte carbone (Insee-SDES)",
@@ -3518,7 +3452,7 @@ window.COMPARATEUR_DATA = {
      ]
     },
     {
-     "name": "Budgets indicatifs en empreinte, fourchette (décret n° 2026-636)",
+     "name": "Budgets indicatifs en empreinte, intervalle (décret n° 2026-636)",
      "render": "bande",
      "points": [
       {
