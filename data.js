@@ -1,6 +1,6 @@
 window.COMPARATEUR_DATA = {
  "meta": {
-  "generated": "2026-09-17",
+  "generated": "2026-09-20",
   "title": "Comparateur 2027"
  },
  "candidates": [
@@ -2703,6 +2703,22 @@ window.COMPARATEUR_DATA = {
     "KAZLOU-2024-01",
     "SNBC3-2026-01"
    ]
+  },
+  {
+   "id": "ATT-emissions-ges",
+   "type": "analyse",
+   "author": "Lucas",
+   "initials": "LB",
+   "text": "Le Soleil chauffe la surface de la Terre qui, par conséquent, émet un rayonnement infrarouge. Un gaz à effet de serre (GES) est un gaz dont les molécules absorbent une partie de ce rayonnement [1]. L'atmosphère renvoie alors vers la surface une énergie qui s'ajoute au rayonnement solaire et élève sa température d'équilibre [1]. Appartiennent notamment à cette catégorie la vapeur d'eau, le dioxyde de carbone, le méthane, le protoxyde d'azote et l'ozone [1]. Chacun absorbe dans des gammes de longueurs d'onde qui lui sont propres et chacun contribue de manière différente au réchauffement [1].\r\nAu 16 septembre 2026, l'Accord de Paris compte 194 parties. Toutes rapportent les émissions de sept gaz, désignés comme le « panier de Kyoto » : le dioxyde de carbone, le méthane, le protoxyde d'azote, les familles des HFC et des PFC, l'hexafluorure de soufre et le trifluorure d'azote [2]. La vapeur d'eau et l'ozone n'y figurent pas. Certains HFC récemment développés, les HFO, ne relèvent pas des obligations de déclaration de la convention-cadre des Nations Unies sur les changements climatiques (CCNUCC) et n'entrent pas non plus dans le total [2]. Les gaz à effet de serre ne sont donc pas tous comptabilisés dans les émissions de GES que rapportent les États.\r\nPour additionner des gaz qui contribuent de manière inégale au réchauffement, chaque tonne émise est convertie en équivalent CO₂ au moyen du pouvoir de réchauffement global, qui rapporte à celui du dioxyde de carbone le forçage radiatif cumulé sur une durée donnée [2]. Cette durée a été fixée à cent ans dans le cadre de la convention-cadre des Nations Unies sur les changements climatiques [2].\r\nCôté français, deux mesures coexistent. La première est la quantité totale brute des émissions réalisées sur le territoire, Outre-mer compris : 367 MtCO₂e en 2024, hors puits de carbone (en ne comptabilisant donc pas ce que les forêts et les sols relâchent ainsi que ce qu'ils absorbent). C'est sur elle que le décret du 16 juillet 2026 se base pour fixer des budgets carbone [3].\r\n{{FIG-ges-territoriales}}\r\nLa seconde est l'empreinte carbone, qui traduit ce que la demande intérieure française entraîne comme émissions. Elle est la somme de deux composantes. L'une est la part des émissions du territoire qui sert à la consommation intérieure, les exportations retirées. L'autre est la part des émissions liées aux biens et services importés. Estimée à 563 MtCO₂e la même année, elle se décompose en 279 Mt pour la première et 284 Mt pour la seconde [3].\r\n{{FIG-ges-empreinte}}\r\nLes deux grandeurs n'ont pas le même statut : la première est un inventaire remis chaque année au titre de la CCNUCC, la seconde une estimation modélisée qu'aucune norme internationale n'encadre [4]. Le décret leur assigne d'ailleurs des trajectoires de nature différente : des budgets carbone pour l'une, des fourchettes explicitement indicatives pour l'autre [3].\r\nLa France se donne des budgets carbone, ce sont des seuils pluriannuels d'émissions fixés par période de cinq ans [3]. Les deux premiers ont connu des sorts opposés : celui de 2015-2018 a été dépassé de 61 MtCO₂e cumulées, celui de 2019-2023 respecté avec une marge de 91 Mt, pour des émissions moyennes de 406 MtCO₂e par an pour un seuil de 425 [5]. Ce second budget avait toutefois été révisé à la hausse en 2019 [6].\r\nLe troisième budget porte sur 2024-2028 et s'établit à 342 MtCO₂e de moyenne par an, suivi d'un quatrième à 262 de moyenne pour 2029-2033 et d'un cinquième à 194 de moyenne pour 2034-2038. Les tranches annuelles indicatives diminuent de 367 MtCO₂e en 2024 à 276 en 2030 ; la première reprend le niveau estimé en 2024 [3]. Le Citepa estime les émissions de 2025 à 359 MtCO₂e, soit une baisse de 2,1 %, après 3,0 % l'année précédente [2].\r\nLa baisse ne vient pas de partout. Entre 1990 et 2024, les émissions de l'industrie sont passées de 140 à 62 MtCO₂e et celles de la production d'énergie de 79 à 31, alors que celles des transports, premier poste d'émissions du pays, étaient de 125 en 1990 comme en 2024 [3]. Le Haut conseil pour le climat relève qu'en 2025 la moitié de la baisse est portée par un recul d'activité tendanciel dans l'industrie et l'élevage : chimie, métallurgie et minéraux pour 2,7 MtCO₂e, cheptel bovin pour 1,1 Mt, sur une baisse totale estimée de 7,6 Mt. Ces reculs, précise-t-il, ne correspondent pas entièrement à la mise en œuvre de la stratégie nationale bas-carbone [7].",
+   "sources": [
+    "DUFRESNE-2011-01",
+    "CITEPA-2026-01",
+    "JORF-2026-01",
+    "SDES-2025-02",
+    "MTE-2025-01",
+    "AN-2019-01",
+    "HCC-2026-01"
+   ]
   }
  ],
  "bibliography": [
@@ -2969,6 +2985,50 @@ window.COMPARATEUR_DATA = {
    "date": "2025",
    "url": "https://www.statistiques.developpement-durable.gouv.fr/media/8720/download?inline",
    "consulted": "16/09/2026"
+  },
+  {
+   "id": "DUFRESNE-2011-01",
+   "registre": "analyse",
+   "authors": "Jean-Louis Dufresne, Jacques Treiner",
+   "title": "L'effet de serre atmosphérique : plus subtil qu'on ne le croit !",
+   "type": "Étude scientifique",
+   "org": "La Météorologie, n° 72, p. 31-41, Société météorologique de France",
+   "date": "février 2011",
+   "url": "https://lameteorologie.fr/issues/2011/72/meteo_2011_72_31",
+   "consulted": "19/09/2026"
+  },
+  {
+   "id": "MTE-2025-01",
+   "registre": "analyse",
+   "authors": "Ministère de la Transition écologique",
+   "title": "Climat : la France a respecté ses engagements de baisse des émissions pour la période 2019-2023 et a poursuivi cette baisse en 2024",
+   "type": "Texte officiel",
+   "org": "Ministère de la Transition écologique",
+   "date": "16 juin 2025",
+   "url": "https://www.ecologie.gouv.fr/presse/climat-france-respecte-ses-engagements-baisse-emissions-periode-2019-2023-poursuivi-cette",
+   "consulted": "19/09/2026"
+  },
+  {
+   "id": "AN-2019-01",
+   "registre": "analyse",
+   "authors": "Ministère de la Transition écologique et solidaire, en réponse à une question de Patricia Mirallès",
+   "title": "Réponse à la question écrite n° 14808 — Accompagnement de l'industrie dans le cadre de la stratégie bas carbone",
+   "type": "Texte officiel",
+   "org": "Assemblée nationale, 15e législature",
+   "date": "22 janvier 2019",
+   "url": "https://www.assemblee-nationale.fr/dyn/15/questions/QANR5L15QE14808",
+   "consulted": "19/09/2026"
+  },
+  {
+   "id": "HCC-2026-01",
+   "registre": "analyse",
+   "authors": "Haut conseil pour le climat",
+   "title": "Dangers climatiques : la France face à ses responsabilités — Rapport annuel 2026",
+   "type": "Rapport institutionnel",
+   "org": "Haut conseil pour le climat",
+   "date": "juillet 2026",
+   "url": "https://www.hautconseilclimat.fr/wp-content/uploads/2026/07/HCC_Rapport_annuel_2026_1707_2.pdf",
+   "consulted": "19/09/2026"
   }
  ],
  "figures": [
@@ -2979,7 +3039,7 @@ window.COMPARATEUR_DATA = {
    "unit": "MtCO₂e par an",
    "axisMin": 0,
    "axisMax": 900,
-   "note": "Émissions de gaz à effet de serre sur le territoire, hors puits de carbone (hors utilisation des terres et forêts). Périmètre : France hexagonale et Outre-mer inclus dans l'Union européenne, hors transports aérien et maritime internationaux. Panier de Kyoto de 7 gaz, pouvoirs de réchauffement à 100 ans du 5e rapport du GIEC. 1990 est l'année de référence des engagements climatiques. Données consolidées jusqu'en 2024 (Citepa, édition 2026) ; 2025, en pointillé, est une estimation provisoire. Les budgets carbone sont des plafonds d'émissions annuels moyens par période de cinq ans ; les tranches indicatives les découpent année par année (décret n° 2026-636 du 16 juillet 2026, qui prévoit leur ajustement annuel). Ces émissions ne comptent pas celles des biens et services importés : voir la figure sur l'empreinte carbone.",
+   "note": "Émissions de gaz à effet de serre sur le territoire, hors puits de carbone (hors utilisation des terres et forêts). Périmètre : France hexagonale et Outre-mer inclus dans l'Union européenne, hors transports aérien et maritime internationaux. Panier de Kyoto de 7 gaz, pouvoirs de réchauffement à 100 ans du 5e rapport du GIEC. 1990 est l'année de référence des engagements climatiques. Données consolidées jusqu'en 2024 (Citepa, édition 2026) ; 2025, en pointillé, est une estimation provisoire. Les budgets carbone sont des plafonds d'émissions annuels moyens par période de cinq ans ; les tranches indicatives les découpent année par année (décret n° 2026-636 du 16 juillet 2026). Ces émissions ne comptent pas celles des biens et services importés : voir la figure sur l'empreinte carbone.",
    "sources": [
     "CITEPA-2026-01",
     "JORF-2026-01"
