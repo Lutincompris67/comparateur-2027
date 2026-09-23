@@ -11,7 +11,8 @@
 <style>
 :root{
   --paper:#F7F5F0; --card:#FFFFFF; --ink:#27221B; --ink-2:#5C5346; --ink-3:#978D7E;
-  --terre:#8C4A2F; --terre-deep:#6E3920; --terre-soft:#F4E7DE; --terre-mist:#FAF2EC;
+  --terre:#CC7A48; --terre-deep:#B05F2E; --terre-soft:#F4E2D2; --terre-mist:#FBF1E9;
+  --terre-accroche:#CC7A48; --terre-accroche-line:#E08A4E;
   --graphite:#6B6459; --graphite-soft:#EFEDE8;
   --rule:#E0DACF; --rule-soft:#ECE8DF;
   --gb:#CDC8BF; --gb-border:#B3ADA1; --gb-hover:#C2BCB1; --gb-frame:#534D43;
@@ -39,15 +40,26 @@ nav a{font-size:12.5px;text-decoration:none;color:var(--ink-3);padding:4px 2px;b
 nav a:hover{color:var(--terre)}
 nav a.on{color:var(--terre);border-color:var(--terre)}
 
-/* ===== Bandeau registres (signature) ===== */
+/* ===== Accroche percutante (accueil uniquement) ===== */
+.accroche-wrap{background:var(--terre-accroche);border-bottom:3px solid var(--terre-accroche-line)}
+.accroche{max-width:1180px;margin:0 auto;padding:18px 16px;text-align:center}
+.accroche-hl{font-family:var(--serif);font-weight:600;font-size:clamp(19px,4.6vw,30px);line-height:1.28;color:#fff;letter-spacing:.2px}
+@media(max-width:560px){.accroche{padding:20px 16px}.accroche-hl{font-size:22px}}
+
+/* ===== Bandeau registres (signature) : dégradé de terracotta ===== */
 .registres{display:flex;gap:0;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin:20px 0 6px;background:var(--card)}
-.registres>div{flex:1;padding:11px 15px;font-size:12px;color:var(--ink-2);border-left:1px solid var(--rule-soft)}
+.registres>div{flex:1;padding:13px 16px;font-size:12px;border-left:1px solid rgba(255,255,255,.3)}
 .registres>div:first-child{border-left:none}
-.registres b{display:block;font-size:12.5px;color:var(--ink);margin-bottom:1px}
-.registres .r1 b{font-family:var(--serif)}
-.registres .r2 b{font-weight:600}
+.registres b{display:block;font-size:13px;margin-bottom:3px}
+.registres .r1{background:var(--terre);color:#FBEDE2}
+.registres .r1 b{font-family:var(--serif);font-size:15px;color:#fff}
+.registres .r1-link{color:#fff;text-decoration:underline;text-decoration-color:rgba(255,255,255,.5);text-underline-offset:3px;transition:text-decoration-color .12s}
+.registres .r1-link:hover{text-decoration-color:#fff}
+.registres .r2{background:var(--terre-soft);color:#856248}
+.registres .r2 b{font-weight:600;color:var(--terre-deep)}
+.registres .r3{background:var(--terre-mist);color:var(--ink-2)}
 .registres .r3 b{color:var(--terre)}
-@media(max-width:700px){.registres{flex-direction:column}.registres>div{border-left:none;border-top:1px solid var(--rule-soft)}.registres>div:first-child{border-top:none}}
+@media(max-width:700px){.registres{flex-direction:column}.registres>div{border-left:none;border-top:1px solid rgba(255,255,255,.3)}.registres>div:first-child{border-top:none}}
 
 /* ===== Sommaire (page d'accueil) ===== */
 .tools{display:flex;gap:10px;align-items:center;margin:16px 0 6px;flex-wrap:wrap}
@@ -229,7 +241,7 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
 
 <header>
   <div class="wrap head-in">
-    <a class="brand" href="#" id="brandLink"><b>Comparateur 2027</b><span>Parce qu'en France, près de 60% des promesses ont été réalisées depuis 1995</span></a>
+    <a class="brand" href="#" id="brandLink"><b>Comparateur 2027</b><span>Les programmes des candidats, mot à mot</span></a>
     <nav>
       <a href="#methodologie" data-nav="methodologie">Méthodologie</a>
       <a href="#sources" data-nav="sources">Sources</a>
@@ -237,11 +249,17 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
   </div>
 </header>
 
+<div class="accroche-wrap" id="accrocheWrap">
+  <div class="wrap">
+    <p class="accroche"><span class="accroche-hl">Parce qu'en France, près de 60% des promesses des programmes ont été réalisées depuis 1995.</span></p>
+  </div>
+</div>
+
 <!-- ===== Vue sommaire (accueil) ===== -->
 <main id="view-accueil">
   <div class="wrap">
     <div class="registres" aria-label="Les trois registres du site">
-      <div class="r1"><b>« Le programme, mot à mot »</b>Parce qu'en France près de 60% des promesses ont été réalisées depuis 1995</div>
+      <div class="r1"><b><a href="https://www.youtube.com/watch?v=M84OlXxdHiY" target="_blank" rel="noopener" class="r1-link">Et s'ils ne mentaient pas ?</a></b>Macron a tenu, au moins partiellement, plus de 70% de ses promesses lors de son 1er mandat</div>
       <div class="r2"><b>L'analyse</b>Éclairage factuel et sourcé : explication des concepts, faisabilité, comparaisons. Sans jugement ou avis.</div>
       <div class="r3"><b>Les partis pris</b>Opinions assumées, publiées sous les initiales de leur auteur, sur les idées et non sur les candidats</div>
     </div>
@@ -254,8 +272,8 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
     </div>
     <button class="constit-banner" id="constitBanner" type="button">
       <span class="cb-left">
-        <span class="cb-kicker">Au cœur de 2027</span>
-        <span class="cb-title">Constitution — les révisions proposées</span>
+        <span class="cb-kicker">Le fondement de la République</span>
+        <span class="cb-title">Constitution — les révisions proposées de la loi des lois</span>
       </span>
       <span class="cb-go">Voir les propositions <span class="cb-arr">→</span></span>
     </button>
@@ -390,6 +408,8 @@ function showView(v){
   $('overlay').classList.remove('open'); $('panel').classList.remove('open');
   lockPageScroll(false);
   views.forEach(function(name){ $('view-'+name).classList.toggle('hidden', name!==v); });
+  /* L'accroche n'apparaît que sur la page d'accueil. */
+  $('accrocheWrap').classList.toggle('hidden', v!=='accueil');
   document.querySelectorAll('[data-nav]').forEach(function(a){
     a.classList.toggle('on', a.getAttribute('data-nav')===v);
   });
