@@ -1,6 +1,6 @@
 window.COMPARATEUR_DATA = {
  "meta": {
-  "generated": "2026-09-20",
+  "generated": "2026-10-03",
   "title": "Comparateur 2027"
  },
  "candidates": [
@@ -58,31 +58,11 @@ window.COMPARATEUR_DATA = {
    "name": "Economie",
    "subjects": [
     {
-     "id": "ECN-sante",
-     "label": "Santé",
-     "positions": {}
-    },
-    {
-     "id": "ECN-banque",
-     "label": "Banque",
-     "positions": {}
-    },
-    {
-     "id": "ECN-bourse",
-     "label": "Bourse",
-     "positions": {}
-    },
-    {
-     "id": "ECN-fonds-souverains",
-     "label": "Fonds souverains",
-     "positions": {}
-    },
-    {
-     "id": "ECN-protectionnisme",
-     "label": "Protectionnisme",
+     "id": "ECN-dette-deficit",
+     "label": "Dette et déficit publics",
      "positions": {
-      "Édouard Philippe": "Protéger le marché européen face à la concurrence déloyale chinoise, en imposant transferts de technologie, quotas de production et joint-ventures dans les secteurs stratégiques et permettre l'émergence de géants capables de sauver notre industrie automobile, sidérurgique et nucléaire.",
-      "Gabriel Attal": "Se protéger, c'est accepter de mettre en place des barrières commerciales claires : des taxes à l'importation ciblées sur les produits chinois vendus à perte (acier, voitures électriques, panneaux solaires), un contrôle strict des investissements chinois dans nos infrastructures les plus sensibles (ports, réseaux de télécommunications, centres de données) et une plus grande imperméabilité européenne (lorsqu'une entreprise chinoise est interdite de marchés publics dans un pays car elle bénéficie trop fortement de subvention d'État, elle doit être automatiquement interdite dans tous les autres)."
+      "Édouard Philippe": "[...] ramener le déficit de plus de 5 % à 2 % du PIB en fin de quinquennat, comme l'ont fait l'Allemagne ou les Pays-Bas.",
+      "Gabriel Attal": "L'objectif est clair : zéro déficit en 10 ans maximum. — Nous devons commencer par enrayer cette spirale de la dette. — Trois priorités claires seront fixées : l'éducation, l'écologie et la défense. — Toutes les propositions que nous formulerons durant la campagne seront financées. Nous ne ferons aucune promesse dont nous ne pourrions pas garantir le respect."
      }
     },
     {
@@ -93,8 +73,16 @@ window.COMPARATEUR_DATA = {
      }
     },
     {
-     "id": "ECN-assurance",
-     "label": "Assurance",
+     "id": "ECN-protectionnisme",
+     "label": "Protectionnisme",
+     "positions": {
+      "Édouard Philippe": "Protéger le marché européen face à la concurrence déloyale chinoise, en imposant transferts de technologie, quotas de production et joint-ventures dans les secteurs stratégiques et permettre l'émergence de géants capables de sauver notre industrie automobile, sidérurgique et nucléaire.",
+      "Gabriel Attal": "Se protéger, c'est accepter de mettre en place des barrières commerciales claires : des taxes à l'importation ciblées sur les produits chinois vendus à perte (acier, voitures électriques, panneaux solaires), un contrôle strict des investissements chinois dans nos infrastructures les plus sensibles (ports, réseaux de télécommunications, centres de données) et une plus grande imperméabilité européenne (lorsqu'une entreprise chinoise est interdite de marchés publics dans un pays car elle bénéficie trop fortement de subvention d'État, elle doit être automatiquement interdite dans tous les autres)."
+     }
+    },
+    {
+     "id": "ECN-fonds-souverains",
+     "label": "Fonds souverains",
      "positions": {}
     },
     {
@@ -108,12 +96,19 @@ window.COMPARATEUR_DATA = {
      "positions": {}
     },
     {
-     "id": "ECN-dette-deficit",
-     "label": "Dette et déficit publics",
-     "positions": {
-      "Édouard Philippe": "[...] ramener le déficit de plus de 5 % à 2 % du PIB en fin de quinquennat, comme l'ont fait l'Allemagne ou les Pays-Bas.",
-      "Gabriel Attal": "L'objectif est clair : zéro déficit en 10 ans maximum. — Nous devons commencer par enrayer cette spirale de la dette. — Trois priorités claires seront fixées : l'éducation, l'écologie et la défense. — Toutes les propositions que nous formulerons durant la campagne seront financées. Nous ne ferons aucune promesse dont nous ne pourrions pas garantir le respect."
-     }
+     "id": "ECN-banque",
+     "label": "Banque",
+     "positions": {}
+    },
+    {
+     "id": "ECN-bourse",
+     "label": "Bourse",
+     "positions": {}
+    },
+    {
+     "id": "ECN-assurance",
+     "label": "Assurance",
+     "positions": {}
     },
     {
      "id": "ECN-epargne",
@@ -122,6 +117,11 @@ window.COMPARATEUR_DATA = {
       "Édouard Philippe": "Créer un « livret capital France » pour mobiliser l'épargne dormante des Français, et utiliser la capitalisation retraite pour financer nos champions technologiques.",
       "Gabriel Attal": "Je propose un nouveau livret d'épargne, sur le modèle du livret A, pour orienter l'épargne des Français vers le financement de nouvelles places en crèche."
      }
+    },
+    {
+     "id": "ECN-sante",
+     "label": "Santé",
+     "positions": {}
     }
    ]
   },
