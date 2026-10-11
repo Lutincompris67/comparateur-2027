@@ -234,6 +234,22 @@ tbody tr:hover td.subj{background:#F6F0E9}
 .cite-link:hover{color:var(--terre-deep)}
 footer{border-top:1px solid var(--rule);padding:20px 0 34px;margin-top:10px}
 footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+footer a{color:var(--terre)}
+.p-signal{margin-top:22px;padding-top:12px;border-top:1px dashed var(--rule)}
+/* ===== Signalement ===== */
+#sigDlg{border:1px solid var(--rule);border-radius:12px;padding:20px 22px;width:min(480px,calc(100% - 32px));margin:auto;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+#sigDlg::backdrop{background:rgba(45,32,22,.45)}
+#sigDlg h2{font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:6px}
+#sigDlg label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin:12px 0 4px}
+#sigDlg textarea,#sigDlg input[type=text]{width:100%;padding:9px 11px;border:1px solid var(--rule);border-radius:8px;background:var(--card);font-family:var(--sans);font-size:14px;color:var(--ink)}
+#sigDlg textarea{min-height:120px;resize:vertical;line-height:1.5}
+.sig-ctx{font-size:12.5px;color:var(--ink-3)}
+.sig-pot{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.sig-etat{font-size:13px;margin-top:10px;min-height:1.2em;color:var(--ink-2)}
+.sig-actions{display:flex;gap:10px;margin-top:8px}
+.sig-btn{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:8px 15px;font-size:14px;font-weight:600;color:var(--ink-2)}
+.sig-pri{background:var(--terre-deep);border-color:var(--terre-deep);color:#fff}
+.sig-btn:disabled{opacity:.5;cursor:not-allowed}
 .hidden{display:none!important}
 </style>
 </head>
@@ -278,7 +294,7 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
       <span class="cb-go">Voir les propositions <span class="cb-arr">→</span></span>
     </button>
     <p class="som-label">Choisissez une thématique</p>
-    <div class="cards" id="cards"></div>
+    <div class="cards" id="cards"><p class="som-label">Chargement…</p></div>
   </div>
 </main>
 
@@ -319,7 +335,7 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
     <p>Certains textes sont accompagnés de figures. Chacune indique ses sources, et le bouton « Voir les données » affiche les valeurs qui la composent. Le choix d'une figure dépend du registre : une analyse retient les données qui éclairent le sujet, un parti pris celles qui appuient l'argument de son auteur. Leur construction, en revanche, obéit aux mêmes règles dans les deux cas, car un graphique pourrait véhiculer un argument fallacieux sans un mot d'opinion : les données provisoires sont signalées, et aucune couleur n'est associée à un candidat ou à un parti.</p>
 
     <h2>La neutralité, rendue vérifiable</h2>
-    <p>Nous ne prétendons pas être sans opinions : nous les signons et les séparons. Aucun candidat ne reçoit de traitement visuel distinctif ; les colonnes du tableau sont strictement identiques. La fidélité de la restitution est vérifiable par les liens vers les programmes d'origine. Si vous constatez une erreur de transcription ou d'attribution, signalez-la nous.</p>
+    <p>Nous ne prétendons pas être sans opinions : nous les signons et les séparons. Aucun candidat ne reçoit de traitement visuel distinctif ; les colonnes du tableau sont strictement identiques. La fidélité de la restitution est vérifiable par les liens vers les programmes d'origine. Si vous constatez une erreur de transcription ou d'attribution, <button class="cite-link" type="button" data-signaler style="font-size:inherit">signalez-la nous</button>.</p>
   </div>
 </main>
 
@@ -363,15 +379,38 @@ footer .wrap{font-size:12.5px;color:var(--ink-3);display:flex;justify-content:sp
   <div class="wrap">
     <span>Les cases « À venir » correspondent aux positions non encore publiées par écrit.</span>
     <span id="footMeta"></span>
+    <span><button class="cite-link" type="button" data-signaler>Signaler un problème</button> · <a href="contribuer.html">Espace contributeurs</a></span>
   </div>
 </footer>
 
-<script src="data.js"></script>
+<!-- ===== Signalement ===== -->
+<dialog id="sigDlg" aria-labelledby="sigTitre">
+  <form id="sigForm" method="dialog">
+    <h2 id="sigTitre">Signaler un problème</h2>
+    <p class="sig-ctx" id="sigCtx"></p>
+    <label for="sigMsg">Que faut-il corriger ?</label>
+    <textarea id="sigMsg" required minlength="5" maxlength="3000" placeholder="Erreur de transcription, source manquante, coquille, lien cassé…"></textarea>
+    <label for="sigContact">Un moyen de vous répondre (facultatif)</label>
+    <input type="text" id="sigContact" maxlength="200" placeholder="Adresse e-mail ou pseudo Discord">
+    <input type="text" id="sigSite" tabindex="-1" autocomplete="off" aria-hidden="true" class="sig-pot">
+    <p class="sig-etat" id="sigEtat" role="status"></p>
+    <div class="sig-actions">
+      <button type="submit" id="sigEnvoi" class="sig-btn sig-pri">Envoyer</button>
+      <button type="button" id="sigFermer" class="sig-btn">Fermer</button>
+    </div>
+  </form>
+</dialog>
+
 <script>
-(function(){
+/* ===== Source des données =====
+   Le site lit le contenu publié dans la base en ligne. Si elle ne répond pas, il
+   affiche la dernière version vue par ce navigateur, sinon la copie de secours
+   data.js rangée à côté de cette page. */
+var BASE_URL = 'https://bwkqtcxygzxcvrbzvdzg.supabase.co';
+var BASE_CLE = 'sb_publishable_iaBd03vrVGP-NxntLO9dzg_enTfgPHa';
+
+function demarrer(D){
 "use strict";
-var D = window.COMPARATEUR_DATA;
-if(!D){document.body.innerHTML='<div style="padding:40px;font-family:sans-serif">Le fichier de données <b>data.js</b> est introuvable. Vérifiez qu\'il se trouve dans le même dossier que index.html.</div>';return;}
 
 var esc = function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
 var $ = function(id){return document.getElementById(id);};
@@ -741,7 +780,7 @@ function figureHTML(f){
   figCounter++;
   var h='<figure class="fig"><figcaption class="fig-cap"><span class="fig-num">Figure '+figCounter+'</span><span class="fig-title">'+esc(f.title)+'</span>'+(f.unit?'<span class="fig-unit">'+esc(f.unit)+'</span>':'')+'</figcaption>';
   if(f.type==='image'){
-    h+='<div class="fig-img"><img src="figures/'+esc(f.file)+'" alt="'+esc(f.alt)+'" loading="lazy"></div>';
+    h+='<div class="fig-img"><img src="'+esc(f.url||('figures/'+f.file))+'" alt="'+esc(f.alt)+'" loading="lazy"></div>';
   } else if(f.type==='tableau'){
     h+='<div class="fig-scroll">'+figTable(f)+'</div>';
   } else if(f.series&&f.series.length){
@@ -754,6 +793,7 @@ function figureHTML(f){
       return (b.authors?esc(b.authors)+', ':'')+'<i>'+esc(b.title)+'</i>'+(b.date?' ('+esc(b.date)+')':'')+(b.url?' <a href="'+esc(b.url)+'" target="_blank" rel="noopener" aria-label="Consulter la source">↗</a>':'');
     }).join(' ; ')+'</p>';
   }
+  if(f.credit)h+='<p class="fig-src"><b>Source :</b> '+esc(f.credit)+'</p>';
   if((f.type==='courbe'||f.type==='barres')&&f.series&&f.series.length){
     h+='<button class="fig-toggle" type="button" aria-expanded="false">Voir les données</button><div class="fig-data hidden">'+figTable(f)+'</div>';
   }
@@ -815,9 +855,10 @@ function renderPanelBody(){
     if(!pp.length)h+='<p class="p-empty">Pas encore de parti pris sur ce sujet. Les contributions arrivent au fil du projet.</p>';
     pp.forEach(function(p){
       var col=ppColor(p.author||'?');
-      h+='<div class="pp-card" style="--pp:'+col+'"><div class="pp-head"><span class="pp-av">'+esc(initials(p))+'</span><span class="pp-name">L\'avis de '+esc(p.author||'Anonyme')+'</span><span class="pp-tag">Opinion</span></div>'+richText(p.text,null)+'</div>';
+      h+='<div class="pp-card" style="--pp:'+col+'"><div class="pp-head"><span class="pp-av">'+esc(initials(p))+'</span><span class="pp-name">L\'avis de '+esc(p.author||'Anonyme')+(p.age?', '+esc(p.age)+' ans':'')+'</span><span class="pp-tag">Opinion</span></div>'+richText(p.text,null)+'</div>';
     });
   }
+  h+='<p class="p-signal"><button class="cite-link" type="button" data-signaler>Signaler une erreur sur ce sujet</button></p>';
   body.innerHTML=h; body.scrollTop=0;
 }
 /* Fige le défilement de la page pendant que le panneau est ouvert, pour qu'une seule
@@ -983,6 +1024,41 @@ function renderSources(){
   }
 })();
 
+/* ===== Signalement d'un problème par un visiteur ===== */
+(function(){
+  var dlg=$('sigDlg'); if(!dlg||!dlg.showModal)return;
+  var sujet=null;
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-signaler]'); if(!b)return;
+    e.preventDefault();
+    var f=state.subject&&$('panel').classList.contains('open')?findSubject(state.subject):null;
+    sujet=f?f.subject.id:null;
+    $('sigCtx').textContent=f?'À propos de : '+f.subject.label+' ('+f.theme.name+')':'Votre message est transmis à l\'équipe du projet.';
+    $('sigEtat').textContent=''; $('sigEnvoi').disabled=false;
+    dlg.showModal(); $('sigMsg').focus();
+  });
+  $('sigFermer').addEventListener('click',function(){dlg.close();});
+  $('sigForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var msg=$('sigMsg').value.trim(), contact=$('sigContact').value.trim();
+    if(msg.length<5){$('sigEtat').textContent='Décrivez le problème en quelques mots.';return;}
+    if($('sigSite').value){dlg.close();return;} /* champ invisible : rempli seulement par un robot */
+    $('sigEnvoi').disabled=true; $('sigEtat').textContent='Envoi…';
+    fetch(BASE_URL+'/rest/v1/signalements',{
+      method:'POST',
+      headers:{'apikey':BASE_CLE,'Authorization':'Bearer '+BASE_CLE,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({sujet_id:sujet,message:msg.slice(0,3000),contact:contact||null})
+    }).then(function(r){
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      $('sigMsg').value=''; $('sigContact').value='';
+      $('sigEtat').textContent='Merci, votre signalement a bien été transmis.';
+    }).catch(function(){
+      $('sigEnvoi').disabled=false;
+      $('sigEtat').textContent='L\'envoi a échoué. Réessayez dans un instant.';
+    });
+  });
+})();
+
 /* ===== Init ===== */
 $('majDate').textContent = D.meta && D.meta.generated ? 'Données du '+D.meta.generated : '';
 $('footMeta').textContent = 'Comparateur 2027 — données mises à jour le '+(D.meta?D.meta.generated:'');
@@ -995,6 +1071,37 @@ $('pBody').addEventListener('click',function(e){
   b.textContent=open?'Masquer les données':'Voir les données';
 });
 renderCards(); renderSources(); applyHash();
+}
+
+(function(){
+"use strict";
+var CACHE='comparateur2027-donnees';
+function valide(D){ return D && D.themes && D.themes.length && D.candidates; }
+function echec(){
+  document.getElementById('cards').outerHTML='<p style="padding:30px 0;color:#5C5346">Les données du comparateur n\'ont pas pu être chargées. Vérifiez votre connexion, puis rechargez la page.</p>';
+}
+function secours(){
+  try{ var c=JSON.parse(localStorage.getItem(CACHE)||'null'); if(valide(c)){ demarrer(c); return; } }catch(e){}
+  var s=document.createElement('script');
+  s.src='data.js';
+  s.onload=function(){ if(valide(window.COMPARATEUR_DATA)) demarrer(window.COMPARATEUR_DATA); else echec(); };
+  s.onerror=echec;
+  document.head.appendChild(s);
+}
+if(!window.fetch){ secours(); return; }
+var ctl=window.AbortController?new AbortController():null;
+var minuteur=setTimeout(function(){ if(ctl)ctl.abort(); },8000);
+fetch(BASE_URL+'/rest/v1/rpc/donnees_publiques',{
+  method:'POST',
+  headers:{'apikey':BASE_CLE,'Authorization':'Bearer '+BASE_CLE,'Content-Type':'application/json'},
+  body:'{}', signal:ctl?ctl.signal:undefined
+}).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(D){ if(!valide(D)) throw new Error('base vide'); return D; })
+  .then(function(D){
+    clearTimeout(minuteur);
+    try{ localStorage.setItem(CACHE,JSON.stringify(D)); }catch(e){}
+    demarrer(D);
+  }, function(){ clearTimeout(minuteur); secours(); });
 })();
 </script>
 </body>

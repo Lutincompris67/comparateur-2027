@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Contribuer — Comparateur 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F5F0; --card:#FFFFFF; --ink:#27221B; --ink-2:#5C5346; --ink-3:#978D7E;
+  --terre:#CC7A48; --terre-deep:#B05F2E; --terre-soft:#F4E2D2; --terre-mist:#FBF1E9;
+  --graphite:#6B6459; --graphite-soft:#EFEDE8; --rule:#E0DACF; --rule-soft:#ECE8DF;
+  --vert:#1D7A5F; --vert-soft:#E2F1EB; --rouge:#A31D1D; --rouge-soft:#F8E4E1;
+  --serif:"Source Serif 4",Georgia,serif; --sans:"Archivo",system-ui,sans-serif; --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55}
+a{color:var(--terre-deep)}
+button,input,select,textarea{font-family:var(--sans);font-size:14.5px;color:var(--ink)}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--terre);outline-offset:2px}
+.wrap{max-width:900px;margin:0 auto;padding:0 16px}
+header{border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:20}
+.head-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;text-decoration:none;color:var(--ink)}
+.brand b{font-family:var(--serif);font-size:20px;font-weight:600}
+.brand span{font-size:11.5px;color:var(--ink-2);font-style:italic}
+.who{font-size:13px;color:var(--ink-2);display:flex;gap:10px;align-items:center}
+.tabs{display:flex;gap:2px;flex-wrap:wrap;border-bottom:1px solid var(--rule);margin:18px 0 20px}
+.tab{border:none;background:none;font-weight:600;color:var(--ink-2);padding:9px 12px;border-bottom:2.5px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--terre-deep);border-color:var(--terre)}
+.tab .n{display:inline-block;min-width:19px;padding:0 5px;margin-left:5px;border-radius:10px;background:var(--terre);color:#fff;font-size:11.5px;text-align:center}
+h1{font-family:var(--serif);font-size:26px;font-weight:600;margin:26px 0 8px}
+h2{font-family:var(--serif);font-size:19px;font-weight:600;margin:0 0 10px}
+h3{font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:20px 0 8px}
+p{margin-bottom:10px}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);padding:16px 18px;margin-bottom:14px}
+.muted{color:var(--ink-3);font-size:13px}
+.btn{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:8px 14px;font-weight:600;color:var(--ink-2)}
+.btn:hover{border-color:var(--graphite);color:var(--ink)}
+.btn.pri{background:var(--terre-deep);border-color:var(--terre-deep);color:#fff}
+.btn.pri:hover{background:#9A5124;color:#fff}
+.btn.danger{color:var(--rouge);border-color:#E3BDB8}
+.btn.small{padding:4px 9px;font-size:12.5px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.row>*{flex:1;min-width:190px}
+.row>.narrow{flex:0 0 110px;min-width:110px}
+.field{margin-bottom:13px}
+.field label,.lab{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
+.field small{display:block;color:var(--ink-3);font-size:12px;margin-top:3px}
+input[type=text],input[type=number],input[type=search],input[type=url],select,textarea{width:100%;padding:9px 11px;border:1px solid var(--rule);border-radius:8px;background:#fff}
+textarea{min-height:230px;line-height:1.6;resize:vertical}
+textarea.court{min-height:90px}
+textarea.verb{font-family:var(--serif);font-size:15.5px;min-height:130px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.pill{border:1px solid var(--rule);background:var(--card);border-radius:20px;padding:7px 15px;font-weight:600;color:var(--ink-2)}
+.pill.on{background:var(--terre-soft);border-color:var(--terre);color:var(--terre-deep)}
+.note{border-radius:8px;padding:9px 12px;font-size:13.5px;margin:8px 0}
+.note.warn{background:var(--terre-mist);border:1px solid var(--terre-soft);color:#7A4A26}
+.note.err{background:var(--rouge-soft);border:1px solid #E3BDB8;color:var(--rouge)}
+.note.ok{background:var(--vert-soft);border:1px solid #BFE0D3;color:var(--vert)}
+.note.info{background:var(--graphite-soft);border:1px solid var(--rule);color:var(--ink-2)}
+.note ul{margin-left:18px}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:4px;background:var(--graphite-soft);color:var(--graphite)}
+.badge.attente{background:var(--terre-soft);color:var(--terre-deep)}
+.badge.publie{background:var(--vert-soft);color:var(--vert)}
+.badge.refuse,.badge.hors{background:var(--rouge-soft);color:var(--rouge)}
+.meta{font-size:12.5px;color:var(--ink-3);margin:4px 0 10px}
+.meta b{color:var(--ink-2)}
+.texte{border-left:4px solid var(--graphite);padding:4px 0 4px 14px;margin:10px 0;font-size:14.5px;line-height:1.7;overflow-wrap:anywhere}
+.texte p+p{margin-top:.8em}
+.texte.verb{font-family:var(--serif);border-color:var(--terre)}
+.texte.verb::before{content:"«\00a0";color:var(--ink-3)}
+.texte.verb::after{content:"\00a0»";color:var(--ink-3)}
+.texte.pp{border-color:#7A4E83}
+.texte sup{font-weight:600;color:var(--terre-deep)}
+.texte figure{margin:12px 0;padding:10px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);font-size:12.5px;color:var(--ink-2)}
+.texte figure img{display:block;max-width:100%;height:auto;margin-bottom:6px;border-radius:5px}
+.srcs{font-size:13px;color:var(--ink-2);margin:6px 0 0 20px}
+.srcs li{margin-bottom:4px;overflow-wrap:anywhere}
+.srcline{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--rule-soft);font-size:13.5px}
+.srcline .num{font-weight:700;color:var(--terre-deep);min-width:28px}
+.srcline .t{flex:1;overflow-wrap:anywhere}
+.results button{display:block;width:100%;text-align:left;border:none;border-bottom:1px solid var(--rule-soft);background:none;padding:7px 4px;font-size:13.5px}
+.results button:hover{background:var(--terre-mist)}
+details{margin:10px 0}
+details>summary{cursor:pointer;font-weight:600;color:var(--terre-deep);font-size:13.5px}
+details>div{padding:12px 0 0}
+table.droits{width:100%;border-collapse:collapse;font-size:14px}
+table.droits th,table.droits td{padding:8px 6px;border-bottom:1px solid var(--rule-soft);text-align:center}
+table.droits th:first-child,table.droits td:first-child{text-align:left}
+table.droits th{font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-3)}
+table.droits input{width:18px;height:18px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.drop{border:2px dashed var(--terre);border-radius:12px;background:#fff;padding:30px 16px;text-align:center;cursor:pointer;color:var(--terre-deep);font-weight:600}
+dialog{border:1px solid var(--rule);border-radius:12px;padding:20px;max-width:460px;width:calc(100% - 32px);margin:auto}
+dialog::backdrop{background:rgba(45,32,22,.45)}
+.compte{font-size:12.5px;color:var(--ink-3);text-align:right;margin-top:3px}
+.compte.trop{color:var(--rouge);font-weight:700}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap head-in">
+    <a class="brand" href="index.html"><b>Comparateur 2027</b><span>Espace des contributeurs</span></a>
+    <div class="who" id="who"></div>
+  </div>
+</header>
+<main class="wrap" id="app"><p class="muted" style="margin-top:30px">Chargement…</p></main>
+<dialog id="dlg"></dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script>
+(function(){
+"use strict";
+/* ===== Réglages ===== */
+var SUPABASE_URL = 'https://bwkqtcxygzxcvrbzvdzg.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_iaBd03vrVGP-NxntLO9dzg_enTfgPHa';
+var MOTS_REPERE_PARTI_PRIS = 800;   /* ordre de grandeur visé */
+var MOTS_MAX_PARTI_PRIS = 1000;     /* au-delà, le dépôt est bloqué */
+
+var $ = function(id){ return document.getElementById(id); };
+var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
+var app = $('app');
+
+if(!window.supabase){
+  app.innerHTML = '<div class="note err" style="margin-top:30px">La page n\'a pas pu charger ses outils (bibliothèque Supabase). Vérifiez votre connexion, ou un bloqueur de contenu, puis rechargez.</div>';
+  return;
+}
+var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+var CIRCUITS = [
+  { id:'analyse',    droit:'analyses',    nom:'Analyse' },
+  { id:'parti pris', droit:'partis_pris', nom:'Parti pris' },
+  { id:'verbatim',   droit:'verbatims',   nom:'Verbatim' }
+];
+var S = {
+  session:null, profil:null, tab:null,
+  themes:[], sujets:[], sujetById:{}, candidats:[], sources:[], srcById:{}, figById:{},
+  pseudos:{}, form:null, nAttente:0, nSignal:0, message:null
+};
+
+/* ===== Outils ===== */
+function msgErreur(e){
+  var m = (e && (e.message || e.error_description)) || String(e);
+  if(/Failed to fetch|NetworkError/i.test(m)) return 'Connexion impossible avec la base. Réessayez dans un instant.';
+  if(/row-level security|permission denied/i.test(m)) return 'Votre compte n\'a pas le droit de faire cette action.';
+  return m;
+}
+/* Lit toutes les lignes d'une requête, par pages de 1000 (limite de l'API). */
+async function tout(fabrique){
+  var out = [], pas = 1000;
+  for(var i = 0; ; i += pas){
+    var r = await fabrique().range(i, i + pas - 1);
+    if(r.error) throw r.error;
+    out = out.concat(r.data);
+    if(r.data.length < pas) break;
+  }
+  return out;
+}
+async function rpc(nom, args){
+  var r = await sb.rpc(nom, args || {});
+  if(r.error) throw r.error;
+  return r.data;
+}
+function dateFr(iso){
+  if(!iso) return '';
+  var d = new Date(iso);
+  return d.toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'numeric'}) + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+}
+function nomCircuit(id){ var c = CIRCUITS.filter(function(x){ return x.id === id; })[0]; return c ? c.nom : id; }
+function libelleSujet(id){ var s = S.sujetById[id]; return s ? s.libelle + ' (' + s.thematique + ')' : id; }
+function flash(type, texte){ S.message = {type:type, texte:texte}; }
+function prendreFlash(){ var m = S.message; S.message = null; return m ? '<div class="note ' + m.type + '">' + esc(m.texte) + '</div>' : ''; }
+
+/* Fenêtre de confirmation, avec ou sans motif à saisir. Renvoie null si annulé. */
+function demander(o){
+  return new Promise(function(resolve){
+    var d = $('dlg');
+    d.innerHTML = '<h2>' + esc(o.titre) + '</h2>' + (o.texte ? '<p>' + esc(o.texte) + '</p>' : '')
+      + (o.motif ? '<div class="field"><label for="dlgMotif">' + esc(o.motif) + '</label><textarea id="dlgMotif" class="court"></textarea></div><div class="note err hidden" id="dlgErr">Ce champ est obligatoire.</div>' : '')
+      + '<div class="actions"><button class="btn ' + (o.danger ? 'danger' : 'pri') + '" id="dlgOk">' + esc(o.ok || 'Confirmer') + '</button><button class="btn" id="dlgNon">Annuler</button></div>';
+    var fin = function(v){ d.close(); resolve(v); };
+    $('dlgNon').onclick = function(){ fin(null); };
+    d.oncancel = function(){ resolve(null); };
+    $('dlgOk').onclick = function(){
+      if(!o.motif) return fin(true);
+      var v = $('dlgMotif').value.trim();
+      if(!v && !o.motifFacultatif){ $('dlgErr').classList.remove('hidden'); return; }
+      fin(v || '');
+    };
+    d.showModal();
+  });
+}
+
+/* ===== Rendu d'un texte (aperçu et relecture) ===== */
+function rendreTexte(texte, sourcesIds, classe){
+  if(classe === 'verb') return '<div class="texte verb">' + esc(texte) + '</div>';
+  var h = String(texte || '').split(/\r?\n+/).map(function(l){ return l.trim(); }).filter(Boolean).map(function(l){
+    var fm = l.match(/^\{\{\s*([^}]+?)\s*\}\}$/);
+    if(fm){
+      var f = S.figById[fm[1]];
+      if(!f) return '<figure>Figure « ' + esc(fm[1]) + ' » introuvable.</figure>';
+      if(f.type === 'image') return '<figure><img src="' + esc(f.url || 'figures/' + f.fichier) + '" alt="' + esc(f.alt) + '"><b>' + esc(f.titre) + '</b><br>Source : ' + esc(f.credit) + '</figure>';
+      return '<figure>Graphique « ' + esc(f.titre) + ' » — dessiné par le site.</figure>';
+    }
+    return '<p>' + esc(l).replace(/\[(\d+)\]/g, '<sup>[$1]</sup>') + '</p>';
+  }).join('');
+  var out = '<div class="texte ' + (classe || '') + '">' + h + '</div>';
+  if(sourcesIds && sourcesIds.length){
+    out += '<ol class="srcs">' + sourcesIds.map(function(id){
+      var b = S.srcById[id];
+      if(!b) return '<li>' + esc(id) + '</li>';
+      return '<li>' + esc(b.auteurs ? b.auteurs + '. ' : '') + '<i>' + esc(b.titre) + '</i>' + (b.organisme ? ', ' + esc(b.organisme) : '') + (b.date_publication ? ', ' + esc(b.date_publication) : '')
+        + (/^https?:\/\//i.test(b.url) ? ' — <a href="' + esc(b.url) + '" target="_blank" rel="noopener">ouvrir ↗</a>' : '') + '</li>';
+    }).join('') + '</ol>';
+  }
+  return out;
+}
+function compterMots(texte){
+  var t = String(texte || '').split(/\r?\n/).filter(function(l){ return !/^\s*\{\{[^}]*\}\}\s*$/.test(l); }).join(' ').replace(/\[\d+\]/g, ' ');
+  var m = t.match(/[^\s«»"“”().,;:!?…—–-]+/g);
+  return m ? m.length : 0;
+}
+
+/* ===== Connexion ===== */
+function ecranConnexion(erreur){
+  $('who').innerHTML = '';
+  app.innerHTML = '<h1>Espace des contributeurs</h1>'
+    + '<p>Cette page sert à déposer les textes validés sur le Discord du projet : analyses, partis pris et verbatims. Un mainteneur vérifie ensuite que le circuit a été respecté, puis le texte paraît sur le site.</p>'
+    + (erreur ? '<div class="note err">' + esc(erreur) + '</div>' : '')
+    + '<div class="card"><p>La connexion se fait avec votre compte Discord. Seul votre pseudo Discord est utilisé ici.</p><button class="btn pri" id="btnDiscord">Se connecter avec Discord</button></div>'
+    + '<p class="muted">Lire le site ne demande aucun compte : <a href="index.html">retour au comparateur</a>.</p>';
+  $('btnDiscord').onclick = async function(){
+    var r = await sb.auth.signInWithOAuth({ provider:'discord', options:{ redirectTo: location.origin + location.pathname } });
+    if(r.error) ecranConnexion(msgErreur(r.error));
+  };
+}
+
+async function demarrer(session){
+  S.session = session;
+  if(!session){
+    var p = new URLSearchParams(location.search), h = new URLSearchParams(location.hash.replace(/^#/, ''));
+    ecranConnexion(p.get('error_description') || h.get('error_description'));
+    return;
+  }
+  try {
+    var r = await sb.from('profils').select('*').eq('id', session.user.id).maybeSingle();
+    if(r.error) throw r.error;
+    S.profil = r.data;
+  } catch(e){ app.innerHTML = '<div class="note err" style="margin-top:30px">' + esc(msgErreur(e)) + '</div>'; return; }
+
+  $('who').innerHTML = '<span>' + esc(S.profil ? S.profil.pseudo : '') + '</span><button class="btn small" id="btnOut">Se déconnecter</button>';
+  $('btnOut').onclick = function(){ sb.auth.signOut(); };
+
+  var p = S.profil;
+  if(!p || !(p.analyses || p.partis_pris || p.verbatims || p.mainteneur)){
+    app.innerHTML = '<h1>Compte en attente</h1><div class="card"><p>Votre compte est créé' + (p ? ' sous le pseudo <b>' + esc(p.pseudo) + '</b>' : '') + ', mais aucun circuit ne lui est encore attribué.</p><p>Prévenez un mainteneur sur le Discord : il ouvrira vos droits, puis rechargez cette page.</p></div>';
+    return;
+  }
+  try { await chargerReferentiel(); }
+  catch(e){ app.innerHTML = '<div class="note err" style="margin-top:30px">' + esc(msgErreur(e)) + '</div>'; return; }
+  S.tab = circuitsPermis().length ? 'deposer' : 'valider';
+  afficher();
+}
+
+function circuitsPermis(){ return CIRCUITS.filter(function(c){ return S.profil[c.droit]; }); }
+
+async function chargerReferentiel(){
+  var r = await Promise.all([
+    tout(function(){ return sb.from('thematiques').select('nom,ordre').order('ordre'); }),
+    tout(function(){ return sb.from('sujets').select('id,libelle,thematique,ordre').order('ordre'); }),
+    tout(function(){ return sb.from('candidats').select('nom,ordre').order('ordre'); }),
+    tout(function(){ return sb.from('sources').select('id,registre,auteurs,titre,organisme,date_publication,url').order('ordre'); }),
+    tout(function(){ return sb.from('figures').select('id,type,titre,alt,credit,url,fichier').order('id'); })
+  ]);
+  S.themes = r[0].map(function(t){ return t.nom; });
+  S.sujets = r[1]; S.sujetById = {};
+  S.sujets.forEach(function(s){ S.sujetById[s.id] = s; });
+  S.candidats = r[2].map(function(c){ return c.nom; });
+  S.sources = r[3]; S.srcById = {};
+  S.sources.forEach(function(b){ S.srcById[b.id] = b; });
+  S.figById = {};
+  r[4].forEach(function(f){ S.figById[f.id] = f; });
+  if(S.profil.mainteneur) await chargerCompteurs();
+}
+async function chargerCompteurs(){
+  var a = await sb.from('depots').select('id', {count:'exact', head:true}).eq('statut', 'en attente');
+  var b = await sb.from('signalements').select('id', {count:'exact', head:true}).eq('traite', false);
+  S.nAttente = a.count || 0; S.nSignal = b.count || 0;
+  var p = await tout(function(){ return sb.from('profils').select('id,pseudo'); });
+  S.pseudos = {};
+  p.forEach(function(x){ S.pseudos[x.id] = x.pseudo; });
+}
+
+/* ===== Onglets ===== */
+function afficher(){
+  var onglets = [];
+  if(circuitsPermis().length){ onglets.push(['deposer', 'Déposer']); onglets.push(['mes', 'Mes dépôts']); }
+  if(S.profil.mainteneur){
+    onglets.push(['valider', 'À valider' + (S.nAttente ? '<span class="n">' + S.nAttente + '</span>' : '')]);
+    onglets.push(['enligne', 'En ligne']);
+    onglets.push(['signalements', 'Signalements' + (S.nSignal ? '<span class="n">' + S.nSignal + '</span>' : '')]);
+    onglets.push(['droits', 'Droits']);
+    onglets.push(['excel', 'Excel']);
+  }
+  app.innerHTML = '<nav class="tabs">' + onglets.map(function(o){
+    return '<button class="tab' + (o[0] === S.tab ? ' on' : '') + '" data-tab="' + o[0] + '">' + o[1] + '</button>';
+  }).join('') + '</nav><div id="vue"></div>';
+  app.querySelectorAll('.tab').forEach(function(b){ b.onclick = function(){ S.tab = b.getAttribute('data-tab'); afficher(); }; });
+  var vues = { deposer:vueDeposer, mes:vueMes, valider:vueValider, enligne:vueEnLigne, signalements:vueSignalements, droits:vueDroits, excel:vueExcel };
+  Promise.resolve(vues[S.tab]()).catch(function(e){ $('vue').innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; });
+}
+
+/* =====================================================================
+   DÉPOSER
+   ===================================================================== */
+function nouveauFormulaire(circuit){
+  return { circuit:circuit, theme:'', sujet:'', candidat:'', auteur:'', initiales:'', age:'', texte:'',
+           sources:[], relecteurs:['', ''], remplace:null, suite_de:null, ctx:null, motifPrecedent:null };
+}
+function relecteursRequis(f){ return (f.circuit === 'verbatim' || f.remplace || f.suite_de) ? 1 : 2; }
+
+/* Ce qui existe déjà à l'endroit visé : la case en ligne (verbatim) ou les textes
+   du sujet (analyse, parti pris). Chargé à part, sans redessiner le formulaire,
+   pour ne jamais interrompre la saisie. */
+var jetonContexte = 0;
+async function majContexte(){
+  var f = S.form, zone = $('ctxZone');
+  if(!zone) return;
+  if(!f.ctx){
+    zone.innerHTML = '';
+    if(!f.sujet || (f.circuit === 'verbatim' && !f.candidat)) return;
+    var jeton = ++jetonContexte, ctx = { existants:[], position:null };
+    try {
+      if(f.circuit === 'verbatim'){
+        var r = await sb.from('positions').select('texte').eq('sujet_id', f.sujet).eq('candidat', f.candidat).maybeSingle();
+        if(r.error) throw r.error;
+        ctx.position = r.data ? r.data.texte : null;
+      } else {
+        var e = await sb.from('editorial').select('*').eq('sujet_id', f.sujet).eq('type', f.circuit).order('id');
+        if(e.error) throw e.error;
+        ctx.existants = e.data;
+      }
+    } catch(err){
+      if(jeton === jetonContexte && $('ctxZone')) $('ctxZone').innerHTML = '<div class="note err">' + esc(msgErreur(err)) + '</div>';
+      return;
+    }
+    if(jeton !== jetonContexte || S.form !== f) return;   /* une demande plus récente a pris le relais */
+    f.ctx = ctx;
+    zone = $('ctxZone');
+    if(!zone) return;
+  }
+  var h = '';
+  if(f.circuit === 'verbatim' && f.ctx.position != null){
+    h = '<div class="note info">Cette case contient déjà un texte en ligne. Votre dépôt le <b>remplacera</b> une fois validé.' + rendreTexte(f.ctx.position, null, 'verb') + '<button class="btn small" id="btnReprendre">Repartir de ce texte</button></div>';
+  } else if(f.circuit !== 'verbatim' && f.ctx.existants.length){
+    h = '<div class="field"><label for="fRemplace">Nouveau texte ou correction ?</label><select id="fRemplace"><option value="">Nouveau texte, qui s\'ajoute</option>'
+      + f.ctx.existants.map(function(e){ return '<option value="' + e.id + '"' + (f.remplace === e.id ? ' selected' : '') + '>Correction du texte de ' + esc(e.auteur || '?') + (e.publie ? '' : ' (dépublié)') + ' — « ' + esc(e.texte.slice(0, 50)) + '… »</option>'; }).join('')
+      + '</select><small>Une correction remplace le texte en ligne, sans mention visible. Une seule validation sur Discord suffit.</small></div>';
+  }
+  zone.innerHTML = h;
+  if($('btnReprendre')) $('btnReprendre').onclick = function(){ f.texte = f.ctx.position; $('fTexte').value = f.texte; majDiagnostic(); };
+  if($('fRemplace')) $('fRemplace').onchange = function(){
+    f.remplace = this.value ? parseInt(this.value, 10) : null;
+    if(f.remplace){
+      var e = f.ctx.existants.filter(function(x){ return x.id === f.remplace; })[0];
+      f.texte = e.texte; f.auteur = e.auteur; f.initiales = e.initiales; f.age = e.age || ''; f.sources = e.sources.slice();
+    }
+    vueDeposer();
+  };
+}
+
+function diagnostics(f){
+  var avert = [], bloc = [], t = f.texte;
+  if(!f.sujet) bloc.push('Choisissez un sujet.');
+  if(!t.trim()) bloc.push('Le texte est vide.');
+  var relus = f.relecteurs.slice(0, relecteursRequis(f)).map(function(x){ return x.trim(); }).filter(Boolean);
+  var distincts = relus.filter(function(x, i){ return relus.indexOf(x) === i; });
+  if(distincts.length < relecteursRequis(f)) bloc.push(relecteursRequis(f) === 2 ? 'Indiquez les deux relecteurs (deux personnes différentes).' : 'Indiquez le relecteur.');
+
+  if(f.circuit === 'verbatim'){
+    if(!f.candidat) bloc.push('Choisissez un candidat.');
+    if(/\[\s*…\s*\]|\(\s*(\.\.\.|…)\s*\)|\[\s*\.\.\s*\]|\[\s*\.{4,}\s*\]|\[\s+\.\.\.\s*\]|\[\.\.\.\s+\]/.test(t)) avert.push('Une coupe se note [...] : crochets droits et trois points saisis au clavier.');
+    if(/\[\s*sic\s*\]/i.test(t)) avert.push('Pas de [sic] : une coquille du programme est reproduite telle quelle.');
+    var crochets = (t.match(/\[[^\]]*\]/g) || []).filter(function(c){ return c !== '[...]' && !/^\[\s*(…|\.+)\s*\]$/.test(c) && !/^\[\s*sic\s*\]$/i.test(c); });
+    if(crochets.length) avert.push('Aucun mot ne s\'ajoute entre crochets (' + crochets.slice(0, 2).join(', ') + ') : ils signalent seulement une coupe.');
+    if(/^\s*[«"“]/.test(t) && /[»"”]\s*$/.test(t)) avert.push('Inutile d\'entourer le texte de guillemets : le site les ajoute.');
+    if(/\n/.test(t.trim())) avert.push('Plusieurs mesures dans une même case se séparent par « — » (tiret cadratin entouré d\'espaces), sans retour à la ligne.');
+  } else {
+    if(!f.auteur.trim()) bloc.push(f.circuit === 'parti pris' ? 'Indiquez le pseudonyme ou les initiales de l\'auteur.' : 'Indiquez l\'auteur.');
+    var appels = (t.match(/\[(\d+)\]/g) || []).map(function(a){ return parseInt(a.slice(1), 10); });
+    var max = appels.length ? Math.max.apply(null, appels) : 0;
+    if(max > f.sources.length) avert.push('Le texte appelle la note [' + max + '] mais seulement ' + f.sources.length + ' source(s) sont listées.');
+    f.sources.forEach(function(id, i){ if(appels.indexOf(i + 1) < 0) avert.push('La source ' + (i + 1) + ' n\'est appelée par aucune note [' + (i + 1) + '] dans le texte.'); });
+    t.split(/\r?\n/).forEach(function(l){
+      if(l.indexOf('{{') < 0) return;
+      var m = l.match(/^\s*\{\{\s*([^}]+?)\s*\}\}\s*$/);
+      if(!m) avert.push('Un appel de figure {{…}} doit être seul sur sa ligne.');
+      else if(!S.figById[m[1]]) avert.push('La figure « ' + m[1] + ' » n\'existe pas.');
+    });
+    if(f.circuit === 'analyse' && !f.sources.length) avert.push('Une analyse est sourcée : aucune source n\'est listée.');
+    if(f.circuit === 'parti pris'){
+      var age = parseInt(f.age, 10);
+      if(!(age >= 18)) bloc.push('Indiquez l\'âge de l\'auteur (18 ans au moins).');
+      var n = compterMots(t);
+      if(n > MOTS_MAX_PARTI_PRIS) bloc.push('Le texte compte ' + n + ' mots : la limite est de ' + MOTS_MAX_PARTI_PRIS + ', notes non comprises.');
+      else if(n > MOTS_REPERE_PARTI_PRIS) avert.push('Le texte compte ' + n + ' mots : l\'ordre de grandeur visé est de ' + MOTS_REPERE_PARTI_PRIS + ' (blocage au-delà de ' + MOTS_MAX_PARTI_PRIS + ').');
+      var bas = ' ' + t.toLowerCase() + ' ';
+      S.candidats.forEach(function(c){
+        var nom = c.trim().split(/\s+/).pop().toLowerCase();
+        if(nom.length > 3 && !/^candidat/i.test(c) && bas.indexOf(nom) >= 0) avert.push('Le texte semble nommer un candidat (« ' + c + ' ») : un parti pris parle des idées, pas des personnes.');
+      });
+    }
+  }
+  return { avert:avert, bloc:bloc };
+}
+
+function vueDeposer(){
+  var permis = circuitsPermis(), vue = $('vue');
+  if(!S.form || !S.profil[CIRCUITS.filter(function(c){ return c.id === S.form.circuit; })[0].droit]) S.form = nouveauFormulaire(permis[0].id);
+  var f = S.form;
+  var estVerb = f.circuit === 'verbatim', estPP = f.circuit === 'parti pris';
+  var sujetsTheme = S.sujets.filter(function(s){ return s.thematique === f.theme; });
+  var h = prendreFlash();
+
+  h += '<div class="pills">' + permis.map(function(c){ return '<button class="pill' + (c.id === f.circuit ? ' on' : '') + '" data-circuit="' + c.id + '">' + c.nom + '</button>'; }).join('') + '</div>';
+
+  if(f.suite_de) h += '<div class="note info">Nouveau dépôt après un refus' + (f.motifPrecedent ? ' — motif : « ' + esc(f.motifPrecedent) + ' »' : '') + '. Une seule nouvelle validation sur Discord suffit.</div>';
+
+  h += '<div class="card"><h2>1. Où va ce texte ?</h2><div class="row">'
+    + '<div class="field"><label for="fTheme">Thématique</label><select id="fTheme"><option value="">— choisir —</option>' + S.themes.map(function(t){ return '<option' + (t === f.theme ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select></div>'
+    + '<div class="field"><label for="fSujet">Sujet</label><select id="fSujet"' + (f.theme ? '' : ' disabled') + '><option value="">— choisir —</option>' + sujetsTheme.map(function(s){ return '<option value="' + esc(s.id) + '"' + (s.id === f.sujet ? ' selected' : '') + '>' + esc(s.libelle) + '</option>'; }).join('') + '</select><small>' + (f.sujet ? 'ID : ' + esc(f.sujet) : 'Un sujet se dépose dans sa thématique d\'origine.') + '</small></div>'
+    + (estVerb ? '<div class="field"><label for="fCand">Candidat</label><select id="fCand"><option value="">— choisir —</option>' + S.candidats.map(function(c){ return '<option' + (c === f.candidat ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select></div>' : '')
+    + '</div><div id="ctxZone"></div></div>';
+
+  h += '<div class="card"><h2>2. Le texte</h2>';
+  if(estVerb){
+    h += '<div class="field"><label for="fTexte">Transcription mot à mot</label><textarea id="fTexte" class="verb" spellcheck="false">' + esc(f.texte) + '</textarea><small>Le texte du programme, sans aucune modification ni correction. Coupes notées [...]. Plusieurs mesures séparées par « — ».</small></div>';
+  } else {
+    h += '<div class="row"><div class="field"><label for="fAuteur">' + (estPP ? 'Pseudonyme ou initiales de l\'auteur (publié)' : 'Auteur') + '</label><input type="text" id="fAuteur" maxlength="60" value="' + esc(f.auteur) + '">' + (estPP ? '<small>Ni le vrai nom, ni une référence à un candidat, un parti ou une personnalité.</small>' : '') + '</div>'
+      + '<div class="field narrow"><label for="fInit">Initiales</label><input type="text" id="fInit" maxlength="3" value="' + esc(f.initiales) + '"></div>'
+      + (estPP ? '<div class="field narrow"><label for="fAge">Âge</label><input type="number" id="fAge" min="18" max="120" value="' + esc(f.age) + '"></div>' : '')
+      + '</div>'
+      + '<div class="field"><label for="fTexte">Texte validé sur Discord</label><textarea id="fTexte">' + esc(f.texte) + '</textarea>'
+      + (estPP ? '<div class="compte" id="compte"></div>' : '')
+      + '<small>Un paragraphe par ligne. Les notes s\'écrivent [1], [2]… et renvoient aux sources ci-dessous, dans l\'ordre.</small></div>';
+
+    h += '<h3>Sources, dans l\'ordre des notes</h3><div id="listeSources"></div>'
+      + '<details id="detSrc"><summary>Ajouter une source</summary><div>'
+      + '<div class="field"><label for="srcCherche">Chercher dans la bibliographie</label><input type="search" id="srcCherche" placeholder="Titre, auteur, organisme ou adresse…"><div class="results" id="srcResultats"></div></div>'
+      + '<p class="muted">Elle n\'y est pas ? Créez-la :</p>'
+      + '<div class="row"><div class="field"><label for="nsTitre">Titre</label><input type="text" id="nsTitre"></div><div class="field"><label for="nsAuteurs">Auteurs</label><input type="text" id="nsAuteurs"></div></div>'
+      + '<div class="row"><div class="field"><label for="nsOrg">Éditeur ou organisme</label><input type="text" id="nsOrg"></div><div class="field"><label for="nsType">Nature</label><select id="nsType"><option>Rapport institutionnel</option><option>Étude scientifique</option><option>Texte officiel</option><option>Analyse d\'organisation</option><option>Presse et vulgarisation</option><option>Données statistiques</option><option>Autre</option></select></div></div>'
+      + '<div class="row"><div class="field"><label for="nsDate">Date de publication</label><input type="text" id="nsDate" placeholder="2026"></div><div class="field"><label for="nsUrl">Adresse web</label><input type="url" id="nsUrl" placeholder="https://…"></div></div>'
+      + '<button class="btn" id="btnCreerSrc">Créer et ajouter cette source</button><div id="srcMsg"></div></div></details>';
+
+    h += '<details id="detImg"><summary>Insérer une image (infographie)</summary><div>'
+      + '<div class="field"><label for="imgFichier">Fichier (PNG, JPG ou WebP, 5 Mo au plus)</label><input type="file" id="imgFichier" accept="image/png,image/jpeg,image/webp"></div>'
+      + '<div class="row"><div class="field"><label for="imgTitre">Titre de la figure</label><input type="text" id="imgTitre"></div><div class="field"><label for="imgCredit">Source des données (obligatoire)</label><input type="text" id="imgCredit" placeholder="Ex. Insee, comptes nationaux 2025"></div></div>'
+      + '<div class="field"><label for="imgAlt">Description pour les personnes qui ne voient pas l\'image</label><input type="text" id="imgAlt"></div>'
+      + '<button class="btn" id="btnImg">Envoyer et insérer dans le texte</button><div id="imgMsg"></div></div></details>';
+  }
+  h += '</div>';
+
+  h += '<div class="card"><h2>3. La relecture sur Discord</h2><div class="row">';
+  for(var i = 0; i < relecteursRequis(f); i++) h += '<div class="field"><label for="fRel' + i + '">Relecteur' + (relecteursRequis(f) > 1 ? ' ' + (i + 1) : '') + ' qui a validé</label><input type="text" id="fRel' + i + '" maxlength="60" value="' + esc(f.relecteurs[i] || '') + '" placeholder="Pseudo Discord"></div>';
+  h += '</div>';
+  h += '</div>';
+
+  h += '<div id="diag"></div><div class="actions"><button class="btn pri" id="btnDeposer">Déposer pour validation</button><button class="btn" id="btnApercu">Aperçu</button><button class="btn" id="btnVider">Tout effacer</button></div><div id="apercu"></div>';
+  vue.innerHTML = h;
+
+  /* --- liaisons --- */
+  vue.querySelectorAll('.pill').forEach(function(b){ b.onclick = function(){ var anc = S.form; S.form = nouveauFormulaire(b.getAttribute('data-circuit')); S.form.theme = anc.theme; S.form.sujet = anc.sujet; vueDeposer(); }; });
+  $('fTheme').onchange = function(){ f.theme = this.value; f.sujet = ''; f.ctx = null; f.remplace = null; vueDeposer(); };
+  $('fSujet').onchange = function(){ f.sujet = this.value; f.ctx = null; f.remplace = null; vueDeposer(); };
+  if($('fCand')) $('fCand').onchange = function(){ f.candidat = this.value; f.ctx = null; vueDeposer(); };
+  var maj = function(){ majDiagnostic(); };
+  $('fTexte').oninput = function(){ f.texte = this.value; maj(); };
+  if($('fAuteur')) $('fAuteur').oninput = function(){ f.auteur = this.value; maj(); };
+  if($('fInit')) $('fInit').oninput = function(){ f.initiales = this.value; };
+  if($('fAge')) $('fAge').oninput = function(){ f.age = this.value; maj(); };
+  [0, 1].forEach(function(i){ if($('fRel' + i)) $('fRel' + i).oninput = function(){ f.relecteurs[i] = this.value; maj(); }; });
+  $('btnVider').onclick = function(){ S.form = nouveauFormulaire(f.circuit); vueDeposer(); };
+  $('btnApercu').onclick = function(){
+    $('apercu').innerHTML = '<h3>Aperçu</h3>' + rendreTexte(f.texte, estVerb ? null : f.sources, estVerb ? 'verb' : (estPP ? 'pp' : ''));
+  };
+  $('btnDeposer').onclick = deposer;
+  if(!estVerb){ majSources(); lierSources(); lierImage(); }
+  majDiagnostic();
+  majContexte();
+}
+
+function majDiagnostic(){
+  var f = S.form, d = diagnostics(f), h = '';
+  if(d.avert.length) h += '<div class="note warn"><b>À vérifier avant de déposer</b><ul>' + d.avert.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
+  if($('diag')) $('diag').innerHTML = h;
+  if($('compte')){
+    var n = compterMots(f.texte);
+    $('compte').textContent = n + ' mots — repère : ' + MOTS_REPERE_PARTI_PRIS + ', maximum : ' + MOTS_MAX_PARTI_PRIS + ' (notes non comptées)';
+    $('compte').className = 'compte' + (n > MOTS_MAX_PARTI_PRIS ? ' trop' : '');
+  }
+}
+
+function majSources(){
+  var f = S.form, w = $('listeSources');
+  if(!w) return;
+  if(!f.sources.length){ w.innerHTML = '<p class="muted">Aucune source pour l\'instant.</p>'; return; }
+  w.innerHTML = f.sources.map(function(id, i){
+    var b = S.srcById[id] || { titre:id };
+    return '<div class="srcline"><span class="num">[' + (i + 1) + ']</span><span class="t"><b>' + esc(b.titre) + '</b>' + (b.auteurs || b.organisme ? '<br><span class="muted">' + esc([b.auteurs, b.organisme, b.date_publication].filter(Boolean).join(' — ')) + '</span>' : '') + '</span>'
+      + '<button class="btn small" data-act="haut" data-i="' + i + '"' + (i ? '' : ' disabled') + ' aria-label="Monter">↑</button>'
+      + '<button class="btn small" data-act="bas" data-i="' + i + '"' + (i < f.sources.length - 1 ? '' : ' disabled') + ' aria-label="Descendre">↓</button>'
+      + '<button class="btn small danger" data-act="oter" data-i="' + i + '">Retirer</button></div>';
+  }).join('');
+  w.querySelectorAll('button').forEach(function(b){
+    b.onclick = function(){
+      var i = parseInt(b.getAttribute('data-i'), 10), a = b.getAttribute('data-act'), s = f.sources;
+      if(a === 'oter') s.splice(i, 1);
+      else { var j = a === 'haut' ? i - 1 : i + 1; var tmp = s[i]; s[i] = s[j]; s[j] = tmp; }
+      majSources(); majDiagnostic();
+    };
+  });
+}
+function ajouterSource(id){
+  var f = S.form;
+  if(f.sources.indexOf(id) < 0) f.sources.push(id);
+  majSources(); majDiagnostic();
+}
+function lierSources(){
+  var champ = $('srcCherche'), res = $('srcResultats');
+  champ.oninput = function(){
+    var q = champ.value.trim().toLowerCase();
+    if(q.length < 2){ res.innerHTML = ''; return; }
+    var hits = S.sources.filter(function(b){ return (b.titre + ' ' + b.auteurs + ' ' + b.organisme + ' ' + b.url + ' ' + b.id).toLowerCase().indexOf(q) >= 0; }).slice(0, 8);
+    res.innerHTML = hits.length ? '' : '<p class="muted">Aucune source trouvée.</p>';
+    hits.forEach(function(b){
+      var bt = document.createElement('button');
+      bt.innerHTML = '<b>' + esc(b.titre) + '</b><br><span class="muted">' + esc([b.auteurs, b.organisme, b.date_publication].filter(Boolean).join(' — ')) + '</span>';
+      bt.onclick = function(){ ajouterSource(b.id); champ.value = ''; res.innerHTML = ''; };
+      res.appendChild(bt);
+    });
+  };
+  $('btnCreerSrc').onclick = async function(){
+    var m = $('srcMsg'), bouton = this;
+    var titre = $('nsTitre').value.trim(), url = $('nsUrl').value.trim();
+    if(!titre){ m.innerHTML = '<div class="note err">Le titre est obligatoire.</div>'; return; }
+    if(url && !/^https?:\/\//i.test(url)){ m.innerHTML = '<div class="note err">L\'adresse web doit commencer par https://</div>'; return; }
+    bouton.disabled = true;
+    try {
+      var auj = new Date().toLocaleDateString('fr-FR');
+      var id = await rpc('creer_source', { p_auteurs:$('nsAuteurs').value, p_titre:titre, p_type:$('nsType').value, p_organisme:$('nsOrg').value, p_date_publication:$('nsDate').value, p_url:url, p_date_consultation:auj });
+      var deja = !!S.srcById[id];
+      if(!deja){
+        var b = { id:id, registre:'analyse', auteurs:$('nsAuteurs').value.trim(), titre:titre, organisme:$('nsOrg').value.trim(), date_publication:$('nsDate').value.trim(), url:url };
+        S.sources.push(b); S.srcById[id] = b;
+      }
+      ajouterSource(id);
+      ['nsTitre', 'nsAuteurs', 'nsOrg', 'nsDate', 'nsUrl'].forEach(function(k){ $(k).value = ''; });
+      m.innerHTML = '<div class="note ok">' + (deja ? 'Cette adresse existait déjà dans la bibliographie : la source existante a été ajoutée.' : 'Source créée et ajoutée.') + '</div>';
+    } catch(e){ m.innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
+    bouton.disabled = false;
+  };
+}
+function lierImage(){
+  $('btnImg').onclick = async function(){
+    var m = $('imgMsg'), bouton = this, fichier = $('imgFichier').files[0];
+    var titre = $('imgTitre').value.trim(), alt = $('imgAlt').value.trim(), credit = $('imgCredit').value.trim();
+    if(!fichier || !titre || !alt || !credit){ m.innerHTML = '<div class="note err">Le fichier, le titre, la description et la source des données sont tous obligatoires.</div>'; return; }
+    if(fichier.size > 5 * 1024 * 1024){ m.innerHTML = '<div class="note err">Ce fichier dépasse 5 Mo.</div>'; return; }
+    bouton.disabled = true; m.innerHTML = '<p class="muted">Envoi en cours…</p>';
+    try {
+      var ext = ({ 'image/png':'png', 'image/jpeg':'jpg', 'image/webp':'webp' })[fichier.type];
+      if(!ext) throw new Error('Format non accepté : PNG, JPG ou WebP uniquement.');
+      var chemin = S.session.user.id + '/' + Date.now() + '.' + ext;
+      var up = await sb.storage.from('figures').upload(chemin, fichier, { contentType:fichier.type, cacheControl:'31536000' });
+      if(up.error) throw up.error;
+      var url = sb.storage.from('figures').getPublicUrl(chemin).data.publicUrl;
+      var id = await rpc('creer_figure_image', { p_titre:titre, p_alt:alt, p_credit:credit, p_url:url });
+      S.figById[id] = { id:id, type:'image', titre:titre, alt:alt, credit:credit, url:url };
+      var ta = $('fTexte'), pos = ta.selectionStart || ta.value.length, avant = ta.value.slice(0, pos).replace(/\s*$/, ''), apres = ta.value.slice(pos).replace(/^\s*/, '');
+      ta.value = (avant ? avant + '\n' : '') + '{{' + id + '}}' + (apres ? '\n' + apres : '');
+      S.form.texte = ta.value;
+      ['imgTitre', 'imgAlt', 'imgCredit', 'imgFichier'].forEach(function(k){ $(k).value = ''; });
+      m.innerHTML = '<div class="note ok">Image envoyée. La ligne {{' + esc(id) + '}} marque sa place dans le texte : vous pouvez la déplacer.</div>';
+      majDiagnostic();
+    } catch(e){ m.innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
+    bouton.disabled = false;
+  };
+}
+
+async function deposer(){
+  var f = S.form, d = diagnostics(f);
+  if(d.bloc.length){
+    $('diag').innerHTML = '<div class="note err"><b>Le dépôt n\'est pas possible en l\'état</b><ul>' + d.bloc.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
+    $('diag').scrollIntoView({ block:'center' });
+    return;
+  }
+  var estVerb = f.circuit === 'verbatim';
+  var ligne = {
+    circuit:f.circuit, sujet_id:f.sujet, candidat:estVerb ? f.candidat : null,
+    auteur:estVerb ? '' : f.auteur.trim(), initiales:estVerb ? '' : f.initiales.trim(),
+    age:f.circuit === 'parti pris' ? parseInt(f.age, 10) : null,
+    texte:f.texte, sources:estVerb ? [] : f.sources,
+    relecteurs:f.relecteurs.slice(0, relecteursRequis(f)).map(function(x){ return x.trim(); }),
+    remplace:estVerb ? null : f.remplace, suite_de:f.suite_de, depose_par:S.session.user.id
+  };
+  $('btnDeposer').disabled = true;
+  var r = await sb.from('depots').insert(ligne);
+  if(r.error){
+    $('btnDeposer').disabled = false;
+    $('diag').innerHTML = '<div class="note err">' + esc(msgErreur(r.error)) + '</div>';
+    return;
+  }
+  S.form = nouveauFormulaire(f.circuit);
+  flash('ok', 'Dépôt enregistré. Il paraîtra sur le site dès qu\'un mainteneur l\'aura validé.');
+  if(S.profil.mainteneur) S.nAttente++;
+  S.tab = 'mes'; afficher();
+}
+
+/* =====================================================================
+   MES DÉPÔTS
+   ===================================================================== */
+function carteDepot(d, mode){
+  var statutClasse = { 'en attente':'attente', 'publié':'publie', 'refusé':'refuse' }[d.statut];
+  var nature = d.suite_de ? 'Nouveau dépôt après refus' : d.remplace ? 'Correction d\'un texte en ligne' : 'Nouveau';
+  var h = '<div class="card" data-depot="' + d.id + '">'
+    + '<div><span class="badge">' + esc(nomCircuit(d.circuit)) + '</span> <span class="badge ' + statutClasse + '">' + esc(d.statut) + '</span></div>'
+    + '<h2 style="margin-top:8px">' + esc(libelleSujet(d.sujet_id)) + (d.candidat ? ' — ' + esc(d.candidat) : '') + '</h2>'
+    + '<div class="meta">' + (mode === 'valider' ? 'Déposé par <b>' + esc(S.pseudos[d.depose_par] || 'compte supprimé') + '</b> le ' : 'Déposé le ') + esc(dateFr(d.depose_le))
+    + ' · ' + esc(nature) + ' · Relu par <b>' + esc(d.relecteurs.join(', ')) + '</b>'
+    + (d.circuit !== 'verbatim' ? ' · Auteur : <b>' + esc(d.auteur) + (d.age ? ', ' + d.age + ' ans' : '') + '</b>' : '') + '</div>';
+  if(d.statut === 'refusé') h += '<div class="note err"><b>Refusé</b> le ' + esc(dateFr(d.traite_le)) + ' — ' + esc(d.motif || '') + '</div>';
+  if(mode === 'valider' && d.suite_de && d._precedent) h += '<div class="note info">Fait suite à un refus — motif d\'alors : « ' + esc(d._precedent.motif || '') + ' »</div>';
+  h += '<details' + (mode === 'valider' ? ' open' : '') + '><summary>Le texte déposé</summary><div>' + rendreTexte(d.texte, d.sources, d.circuit === 'verbatim' ? 'verb' : d.circuit === 'parti pris' ? 'pp' : '') + '</div></details>';
+  if(mode === 'valider' && d._actuel != null) h += '<details><summary>Le texte actuellement en ligne, qui sera remplacé</summary><div>' + rendreTexte(d._actuel, null, d.circuit === 'verbatim' ? 'verb' : '') + '</div></details>';
+  if(mode === 'mes' && d.statut === 'refusé') h += '<div class="actions"><button class="btn" data-act="redeposer">Corriger et redéposer</button></div>';
+  if(mode === 'valider'){
+    var sien = d.depose_par === S.session.user.id;
+    h += '<div class="actions"><button class="btn pri" data-act="valider"' + (sien ? ' disabled' : '') + '>Valider et publier</button><button class="btn danger" data-act="refuser">Refuser…</button>'
+      + (sien ? '<span class="muted">Vous avez déposé ce texte : un autre mainteneur doit le valider.</span>' : '') + '</div>';
+  }
+  return h + '</div>';
+}
+
+async function vueMes(){
+  var vue = $('vue');
+  var tete = prendreFlash();
+  vue.innerHTML = tete + '<p class="muted">Chargement…</p>';
+  var r = await sb.from('depots').select('*').eq('depose_par', S.session.user.id).order('depose_le', { ascending:false }).limit(200);
+  if(r.error) throw r.error;
+  var repris = {};
+  r.data.forEach(function(d){ if(d.suite_de) repris[d.suite_de] = 1; });
+  vue.innerHTML = tete
+    + (r.data.length ? r.data.map(function(d){ return carteDepot(d, repris[d.id] ? 'vu' : 'mes'); }).join('') : '<p class="muted">Vous n\'avez encore rien déposé.</p>');
+  vue.querySelectorAll('[data-act="redeposer"]').forEach(function(b){
+    b.onclick = function(){
+      var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10);
+      var d = r.data.filter(function(x){ return x.id === id; })[0], s = S.sujetById[d.sujet_id];
+      S.form = nouveauFormulaire(d.circuit);
+      Object.assign(S.form, { theme:s ? s.thematique : '', sujet:d.sujet_id, candidat:d.candidat || '', auteur:d.auteur, initiales:d.initiales, age:d.age || '',
+        texte:d.texte, sources:d.sources.slice(), remplace:d.remplace, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
+      S.tab = 'deposer'; afficher();
+    };
+  });
+}
+
+/* =====================================================================
+   À VALIDER (mainteneurs)
+   ===================================================================== */
+async function vueValider(){
+  var vue = $('vue');
+  var tete0 = prendreFlash();
+  vue.innerHTML = tete0 + '<p class="muted">Chargement…</p>';
+  var r = await sb.from('depots').select('*').eq('statut', 'en attente').order('depose_le').limit(200);
+  if(r.error) throw r.error;
+  var liste = r.data;
+  S.nAttente = liste.length;
+  /* Pour chaque dépôt : le texte qu'il remplacerait, et le refus auquel il fait suite. */
+  await Promise.all(liste.map(async function(d){
+    if(d.circuit === 'verbatim'){
+      var p = await sb.from('positions').select('texte').eq('sujet_id', d.sujet_id).eq('candidat', d.candidat).maybeSingle();
+      d._actuel = p.data ? p.data.texte : null;
+    } else if(d.remplace){
+      var e = await sb.from('editorial').select('texte').eq('id', d.remplace).maybeSingle();
+      d._actuel = e.data ? e.data.texte : null;
+    }
+    if(d.suite_de){
+      var x = await sb.from('depots').select('motif').eq('id', d.suite_de).maybeSingle();
+      d._precedent = x.data;
+    }
+  }));
+  var tete = tete0 + '<p>Votre rôle ici : vérifier que le circuit a été respecté (bon sujet, relecteurs indiqués, registre respecté). Vous ne pouvez pas valider un texte que vous avez déposé.</p>';
+  vue.innerHTML = tete + (liste.length ? liste.map(function(d){ return carteDepot(d, 'valider'); }).join('') : '<div class="note ok">Rien à valider pour l\'instant.</div>');
+  document.querySelectorAll('.tab[data-tab="valider"]').forEach(function(t){ t.innerHTML = 'À valider' + (S.nAttente ? '<span class="n">' + S.nAttente + '</span>' : ''); });
+  vue.querySelectorAll('[data-act]').forEach(function(b){
+    b.onclick = async function(){
+      var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10), act = b.getAttribute('data-act');
+      try {
+        if(act === 'valider'){
+          if(!await demander({ titre:'Publier ce texte sur le site ?', texte:'Il sera visible de tous les visiteurs immédiatement.', ok:'Valider et publier' })) return;
+          await rpc('valider_depot', { p_id:id });
+          flash('ok', 'Texte publié.');
+        } else {
+          var motif = await demander({ titre:'Refuser ce dépôt', motif:'Motif, transmis au déposant', ok:'Refuser', danger:true });
+          if(motif == null) return;
+          await rpc('refuser_depot', { p_id:id, p_motif:motif });
+          flash('ok', 'Dépôt refusé. Le déposant voit le motif dans « Mes dépôts ».');
+        }
+      } catch(e){ flash('err', msgErreur(e)); }
+      vueValider();
+    };
+  });
+}
+
+/* =====================================================================
+   EN LIGNE : dépublier (mainteneurs)
+   ===================================================================== */
+async function vueEnLigne(){
+  var vue = $('vue');
+  vue.innerHTML = '<p class="muted">Chargement…</p>';
+  var ed = await tout(function(){ return sb.from('editorial').select('id,sujet_id,type,auteur,age,publie,maj,texte').order('maj', { ascending:false }); });
+  var h = prendreFlash() + '<p>Un mainteneur peut toujours dépublier, jamais publier seul. Un texte dépublié est conservé : il revient en ligne par un dépôt de correction, validé par un autre mainteneur.</p>';
+  h += '<h3>Analyses et partis pris</h3>';
+  h += ed.length ? ed.map(function(e){
+    return '<div class="card" data-ed="' + e.id + '"><span class="badge">' + esc(e.type) + '</span> <span class="badge ' + (e.publie ? 'publie">en ligne' : 'hors">dépublié') + '</span>'
+      + '<h2 style="margin-top:8px">' + esc(libelleSujet(e.sujet_id)) + '</h2><div class="meta">Auteur : <b>' + esc(e.auteur) + (e.age ? ', ' + e.age + ' ans' : '') + '</b> · modifié le ' + esc(dateFr(e.maj)) + '</div>'
+      + '<p class="muted">« ' + esc(e.texte.slice(0, 180)) + '… »</p>'
+      + (e.publie ? '<button class="btn danger small" data-act="depub-ed">Dépublier</button>' : '') + '</div>';
+  }).join('') : '<p class="muted">Aucun texte.</p>';
+  h += '<h3>Verbatims</h3><div class="card"><div class="row">'
+    + '<div class="field"><label for="dvTheme">Thématique</label><select id="dvTheme"><option value="">— choisir —</option>' + S.themes.map(function(t){ return '<option>' + esc(t) + '</option>'; }).join('') + '</select></div>'
+    + '<div class="field"><label for="dvSujet">Sujet</label><select id="dvSujet" disabled><option value="">— choisir —</option></select></div></div><div id="dvCases"></div></div>';
+  vue.innerHTML = h;
+
+  vue.querySelectorAll('[data-act="depub-ed"]').forEach(function(b){
+    b.onclick = async function(){
+      var id = parseInt(b.closest('[data-ed]').getAttribute('data-ed'), 10);
+      var motif = await demander({ titre:'Dépublier ce texte ?', texte:'Il disparaît du site immédiatement. Il reste conservé dans la base.', motif:'Motif (facultatif, noté au journal)', motifFacultatif:true, ok:'Dépublier', danger:true });
+      if(motif == null) return;
+      try { await rpc('depublier_editorial', { p_id:id, p_motif:motif }); flash('ok', 'Texte dépublié.'); } catch(e){ flash('err', msgErreur(e)); }
+      vueEnLigne();
+    };
+  });
+  $('dvTheme').onchange = function(){
+    var t = this.value, sel = $('dvSujet');
+    sel.disabled = !t; $('dvCases').innerHTML = '';
+    sel.innerHTML = '<option value="">— choisir —</option>' + S.sujets.filter(function(s){ return s.thematique === t; }).map(function(s){ return '<option value="' + esc(s.id) + '">' + esc(s.libelle) + '</option>'; }).join('');
+  };
+  $('dvSujet').onchange = async function(){
+    var sid = this.value, w = $('dvCases');
+    if(!sid){ w.innerHTML = ''; return; }
+    var r = await sb.from('positions').select('candidat,texte,maj').eq('sujet_id', sid);
+    if(r.error){ w.innerHTML = '<div class="note err">' + esc(msgErreur(r.error)) + '</div>'; return; }
+    w.innerHTML = r.data.length ? r.data.map(function(p){
+      return '<div style="border-top:1px solid var(--rule-soft);padding-top:10px;margin-top:10px"><b>' + esc(p.candidat) + '</b>' + rendreTexte(p.texte, null, 'verb') + '<button class="btn danger small" data-cand="' + esc(p.candidat) + '">Dépublier cette case</button></div>';
+    }).join('') : '<p class="muted">Aucune case remplie sur ce sujet.</p>';
+    w.querySelectorAll('[data-cand]').forEach(function(b){
+      b.onclick = async function(){
+        var motif = await demander({ titre:'Dépublier ce verbatim ?', texte:'La case redevient « À venir ». Le texte retiré est gardé au journal.', motif:'Motif (facultatif, noté au journal)', motifFacultatif:true, ok:'Dépublier', danger:true });
+        if(motif == null) return;
+        try { await rpc('depublier_position', { p_sujet:sid, p_candidat:b.getAttribute('data-cand'), p_motif:motif }); flash('ok', 'Verbatim dépublié.'); } catch(e){ flash('err', msgErreur(e)); }
+        vueEnLigne();
+      };
+    });
+  };
+}
+
+/* =====================================================================
+   SIGNALEMENTS (mainteneurs)
+   ===================================================================== */
+async function vueSignalements(){
+  var vue = $('vue');
+  vue.innerHTML = '<p class="muted">Chargement…</p>';
+  var r = await sb.from('signalements').select('*').order('cree_le', { ascending:false }).limit(300);
+  if(r.error) throw r.error;
+  S.nSignal = r.data.filter(function(s){ return !s.traite; }).length;
+  vue.innerHTML = prendreFlash() + '<p>Messages envoyés par les visiteurs depuis le site.</p>' + (r.data.length ? r.data.map(function(s){
+    return '<div class="card" data-sig="' + s.id + '"><span class="badge ' + (s.traite ? 'publie">traité' : 'attente">à traiter') + '</span>'
+      + '<div class="meta">Reçu le ' + esc(dateFr(s.cree_le)) + (s.sujet_id ? ' · Sujet : <b>' + esc(libelleSujet(s.sujet_id)) + '</b>' : '') + (s.contact ? ' · Contact : <b>' + esc(s.contact) + '</b>' : '') + '</div>'
+      + '<p style="white-space:pre-wrap;overflow-wrap:anywhere">' + esc(s.message) + '</p>'
+      + '<button class="btn small" data-etat="' + (s.traite ? '0' : '1') + '">' + (s.traite ? 'Remettre à traiter' : 'Marquer comme traité') + '</button></div>';
+  }).join('') : '<div class="note ok">Aucun signalement.</div>');
+  document.querySelectorAll('.tab[data-tab="signalements"]').forEach(function(t){ t.innerHTML = 'Signalements' + (S.nSignal ? '<span class="n">' + S.nSignal + '</span>' : ''); });
+  vue.querySelectorAll('[data-etat]').forEach(function(b){
+    b.onclick = async function(){
+      try { await rpc('traiter_signalement', { p_id:parseInt(b.closest('[data-sig]').getAttribute('data-sig'), 10), p_traite:b.getAttribute('data-etat') === '1' }); } catch(e){ flash('err', msgErreur(e)); }
+      vueSignalements();
+    };
+  });
+}
+
+/* =====================================================================
+   DROITS (mainteneurs)
+   ===================================================================== */
+async function vueDroits(){
+  var vue = $('vue');
+  vue.innerHTML = '<p class="muted">Chargement…</p>';
+  var p = await tout(function(){ return sb.from('profils').select('*').order('pseudo'); });
+  var cols = [['analyses', 'Analyses'], ['partis_pris', 'Partis pris'], ['verbatims', 'Verbatims'], ['mainteneur', 'Mainteneur']];
+  vue.innerHTML = prendreFlash() + '<p>Toute personne qui se connecte avec Discord apparaît ici, sans aucun droit. Cochez les circuits où elle peut déposer. Chaque changement est enregistré aussitôt et noté au journal.</p>'
+    + '<div class="card" style="overflow-x:auto"><table class="droits"><thead><tr><th>Pseudo Discord</th>' + cols.map(function(c){ return '<th>' + c[1] + '</th>'; }).join('') + '</tr></thead><tbody>'
+    + p.map(function(x){
+        var aucun = !(x.analyses || x.partis_pris || x.verbatims || x.mainteneur);
+        return '<tr data-id="' + x.id + '"><td>' + esc(x.pseudo) + (aucun ? ' <span class="badge attente">nouveau</span>' : '') + '<br><span class="muted">inscrit le ' + esc(dateFr(x.cree_le)) + '</span></td>'
+          + cols.map(function(c){ return '<td><input type="checkbox" data-col="' + c[0] + '"' + (x[c[0]] ? ' checked' : '') + ' aria-label="' + c[1] + ' pour ' + esc(x.pseudo) + '"></td>'; }).join('') + '</tr>';
+      }).join('') + '</tbody></table></div><div id="droitsMsg"></div>';
+  vue.querySelectorAll('input[type=checkbox]').forEach(function(c){
+    c.onchange = async function(){
+      var tr = c.closest('tr'), v = {};
+      tr.querySelectorAll('input').forEach(function(i){ v[i.getAttribute('data-col')] = i.checked; });
+      try {
+        await rpc('definir_roles', { p_id:tr.getAttribute('data-id'), p_analyses:v.analyses, p_partis_pris:v.partis_pris, p_verbatims:v.verbatims, p_mainteneur:v.mainteneur });
+        $('droitsMsg').innerHTML = '<div class="note ok">Droits enregistrés.</div>';
+        if(tr.getAttribute('data-id') === S.session.user.id) Object.assign(S.profil, v);
+      } catch(e){ c.checked = !c.checked; $('droitsMsg').innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
+    };
+  });
+}
+
+/* =====================================================================
+   EXCEL : import initial, export complet, réimport de la structure
+   ===================================================================== */
+function chargerXLSX(){
+  if(window.XLSX) return Promise.resolve();
+  return new Promise(function(ok, ko){
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = ok; s.onerror = function(){ ko(new Error('Impossible de charger l\'outil de lecture Excel.')); };
+    document.head.appendChild(s);
+  });
+}
+
+/*<PASSERELLE>*/
+/* Lecture du classeur source. Reprend les règles du convertisseur d'origine. */
+function lireClasseur(XLSX, wb){
+  var SPECIAL = { 'Lisez-moi':1, 'Analyses & partis pris':1, 'Bibliographie':1, 'Journal':1, 'Figures':1, 'Données des figures':1 };
+  var horsDonnees = function(n){ return !!SPECIAL[n] || /^journal/i.test(n) || n.charAt(0) === '_'; };
+  var cell = function(v){ return v == null ? '' : String(v).trim(); };
+  var lignes = function(ws){ return XLSX.utils.sheet_to_json(ws, { header:1, defval:'' }); };
+  var col = function(h, nom){ return h.map(function(x){ return String(x).toLowerCase().trim(); }).indexOf(nom.toLowerCase()); };
+  var feuille = function(nom){ var m = wb.SheetNames.filter(function(x){ return x.trim() === nom; }); return m.length ? wb.Sheets[m[0]] : null; };
+  var liste = function(v){ return cell(v).split(',').map(function(s){ return s.trim(); }).filter(Boolean); };
+  var pb = [], ids = {}, candidats = [], thematiques = [];
+
+  ['Bibliographie', 'Analyses & partis pris'].forEach(function(n){ if(!feuille(n)) throw new Error('Ce classeur n\'est pas le fichier source du comparateur : onglet « ' + n + ' » manquant.'); });
+
+  wb.SheetNames.forEach(function(nom){
+    var net = nom.trim();
+    if(horsDonnees(net)) return;
+    var r = lignes(wb.Sheets[nom]);
+    if(!r.length) return;
+    var h = r[0].map(cell), cId = col(h, 'ID_sujet'), cSu = col(h, 'Sujet'), cAu = col(h, 'Aussi dans');
+    if(cId < 0) cId = 0; if(cSu < 0) cSu = 1;
+    var cc = [];
+    h.forEach(function(x, i){ if(i !== cId && i !== cSu && i !== cAu && x){ cc.push([i, x]); if(candidats.indexOf(x) < 0) candidats.push(x); } });
+    var sujets = [];
+    for(var i = 1; i < r.length; i++){
+      var id = cell(r[i][cId]), lib = cell(r[i][cSu]);
+      if(!id && !lib) continue;
+      if(!id){ pb.push(net + ' ligne ' + (i + 1) + ' : sujet « ' + lib + ' » sans ID_sujet, ignoré.'); continue; }
+      if(ids[id]){ pb.push('ID_sujet en doublon : ' + id + ' (seconde occurrence ignorée, onglet ' + net + ').'); continue; }
+      ids[id] = 1;
+      var pos = {};
+      cc.forEach(function(c){ var t = cell(r[i][c[0]]); if(t) pos[c[1]] = t; });
+      sujets.push({ id:id, libelle:lib || id, aussi_dans:cAu >= 0 ? liste(r[i][cAu]) : [], positions:pos });
+    }
+    thematiques.push({ nom:net, sujets:sujets });
+  });
+  var noms = thematiques.map(function(t){ return t.nom; });
+  thematiques.forEach(function(t){ t.sujets.forEach(function(s){
+    s.aussi_dans = s.aussi_dans.filter(function(c, k, arr){
+      if(noms.indexOf(c) < 0){ pb.push('Sujet ' + s.id + ' : la thématique « ' + c + ' » de la colonne « Aussi dans » n\'existe pas.'); return false; }
+      if(c === t.nom){ pb.push('Sujet ' + s.id + ' : « ' + c + ' » est déjà son onglet d\'origine.'); return false; }
+      return arr.indexOf(c) === k;
+    });
+  }); });
+
+  var editorial = [], re = lignes(feuille('Analyses & partis pris')), he = (re[0] || []).map(cell);
+  var ce = { id:col(he, 'ID_sujet'), type:col(he, 'Type'), auteur:col(he, 'Auteur'), init:col(he, 'Initiales'), texte:col(he, 'Texte'), src:col(he, 'Sources'), age:col(he, 'Âge') };
+  var g = function(row, c){ return c >= 0 ? cell(row[c]) : ''; };
+  for(var i = 1; i < re.length; i++){
+    var sid = g(re[i], ce.id), txt = g(re[i], ce.texte);
+    if(!sid && !txt) continue;
+    if(!ids[sid]){ pb.push('Analyses ligne ' + (i + 1) + ' : ID_sujet « ' + sid + ' » introuvable, texte ignoré.'); continue; }
+    if(!txt) continue;
+    var age = parseInt(g(re[i], ce.age), 10);
+    editorial.push({ sujet_id:sid, type:g(re[i], ce.type).toLowerCase().indexOf('analyse') === 0 ? 'analyse' : 'parti pris',
+      auteur:g(re[i], ce.auteur), initiales:g(re[i], ce.init), age:isNaN(age) ? null : age, texte:txt, sources:liste(ce.src >= 0 ? re[i][ce.src] : '') });
+  }
+
+  var sources = [], vus = {}, rb = lignes(feuille('Bibliographie')), hb = (rb[0] || []).map(cell);
+  var cb = { id:col(hb, 'ID_source'), reg:col(hb, 'Registre'), au:col(hb, 'Auteurs'), ti:col(hb, 'Titre'), ty:col(hb, 'Type'), org:col(hb, 'Éditeur/Organisme'), da:col(hb, 'Date de publication'), url:col(hb, 'URL'), co:col(hb, 'Date de consultation') };
+  for(var i = 1; i < rb.length; i++){
+    var bid = g(rb[i], cb.id);
+    if(!bid) continue;
+    if(vus[bid]){ pb.push('ID_source en doublon : ' + bid + ' (seconde occurrence ignorée).'); continue; }
+    vus[bid] = 1;
+    var ty = g(rb[i], cb.ty), reg = g(rb[i], cb.reg).toLowerCase();
+    if(reg !== 'programme' && reg !== 'analyse') reg = ty.toLowerCase() === 'programme' ? 'programme' : 'analyse';
+    sources.push({ id:bid, registre:reg, auteurs:g(rb[i], cb.au), titre:g(rb[i], cb.ti), type:ty, organisme:g(rb[i], cb.org), date_publication:g(rb[i], cb.da), url:g(rb[i], cb.url), date_consultation:g(rb[i], cb.co) });
+  }
+  editorial.forEach(function(e){ e.sources.forEach(function(s){ if(!vus[s]) pb.push('Source « ' + s + ' » citée (' + e.sujet_id + ') mais absente de la Bibliographie.'); }); });
+
+  var figures = [], figId = {}, wsF = feuille('Figures'), wsD = feuille('Données des figures');
+  var num = function(v){
+    if(typeof v === 'number') return v;
+    var t = cell(v).replace(/[\s  ]/g, '').replace(',', '.');
+    return /^-?\d+(\.\d+)?$/.test(t) ? parseFloat(t) : null;
+  };
+  if(wsF){
+    var rf = lignes(wsF), hf = (rf[0] || []).map(cell);
+    var cf = { id:col(hf, 'ID_figure'), type:col(hf, 'Type'), ti:col(hf, 'Titre'), un:col(hf, 'Unité'), mi:col(hf, 'Axe_min'), ma:col(hf, 'Axe_max'), no:col(hf, 'Note de lecture'), src:col(hf, 'Sources'), ed:col(hf, 'Édition des données'), fi:col(hf, 'Fichier'), alt:col(hf, 'Texte alternatif'), url:col(hf, 'Adresse de l\'image'), cr:col(hf, 'Source des données') };
+    for(var i = 1; i < rf.length; i++){
+      var fid = g(rf[i], cf.id);
+      if(!fid || figId[fid]) continue;
+      var ft = g(rf[i], cf.type).toLowerCase();
+      if(['courbe', 'barres', 'tableau', 'image'].indexOf(ft) < 0){ pb.push('Figure ' + fid + ' : Type « ' + ft + ' » non reconnu, figure ignorée.'); continue; }
+      var fg = { id:fid, type:ft, titre:g(rf[i], cf.ti), unite:g(rf[i], cf.un), axe_min:cf.mi >= 0 ? num(rf[i][cf.mi]) : null, axe_max:cf.ma >= 0 ? num(rf[i][cf.ma]) : null,
+        note:g(rf[i], cf.no), sources:liste(cf.src >= 0 ? rf[i][cf.src] : ''), edition:g(rf[i], cf.ed), fichier:g(rf[i], cf.fi), alt:g(rf[i], cf.alt), url:g(rf[i], cf.url), credit:g(rf[i], cf.cr), series:[] };
+      figures.push(fg); figId[fid] = fg;
+    }
+    if(wsD){
+      var rd = lignes(wsD), hd = (rd[0] || []).map(cell);
+      var cd = { id:col(hd, 'ID_figure'), se:col(hd, 'Série'), re:col(hd, 'Rendu'), x:col(hd, 'X'), v:col(hd, 'Valeur'), hi:col(hd, 'Valeur_haute'), st:col(hd, 'Statut') };
+      for(var i = 1; i < rd.length; i++){
+        var fg = figId[g(rd[i], cd.id)];
+        if(!fg) continue;
+        var sn = g(rd[i], cd.se) || 'Série', rendu = g(rd[i], cd.re).toLowerCase() || 'mesure';
+        if(['mesure', 'palier', 'repère', 'bande'].indexOf(rendu) < 0) rendu = 'mesure';
+        var ser = fg.series.filter(function(x){ return x.name === sn; })[0];
+        if(!ser){ ser = { name:sn, render:rendu, points:[] }; fg.series.push(ser); }
+        var xr = cd.x >= 0 ? rd[i][cd.x] : '', xv = typeof xr === 'number' ? xr : cell(xr);
+        if(typeof xv === 'string' && /^-?\d+$/.test(xv)) xv = parseInt(xv, 10);
+        var vv = cd.v >= 0 ? num(rd[i][cd.v]) : null;
+        if(xv === '' || vv == null){ pb.push('Données des figures ligne ' + (i + 1) + ' : X ou Valeur illisible, point ignoré.'); continue; }
+        var pt = { x:xv, v:vv };
+        if(rendu === 'bande'){ var hv = cd.hi >= 0 ? num(rd[i][cd.hi]) : null; if(hv != null) pt.hi = hv; }
+        var st = g(rd[i], cd.st).toLowerCase();
+        if(rendu === 'mesure' && (st === 'provisoire' || st === 'rétropolé')) pt.s = st;
+        ser.points.push(pt);
+      }
+    }
+  }
+
+  var nPos = 0;
+  thematiques.forEach(function(t){ t.sujets.forEach(function(s){ nPos += Object.keys(s.positions).length; }); });
+  return {
+    donnees:{ candidats:candidats, thematiques:thematiques, editorial:editorial, sources:sources, figures:figures },
+    problemes:pb,
+    resume:{ thematiques:thematiques.length, sujets:Object.keys(ids).length, candidats:candidats.length, verbatims:nPos, textes:editorial.length, sources:sources.length, figures:figures.length }
+  };
+}
+
+/* Construction du classeur de sauvegarde, au même format que le classeur source. */
+function construireClasseur(XLSX, x){
+  var wb = XLSX.utils.book_new();
+  var ajouter = function(nom, aoa, largeurs){
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    if(largeurs) ws['!cols'] = largeurs.map(function(w){ return { wch:w }; });
+    XLSX.utils.book_append_sheet(wb, ws, nom);
+  };
+  var jour = function(iso){ return iso ? new Date(iso).toLocaleString('fr-FR') : ''; };
+
+  ajouter('Lisez-moi', [
+    ['Comparateur de programmes — Présidentielle 2027'],
+    ['Sauvegarde générée depuis la base en ligne le ' + new Date().toLocaleString('fr-FR') + '.'],
+    ['La base en ligne est la référence. Ce classeur en est une copie.'],
+    ['Seule la STRUCTURE se réimporte depuis ce fichier (thématiques, sujets, colonne « Aussi dans », candidats). Les textes ne sont jamais réimportés : ils passent par le dépôt et la validation.'],
+    ['Les conventions de transcription restent celles du « Lisez-moi » du classeur d\'origine, à conserver à part.']
+  ], [140]);
+
+  ajouter('Analyses & partis pris', [['ID_sujet', 'Type', 'Auteur', 'Initiales', 'Texte', 'Sources', 'Âge', 'En ligne', 'ID_base', 'Dernière modification']].concat(
+    x.editorial.map(function(e){ return [e.sujet_id, e.type, e.auteur, e.initiales, e.texte, e.sources.join(', '), e.age == null ? '' : e.age, e.publie ? 'oui' : 'non', e.id, jour(e.maj)]; })), [28, 12, 16, 9, 90, 40, 6, 9, 8, 20]);
+
+  ajouter('Bibliographie', [['ID_source', 'Registre', 'Auteurs', 'Titre', 'Type', 'Éditeur/Organisme', 'Date de publication', 'URL', 'Date de consultation']].concat(
+    x.sources.map(function(s){ return [s.id, s.registre, s.auteurs, s.titre, s.type, s.organisme, s.date_publication, s.url, s.date_consultation]; })), [20, 11, 34, 60, 22, 34, 16, 50, 16]);
+
+  ajouter('Figures', [['ID_figure', 'Type', 'Titre', 'Unité', 'Axe_min', 'Axe_max', 'Note de lecture', 'Sources', 'Édition des données', 'Fichier', 'Texte alternatif', 'Adresse de l\'image', 'Source des données']].concat(
+    x.figures.map(function(f){ return [f.id, f.type, f.titre, f.unite, f.axe_min == null ? '' : f.axe_min, f.axe_max == null ? '' : f.axe_max, f.note, f.sources.join(', '), f.edition, f.fichier, f.alt, f.url, f.credit]; })), [24, 9, 50, 16, 8, 8, 60, 30, 30, 16, 50, 50, 30]);
+
+  var pts = [['ID_figure', 'Série', 'Rendu', 'X', 'Valeur', 'Valeur_haute', 'Statut']];
+  x.figures.forEach(function(f){ (f.series || []).forEach(function(s){ s.points.forEach(function(p){
+    pts.push([f.id, s.name, s.render, p.x, p.v, p.hi == null ? '' : p.hi, p.s || (s.render === 'mesure' ? 'consolidé' : '')]);
+  }); }); });
+  ajouter('Données des figures', pts, [24, 44, 9, 8, 10, 12, 11]);
+
+  var pris = { 'lisez-moi':1, 'analyses & partis pris':1, 'bibliographie':1, 'figures':1, 'données des figures':1, '_dépôts':1, '_journal':1 };
+  x.thematiques.forEach(function(t){
+    var nom = t.nom.replace(/[:\\\/?*\[\]]/g, ' ').slice(0, 31);
+    if(pris[nom.toLowerCase()]) return;
+    pris[nom.toLowerCase()] = 1;
+    ajouter(nom, [['ID_sujet', 'Sujet', 'Aussi dans'].concat(x.candidats)].concat(
+      t.sujets.map(function(s){ return [s.id, s.libelle, (s.aussi_dans || []).join(', ')].concat(x.candidats.map(function(c){ return s.positions[c] || ''; })); })),
+      [30, 40, 22].concat(x.candidats.map(function(){ return 60; })));
+  });
+
+  ajouter('_Dépôts', [['N°', 'Circuit', 'Statut', 'ID_sujet', 'Candidat', 'Auteur', 'Initiales', 'Âge', 'Texte', 'Sources', 'Relecteurs', 'Corrige (ID_base)', 'Fait suite au dépôt', 'Déposé par', 'Déposé le', 'Traité par', 'Traité le', 'Motif du refus']].concat(
+    x.depots.map(function(d){ return [d.id, d.circuit, d.statut, d.sujet_id, d.candidat || '', d.auteur, d.initiales, d.age == null ? '' : d.age, d.texte, d.sources.join(', '), d.relecteurs.join(', '), d.remplace || '', d.suite_de || '', d.depose_par_pseudo || '', jour(d.depose_le), d.traite_par_pseudo || '', jour(d.traite_le), d.motif || '']; })));
+
+  ajouter('_Journal', [['Date', 'Par', 'Action', 'Détail']].concat(
+    x.journal.map(function(j){ return [jour(j.quand), j.pseudo, j.action, JSON.stringify(j.detail)]; })), [20, 18, 20, 120]);
+  return wb;
+}
+/*</PASSERELLE>*/
+
+async function vueExcel(){
+  var vue = $('vue');
+  vue.innerHTML = '<p class="muted">Chargement…</p>';
+  var n = await sb.from('positions').select('sujet_id', { count:'exact', head:true });
+  var m = await sb.from('editorial').select('id', { count:'exact', head:true });
+  var vide = !(n.count || 0) && !(m.count || 0);
+  var lu = null;
+
+  vue.innerHTML = prendreFlash()
+    + '<div class="card"><h2>Sauvegarde : exporter toute la base vers Excel</h2><p>Produit un classeur au format du fichier source : un onglet par thématique, les analyses et partis pris, la bibliographie, les figures, plus l\'historique des dépôts et le journal. À faire régulièrement, et à ranger hors de ce service.</p><div class="actions"><button class="btn pri" id="btnExport"' + (vide ? ' disabled' : '') + '>Télécharger la sauvegarde Excel</button><button class="btn" id="btnSecours"' + (vide ? ' disabled' : '') + '>Télécharger data.js (copie de secours du site)</button></div><p class="muted" style="margin-top:8px">Le fichier data.js se dépose dans le dépôt GitHub à côté de index.html : le site l\'affiche si la base ne répond pas.</p><div id="exportMsg"></div></div>'
+    + '<div class="card"><h2>' + (vide ? 'Import initial : charger le classeur source' : 'Mettre à jour la structure depuis Excel') + '</h2>'
+    + (vide ? '<p>La base est vide. Déposez le classeur <b>Comparateur_2027_source.xlsx</b> : sa structure et tous ses textes seront chargés. Cette opération n\'est possible qu\'une seule fois.</p>'
+            : '<p>Déposez un classeur pour mettre à jour <b>la structure seulement</b> : thématiques, sujets, libellés, colonne « Aussi dans », candidats. Aucun texte n\'est modifié. Un sujet absent du fichier est supprimé s\'il est vide, conservé et signalé s\'il contient quoi que ce soit.</p><div class="note warn">Ne renommez jamais un ID_sujet qui porte déjà des textes : l\'outil y verrait un nouveau sujet vide.</div>')
+    + '<div class="drop" id="drop">Cliquez ou glissez le fichier .xlsx ici</div><input type="file" id="fichierXlsx" accept=".xlsx" class="hidden"><div id="importMsg"></div></div>';
+
+  $('btnExport').onclick = async function(){
+    var b = this, msg = $('exportMsg');
+    b.disabled = true; msg.innerHTML = '<p class="muted">Préparation…</p>';
+    try {
+      await chargerXLSX();
+      var x = await rpc('export_complet');
+      var wb = construireClasseur(window.XLSX, x);
+      window.XLSX.writeFile(wb, 'Comparateur_2027_sauvegarde_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+      msg.innerHTML = '<div class="note ok">Sauvegarde téléchargée.</div>';
+    } catch(e){ msg.innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
+    b.disabled = false;
+  };
+
+  $('btnSecours').onclick = async function(){
+    var msg = $('exportMsg');
+    try {
+      var D = await rpc('donnees_publiques');
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob(['window.COMPARATEUR_DATA = ' + JSON.stringify(D, null, 1) + ';\n'], { type:'text/javascript;charset=utf-8' }));
+      a.download = 'data.js'; a.click(); URL.revokeObjectURL(a.href);
+      msg.innerHTML = '<div class="note ok">data.js téléchargé.</div>';
+    } catch(e){ msg.innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
+  };
+
+  var drop = $('drop'), champ = $('fichierXlsx'), msg = $('importMsg');
+  drop.onclick = function(){ champ.click(); };
+  drop.ondragover = function(e){ e.preventDefault(); };
+  drop.ondrop = function(e){ e.preventDefault(); if(e.dataTransfer.files[0]) lire(e.dataTransfer.files[0]); };
+  champ.onchange = function(){ if(champ.files[0]) lire(champ.files[0]); };
+
+  async function lire(fichier){
+    lu = null;
+    if(!/\.xlsx$/i.test(fichier.name)){ msg.innerHTML = '<div class="note err">Ce n\'est pas un fichier .xlsx.</div>'; return; }
+    msg.innerHTML = '<p class="muted">Lecture du fichier…</p>';
+    try {
+      await chargerXLSX();
+      var wb = window.XLSX.read(new Uint8Array(await fichier.arrayBuffer()), { type:'array' });
+      lu = lireClasseur(window.XLSX, wb);
+    } catch(e){ msg.innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; return; }
+    var r = lu.resume;
+    msg.innerHTML = '<div class="note info"><b>' + esc(fichier.name) + '</b> : ' + r.thematiques + ' thématiques, ' + r.sujets + ' sujets, ' + r.candidats + ' candidats'
+      + (vide ? ', ' + r.verbatims + ' verbatims, ' + r.textes + ' analyses et partis pris, ' + r.sources + ' sources, ' + r.figures + ' figures' : '') + '.</div>'
+      + (lu.problemes.length ? '<div class="note warn"><b>Points relevés dans le fichier (' + lu.problemes.length + ')</b><ul>' + lu.problemes.map(function(p){ return '<li>' + esc(p) + '</li>'; }).join('') + '</ul></div>' : '')
+      + '<div class="actions"><button class="btn pri" id="btnImport">' + (vide ? 'Charger ce classeur dans la base' : 'Appliquer cette structure') + '</button></div>';
+    $('btnImport').onclick = importer;
+  }
+  async function importer(){
+    if(!lu) return;
+    $('btnImport').disabled = true;
+    try {
+      var r = await rpc(vide ? 'import_initial' : 'import_structure', { d:lu.donnees });
+      var h = '<div class="note ok"><b>' + (vide ? 'Import terminé.' : 'Structure mise à jour.') + '</b> La base compte ' + r.thematiques + ' thématiques, ' + r.sujets + ' sujets et ' + r.candidats + ' candidats'
+        + (vide ? ', ' + r.verbatims + ' verbatims, ' + r.textes + ' textes, ' + r.sources + ' sources, ' + r.figures + ' figures' : ' (' + r.sujets_ajoutes + ' sujet(s) ajouté(s), ' + r.sujets_supprimes + ' supprimé(s))') + '.</div>';
+      var alertes = [];
+      if(r.sujets_conserves.length) alertes.push('Sujets absents du fichier mais conservés car ils portent des textes ou des dépôts : ' + r.sujets_conserves.join(', '));
+      if(r.candidats_conserves.length) alertes.push('Candidats absents du fichier mais conservés car ils ont des verbatims : ' + r.candidats_conserves.join(', '));
+      if(r.emprunts_invalides.length) alertes.push('Emprunts vers une thématique inexistante : ' + r.emprunts_invalides.join(', '));
+      if(alertes.length) h += '<div class="note warn"><ul>' + alertes.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
+      await chargerReferentiel();
+      msg.innerHTML = h;
+      if(vide){ vide = false; drop.classList.add('hidden'); $('btnExport').disabled = false; $('btnSecours').disabled = false; }
+    } catch(e){ msg.innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
+  }
+}
+
+/* ===== Démarrage ===== */
+var dernier = undefined;
+sb.auth.onAuthStateChange(function(evt, session){
+  var uid = session ? session.user.id : null;
+  if(uid === dernier && evt !== 'SIGNED_OUT') return;   /* jeton rafraîchi : rien à refaire */
+  dernier = uid;
+  setTimeout(function(){ demarrer(session); }, 0);
+});
+})();
+</script>
+</body>
+</html>
