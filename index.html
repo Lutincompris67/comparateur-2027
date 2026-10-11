@@ -644,23 +644,52 @@ function majGridNav(){
   bar.scrollLeft=w.scrollLeft;
   majFleches();
 }
-/* Les deux barres se suivent ; on ne recopie la position que si elle diffère,
-   ce qui évite qu'elles se relancent l'une l'autre. */
+/* Les deux barres se suivent. Quand la grille bouge (flèches, défilement fluide),
+   la barre du haut est recopiée et ignorée un court instant : sans cela, sa position
+   légèrement en retard serait renvoyée à la grille et interromprait l'animation. */
+var ignorerBarre=0;
 $('gridWrap').addEventListener('scroll',function(){
   var bar=$('gridBar');
-  if(Math.abs(bar.scrollLeft-this.scrollLeft)>1)bar.scrollLeft=this.scrollLeft;
+  if(Math.abs(bar.scrollLeft-this.scrollLeft)>1){ ignorerBarre=Date.now()+200; bar.scrollLeft=this.scrollLeft; }
   majFleches();
 });
 $('gridBar').addEventListener('scroll',function(){
+  if(Date.now()<ignorerBarre)return;
   var w=$('gridWrap');
   if(Math.abs(w.scrollLeft-this.scrollLeft)>1)w.scrollLeft=this.scrollLeft;
 });
+/* Un clic amène la colonne de candidat suivante (ou précédente) contre la colonne
+   « Sujet », pour qu'aucune colonne ne reste coupée. */
+function cibleColonne(sens){
+  var w=$('gridWrap'), ths=w.querySelectorAll('thead th'), subj=w.querySelector('th.subj');
+  var x=w.scrollLeft, max=w.scrollWidth-w.clientWidth, pos=[];
+  /* Position de chaque colonne dans la zone défilante, mesurée à l'écran : bord gauche
+     de la colonne, moins le bord de la grille et la largeur de la colonne « Sujet ». */
+  var g=w.getBoundingClientRect().left+w.clientLeft+(subj?subj.offsetWidth:0);
+  for(var i=1;i<ths.length;i++)pos.push(Math.round(Math.min(max,Math.max(0,ths[i].getBoundingClientRect().left-g+x))));
+  var t=sens>0?pos.filter(function(v){return v>x+4;})[0]:pos.filter(function(v){return v<x-4;}).pop();
+  return t==null?(sens>0?max:0):t;
+}
 function defiler(sens){
   var w=$('gridWrap');
-  w.scrollBy({left:sens*colWidth(),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  w.scrollTo({left:cibleColonne(sens),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
 }
-$('gPrev').addEventListener('click',function(){defiler(-1);});
-$('gNext').addEventListener('click',function(){defiler(1);});
+/* Bouton maintenu enfoncé : une colonne tout de suite, puis une colonne de plus
+   à intervalle régulier tant qu'on appuie. */
+function boutonDefil(btn,sens){
+  var minuteur=null;
+  var arreter=function(){ if(minuteur){clearTimeout(minuteur);minuteur=null;} };
+  var repeter=function(){ defiler(sens); minuteur=setTimeout(repeter,380); };
+  btn.addEventListener('pointerdown',function(e){
+    if(e.button!==0||btn.disabled)return;
+    e.preventDefault(); arreter(); defiler(sens); minuteur=setTimeout(repeter,450);
+  });
+  ['pointerup','pointerleave','pointercancel','blur'].forEach(function(ev){btn.addEventListener(ev,arreter);});
+  /* Clavier (Entrée, Espace) : le clic n'a pas de pointeur, detail vaut 0. */
+  btn.addEventListener('click',function(e){ if(e.detail===0)defiler(sens); });
+}
+boutonDefil($('gPrev'),-1);
+boutonDefil($('gNext'),1);
 
 /* ===== Panneau ===== */
 /* Un verbatim peut réunir plusieurs mesures, séparées à la saisie par un tiret
