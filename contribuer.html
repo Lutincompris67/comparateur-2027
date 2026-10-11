@@ -781,11 +781,15 @@ async function vueSignalements(){
   var r = await sb.from('signalements').select('*').order('cree_le', { ascending:false }).limit(300);
   if(r.error) throw r.error;
   S.nSignal = r.data.filter(function(s){ return !s.traite; }).length;
-  vue.innerHTML = prendreFlash() + '<p>Messages envoyés par les visiteurs depuis le site.</p>' + (r.data.length ? r.data.map(function(s){
+  var nTraites = r.data.length - S.nSignal;
+  vue.innerHTML = prendreFlash() + '<p>Messages envoyés par les visiteurs depuis le site. Un signalement marqué comme traité peut être supprimé définitivement.</p>'
+    + (nTraites ? '<div class="actions" style="margin:0 0 14px"><button class="btn danger small" id="btnSupTraites">Supprimer les ' + nTraites + ' signalement' + (nTraites > 1 ? 's' : '') + ' traité' + (nTraites > 1 ? 's' : '') + '</button></div>' : '')
+    + (r.data.length ? r.data.map(function(s){
     return '<div class="card" data-sig="' + s.id + '"><span class="badge ' + (s.traite ? 'publie">traité' : 'attente">à traiter') + '</span>'
       + '<div class="meta">Reçu le ' + esc(dateFr(s.cree_le)) + (s.sujet_id ? ' · Sujet : <b>' + esc(libelleSujet(s.sujet_id)) + '</b>' : '') + (s.contact ? ' · Contact : <b>' + esc(s.contact) + '</b>' : '') + '</div>'
       + '<p style="white-space:pre-wrap;overflow-wrap:anywhere">' + esc(s.message) + '</p>'
-      + '<button class="btn small" data-etat="' + (s.traite ? '0' : '1') + '">' + (s.traite ? 'Remettre à traiter' : 'Marquer comme traité') + '</button></div>';
+      + '<div class="actions" style="margin-top:6px"><button class="btn small" data-etat="' + (s.traite ? '0' : '1') + '">' + (s.traite ? 'Remettre à traiter' : 'Marquer comme traité') + '</button>'
+      + (s.traite ? '<button class="btn small danger" data-sup="1">Supprimer</button>' : '') + '</div></div>';
   }).join('') : '<div class="note ok">Aucun signalement.</div>');
   document.querySelectorAll('.tab[data-tab="signalements"]').forEach(function(t){ t.innerHTML = 'Signalements' + (S.nSignal ? '<span class="n">' + S.nSignal + '</span>' : ''); });
   vue.querySelectorAll('[data-etat]').forEach(function(b){
@@ -794,6 +798,19 @@ async function vueSignalements(){
       vueSignalements();
     };
   });
+  /* Suppression : réservée aux signalements traités (la base le vérifie aussi). */
+  vue.querySelectorAll('[data-sup]').forEach(function(b){
+    b.onclick = async function(){
+      if(!await demander({ titre:'Supprimer ce signalement ?', texte:'Il sera effacé définitivement de la base.', ok:'Supprimer', danger:true })) return;
+      try { await rpc('supprimer_signalement', { p_id:parseInt(b.closest('[data-sig]').getAttribute('data-sig'), 10) }); flash('ok', 'Signalement supprimé.'); } catch(e){ flash('err', msgErreur(e)); }
+      vueSignalements();
+    };
+  });
+  if($('btnSupTraites')) $('btnSupTraites').onclick = async function(){
+    if(!await demander({ titre:'Supprimer tous les signalements traités ?', texte:'Ils seront effacés définitivement de la base. Les signalements à traiter ne sont pas concernés.', ok:'Tout supprimer', danger:true })) return;
+    try { var n = await rpc('supprimer_signalements_traites'); flash('ok', n + ' signalement' + (n > 1 ? 's supprimés.' : ' supprimé.')); } catch(e){ flash('err', msgErreur(e)); }
+    vueSignalements();
+  };
 }
 
 /* =====================================================================
@@ -883,13 +900,14 @@ function lireClasseur(XLSX, wb){
   }); });
 
   var editorial = [], re = lignes(feuille('Analyses & partis pris')), he = (re[0] || []).map(cell);
-  var ce = { id:col(he, 'ID_sujet'), type:col(he, 'Type'), auteur:col(he, 'Auteur'), init:col(he, 'Initiales'), texte:col(he, 'Texte'), src:col(he, 'Sources'), age:col(he, 'Âge') };
+  var ce = { id:col(he, 'ID_sujet'), type:col(he, 'Type'), auteur:col(he, 'Auteur'), init:col(he, 'Initiales'), texte:col(he, 'Texte'), src:col(he, 'Sources'), age:col(he, 'Âge'), ligne:col(he, 'En ligne') };
   var g = function(row, c){ return c >= 0 ? cell(row[c]) : ''; };
   for(var i = 1; i < re.length; i++){
     var sid = g(re[i], ce.id), txt = g(re[i], ce.texte);
     if(!sid && !txt) continue;
     if(!ids[sid]){ pb.push('Analyses ligne ' + (i + 1) + ' : ID_sujet « ' + sid + ' » introuvable, texte ignoré.'); continue; }
     if(!txt) continue;
+    if(g(re[i], ce.ligne).toLowerCase() === 'non'){ pb.push('Analyses ligne ' + (i + 1) + ' (' + sid + ') : texte dépublié dans la sauvegarde, non repris.'); continue; }
     var age = parseInt(g(re[i], ce.age), 10);
     editorial.push({ sujet_id:sid, type:g(re[i], ce.type).toLowerCase().indexOf('analyse') === 0 ? 'analyse' : 'parti pris',
       auteur:g(re[i], ce.auteur), initiales:g(re[i], ce.init), age:isNaN(age) ? null : age, texte:txt, sources:liste(ce.src >= 0 ? re[i][ce.src] : '') });
@@ -911,7 +929,7 @@ function lireClasseur(XLSX, wb){
   var figures = [], figId = {}, wsF = feuille('Figures'), wsD = feuille('Données des figures');
   var num = function(v){
     if(typeof v === 'number') return v;
-    var t = cell(v).replace(/[\s  ]/g, '').replace(',', '.');
+    var t = cell(v).replace(/[\s  ]/g, '').replace(',', '.');
     return /^-?\d+(\.\d+)?$/.test(t) ? parseFloat(t) : null;
   };
   if(wsF){

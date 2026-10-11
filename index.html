@@ -39,6 +39,9 @@ nav{display:flex;gap:14px;align-items:center}
 nav a{font-size:12.5px;text-decoration:none;color:var(--ink-3);padding:4px 2px;border-bottom:1.5px solid transparent}
 nav a:hover{color:var(--terre)}
 nav a.on{color:var(--terre);border-color:var(--terre)}
+/* Accès contributeurs : affiché seulement dans un navigateur déjà connecté à l'espace. */
+nav a.nav-contrib{color:var(--terre-deep);font-weight:600;border:1px solid var(--terre-soft);border-radius:6px;padding:4px 9px;background:var(--terre-mist)}
+nav a.nav-contrib:hover{border-color:var(--terre)}
 
 /* ===== Accroche percutante (accueil uniquement) ===== */
 .accroche-wrap{background:var(--terre-accroche);border-bottom:3px solid var(--terre-accroche-line)}
@@ -108,6 +111,16 @@ nav a.on{color:var(--terre);border-color:var(--terre)}
 
 /* ===== Grille comparative ===== */
 .grid-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--card);margin-bottom:30px}
+/* Défilement des candidats sur ordinateur : flèches et barre en haut de la grille,
+   qui restent visibles sous l'en-tête pendant qu'on descend dans les sujets. */
+.grid-nav{position:sticky;z-index:30;display:flex;align-items:center;gap:8px;padding:7px 0 8px;background:var(--paper)}
+.grid-nav button{flex:0 0 auto;border:1px solid var(--rule);background:var(--card);border-radius:7px;height:30px;padding:0 11px;font-size:13px;font-weight:600;color:var(--ink-2);display:inline-flex;align-items:center;gap:5px}
+.grid-nav button:hover:not(:disabled){border-color:var(--terre);color:var(--terre-deep)}
+.grid-nav button:disabled{opacity:.35;cursor:default}
+.grid-bar{flex:1;overflow-x:auto;overflow-y:hidden;height:16px}
+.grid-bar div{height:1px}
+.grid-nav .gn-lab{font-size:12px;color:var(--ink-3);white-space:nowrap}
+@media(max-width:640px){.grid-nav{display:none!important}}
 table{border-collapse:separate;border-spacing:0;width:100%}
 th,td{padding:13px 15px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule-soft);font-size:13.5px}
 thead th{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--terre-deep);background:var(--terre-soft);position:sticky;top:0;z-index:2}
@@ -176,7 +189,11 @@ tbody tr:hover td.subj{background:#F6F0E9}
 .src-list{margin-top:16px;padding-top:13px;border-top:1px dashed var(--rule)}
 .src-list h5{font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
 .src-list ol{margin-left:19px;font-size:13px;color:var(--ink-2)}
-.src-list li{margin-bottom:6px}
+.src-list li{margin-bottom:6px;padding:2px 6px;margin-left:-6px;border-radius:5px;scroll-margin:70px;transition:background-color .6s}
+/* Source visée par un appel de note : surlignée brièvement. */
+.src-list li.src-vise{background:var(--terre-soft)}
+.analyse-box sup a,.pp-card sup a{font-weight:600;text-decoration:none;color:var(--terre)}
+.pp-card .src-list{margin-top:12px}
 .pp-card{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--pp,#777);border-radius:var(--r);padding:13px 16px;margin-bottom:12px}
 .pp-head{display:flex;align-items:center;gap:9px;margin-bottom:8px}
 .pp-av{width:30px;height:30px;border-radius:50%;background:var(--pp,#777);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;flex:0 0 auto}
@@ -265,6 +282,7 @@ footer a{color:var(--terre)}
     <nav>
       <a href="#methodologie" data-nav="methodologie">Méthodologie</a>
       <a href="#sources" data-nav="sources">Sources</a>
+      <a href="contribuer.html" class="nav-contrib hidden" id="navContrib">Espace contributeurs</a>
     </nav>
   </div>
 </header>
@@ -313,6 +331,11 @@ footer a{color:var(--terre)}
     </div>
     <h1 class="t-title" id="tTitle"></h1>
     <p class="t-sub" id="tSub"></p>
+    <div class="grid-nav hidden" id="gridNav" aria-label="Faire défiler les candidats">
+      <button type="button" id="gPrev" aria-label="Candidats précédents">‹ Précédents</button>
+      <div class="grid-bar" id="gridBar"><div></div></div>
+      <button type="button" id="gNext" aria-label="Candidats suivants">Suivants ›</button>
+    </div>
     <div class="grid-wrap" id="gridWrap"></div>
   </div>
 </main>
@@ -453,6 +476,8 @@ function showView(v){
   views.forEach(function(name){ $('view-'+name).classList.toggle('hidden', name!==v); });
   /* L'accroche n'apparaît que sur la page d'accueil. */
   $('accrocheWrap').classList.toggle('hidden', v!=='accueil');
+  /* La grille n'a de largeur mesurable qu'une fois sa vue affichée. */
+  if(v==='theme')setTimeout(majGridNav,0);
   document.querySelectorAll('[data-nav]').forEach(function(a){
     a.classList.toggle('on', a.getAttribute('data-nav')===v);
   });
@@ -530,7 +555,7 @@ window.addEventListener('resize',function(){
   if(_rsTimer)clearTimeout(_rsTimer);
   _rsTimer=setTimeout(function(){
     if(!$('view-accueil').classList.contains('hidden'))renderCards();
-    if(!$('view-theme').classList.contains('hidden'))markClamped();
+    if(!$('view-theme').classList.contains('hidden')){markClamped();majGridNav();}
   },150);
 });
 
@@ -594,7 +619,48 @@ function renderGrid(){
      polices stabilisées, sinon « Lire la suite » peut manquer sur une case tronquée. */
   if(window.requestAnimationFrame)requestAnimationFrame(markClamped);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(markClamped);
+  majGridNav();
 }
+/* ===== Défilement des candidats (ordinateur) =====
+   La barre native de la grille est tout en bas d'un long tableau : on ajoute en haut
+   deux flèches et une barre synchronisée, qui restent visibles sous l'en-tête. */
+function colWidth(){
+  var td=$('gridWrap').querySelector('td.cand');
+  return td?td.offsetWidth:300;
+}
+function majFleches(){
+  var w=$('gridWrap');
+  $('gPrev').disabled=w.scrollLeft<=1;
+  $('gNext').disabled=w.scrollLeft>=w.scrollWidth-w.clientWidth-1;
+}
+function majGridNav(){
+  var w=$('gridWrap'), nav=$('gridNav'), bar=$('gridBar');
+  var trop=w.scrollWidth>w.clientWidth+2;
+  nav.classList.toggle('hidden',!trop);
+  if(!trop)return;
+  nav.style.top=(document.querySelector('header').offsetHeight)+'px';
+  bar.firstElementChild.style.width=w.scrollWidth+'px';
+  bar.style.width='';
+  bar.scrollLeft=w.scrollLeft;
+  majFleches();
+}
+/* Les deux barres se suivent ; on ne recopie la position que si elle diffère,
+   ce qui évite qu'elles se relancent l'une l'autre. */
+$('gridWrap').addEventListener('scroll',function(){
+  var bar=$('gridBar');
+  if(Math.abs(bar.scrollLeft-this.scrollLeft)>1)bar.scrollLeft=this.scrollLeft;
+  majFleches();
+});
+$('gridBar').addEventListener('scroll',function(){
+  var w=$('gridWrap');
+  if(Math.abs(w.scrollLeft-this.scrollLeft)>1)w.scrollLeft=this.scrollLeft;
+});
+function defiler(sens){
+  var w=$('gridWrap');
+  w.scrollBy({left:sens*colWidth(),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+}
+$('gPrev').addEventListener('click',function(){defiler(-1);});
+$('gNext').addEventListener('click',function(){defiler(1);});
 
 /* ===== Panneau ===== */
 /* Un verbatim peut réunir plusieurs mesures, séparées à la saisie par un tiret
@@ -823,12 +889,23 @@ function richText(text, ids){
     if(ids)html=html.replace(/\[(\d+)\]/g,function(m,n){
       var i=parseInt(n,10)-1, sid=ids[i];
       if(sid===undefined)return '<sup>['+n+']</sup>';
-      return '<sup><a href="#src-'+esc(sid)+'" title="'+esc(sid)+'">['+n+']</a></sup>';
+      var b=bibById[sid];
+      return '<sup><a href="#" data-note="'+n+'" title="'+esc(b?b.title:sid)+'">['+n+']</a></sup>';
     });
     return '<p>'+html+'</p>';
   }).join('');
 }
 function footnotes(text, ids){ return richText(text, ids||[]); }
+/* Liste des sources d'un texte, numérotée dans l'ordre des appels de note. */
+function sourcesHTML(ids){
+  if(!ids||!ids.length)return '';
+  return '<div class="src-list"><h5>Sources</h5><ol>'+ids.map(function(sid,i){
+    var b=bibById[sid];
+    return '<li data-note="'+(i+1)+'">'+(b
+      ? esc(b.authors? b.authors+'. ':'')+'<i>'+esc(b.title)+'</i>'+(b.org?', '+esc(b.org):'')+(b.date?', '+esc(b.date):'')+(b.url?'. <a href="'+esc(b.url)+'" target="_blank" rel="noopener">Consulter ↗</a>':'')
+      : esc(sid)+' <span class="avenir">(référence à compléter dans la bibliographie)</span>')+'</li>';
+  }).join('')+'</ol></div>';
+}
 function renderPanelBody(){
   var f=findSubject(state.subject); if(!f)return;
   var s=f.subject, ed=edBySubject[s.id]||[], body=$('pBody'), h='';
@@ -851,17 +928,7 @@ function renderPanelBody(){
     h+='<p class="p-section-label">Analyse — factuelle, neutre et sourcée</p>';
     if(!analyses.length)h+='<p class="p-empty">Pas encore d\'analyse sur ce sujet.</p>';
     analyses.forEach(function(a){
-      h+='<div class="analyse-box">'+footnotes(a.text,a.sources||[]);
-      if(a.sources&&a.sources.length){
-        h+='<div class="src-list"><h5>Sources</h5><ol>';
-        a.sources.forEach(function(sid){
-          var b=bibById[sid];
-          h+= b ? '<li id="src-'+esc(sid)+'">'+esc(b.authors? b.authors+'. ':'')+'<i>'+esc(b.title)+'</i>'+(b.org?', '+esc(b.org):'')+(b.date?', '+esc(b.date):'')+(b.url?'. <a href="'+esc(b.url)+'" target="_blank" rel="noopener">Consulter ↗</a>':'')+'</li>'
-                 : '<li id="src-'+esc(sid)+'">'+esc(sid)+' <span class="avenir">(référence à compléter dans la bibliographie)</span></li>';
-        });
-        h+='</ol></div>';
-      }
-      h+='</div>';
+      h+='<div class="analyse-box">'+footnotes(a.text,a.sources||[])+sourcesHTML(a.sources)+'</div>';
     });
   }
   if(state.tab==='partis'){
@@ -870,7 +937,7 @@ function renderPanelBody(){
     if(!pp.length)h+='<p class="p-empty">Pas encore de parti pris sur ce sujet. Les contributions arrivent au fil du projet.</p>';
     pp.forEach(function(p){
       var col=ppColor(p.author||'?');
-      h+='<div class="pp-card" style="--pp:'+col+'"><div class="pp-head"><span class="pp-av">'+esc(initials(p))+'</span><span class="pp-name">L\'avis de '+esc(p.author||'Anonyme')+(p.age?', '+esc(p.age)+' ans':'')+'</span><span class="pp-tag">Opinion</span></div>'+richText(p.text,null)+'</div>';
+      h+='<div class="pp-card" style="--pp:'+col+'"><div class="pp-head"><span class="pp-av">'+esc(initials(p))+'</span><span class="pp-name">L\'avis de '+esc(p.author||'Anonyme')+(p.age?', '+esc(p.age)+' ans':'')+'</span><span class="pp-tag">Opinion</span></div>'+footnotes(p.text,p.sources||[])+sourcesHTML(p.sources)+'</div>';
     });
   }
   h+='<p class="p-signal"><button class="cite-link" type="button" data-signaler>Signaler une erreur sur ce sujet</button></p>';
@@ -1077,6 +1144,24 @@ function renderSources(){
 /* ===== Init ===== */
 $('majDate').textContent = D.meta && D.meta.generated ? 'Données du '+D.meta.generated : '';
 $('footMeta').textContent = 'Comparateur 2027 — données mises à jour le '+(D.meta?D.meta.generated:'');
+/* Appel de note : on reste dans le panneau, on fait défiler jusqu'à la source
+   correspondante (dans le même texte) et on la surligne un instant. */
+$('pBody').addEventListener('click',function(e){
+  var a=e.target.closest('a[data-note]'); if(!a)return;
+  e.preventDefault();
+  var box=a.closest('.analyse-box,.pp-card'); if(!box)return;
+  var li=box.querySelector('.src-list li[data-note="'+a.getAttribute('data-note')+'"]'); if(!li)return;
+  li.scrollIntoView({block:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  li.classList.add('src-vise');
+  setTimeout(function(){li.classList.remove('src-vise');},1800);
+});
+/* Lien vers l'espace contributeurs dans l'en-tête, pour les navigateurs qui s'y sont
+   déjà connectés (session Supabase présente). Le lien du pied de page reste pour tous. */
+try{
+  for(var k=0;k<localStorage.length;k++){
+    if(/^sb-.*-auth-token$/.test(localStorage.key(k))){$('navContrib').classList.remove('hidden');break;}
+  }
+}catch(e){}
 /* Bouton « Voir les données » des figures (délégation : le contenu du panneau est régénéré). */
 $('pBody').addEventListener('click',function(e){
   var b=e.target.closest('.fig-toggle'); if(!b)return;
