@@ -52,6 +52,8 @@ p{margin-bottom:10px}
 .field{margin-bottom:13px}
 .field label,.lab{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
 .field small{display:block;color:var(--ink-3);font-size:12px;margin-top:3px}
+.choix{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:var(--ink-2);margin:8px 0;cursor:pointer;line-height:1.45}
+.choix input{margin-top:3px;flex:none;width:16px;height:16px}
 input[type=text],input[type=number],input[type=search],input[type=url],select,textarea{width:100%;padding:9px 11px;border:1px solid var(--rule);border-radius:8px;background:#fff}
 textarea{min-height:230px;line-height:1.6;resize:vertical}
 textarea.court{min-height:90px}
@@ -123,6 +125,7 @@ var SUPABASE_URL = 'https://bwkqtcxygzxcvrbzvdzg.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_iaBd03vrVGP-NxntLO9dzg_enTfgPHa';
 var MOTS_REPERE_PARTI_PRIS = 800;   /* ordre de grandeur visé */
 var MOTS_MAX_PARTI_PRIS = 1000;     /* au-delà, le dépôt est bloqué */
+var SEPARATEUR = ' — ';             /* entre deux mesures d'une même case (ajouté par la base) */
 
 var $ = function(id){ return document.getElementById(id); };
 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
@@ -322,7 +325,8 @@ function afficher(){
    ===================================================================== */
 function nouveauFormulaire(circuit){
   return { circuit:circuit, theme:'', sujet:'', candidat:'', auteur:'', initiales:'', age:'', texte:'',
-           sources:[], relecteurs:['', ''], remplace:null, suite_de:null, ctx:null, motifPrecedent:null };
+           sources:[], relecteurs:['', ''], remplace:null, suite_de:null, ctx:null, motifPrecedent:null,
+           mode:null, ancienTexte:null };
 }
 function relecteursRequis(f){ return (f.circuit === 'verbatim' || f.remplace || f.suite_de) ? 1 : 2; }
 
@@ -358,14 +362,34 @@ async function majContexte(){
   }
   var h = '';
   if(f.circuit === 'verbatim' && f.ctx.position != null){
-    h = '<div class="note info">Cette case contient déjà un texte en ligne. Votre dépôt le <b>remplacera</b> une fois validé.' + rendreTexte(f.ctx.position, null, 'verb') + '<button class="btn small" id="btnReprendre">Repartir de ce texte</button></div>';
-  } else if(f.circuit !== 'verbatim' && f.ctx.existants.length){
+    h = '<div class="note info"><b>Cette case contient déjà un texte en ligne :</b>' + rendreTexte(f.ctx.position, null, 'verb')
+      + '<span class="lab" style="margin-top:10px">Votre dépôt…</span>'
+      + '<label class="choix"><input type="radio" name="fMode" value="ajout"' + (f.mode === 'ajout' ? ' checked' : '') + '><span><b>s\'ajoute à la suite.</b> Saisissez seulement la ou les nouvelles mesures. À la validation, la base les placera après « — », à la suite du texte alors en ligne, même si un autre ajout a été validé entre-temps.</span></label>'
+      + '<label class="choix"><input type="radio" name="fMode" value="remplacement"' + (f.mode === 'remplacement' ? ' checked' : '') + '><span><b>corrige le texte en ligne.</b> Le texte en ligne est repris dans le champ ci-dessous : modifiez-le. Si la case change avant la validation, votre correction ne pourra pas être publiée et devra être refaite.</span></label>'
+      + '</div>';
+  } else if(f.circuit === 'verbatim'){
+    h = '<p class="muted">Cette case est vide : votre texte la remplira.</p>';
+  } else if(f.ctx.existants.length){
     h = '<div class="field"><label for="fRemplace">Nouveau texte ou correction ?</label><select id="fRemplace"><option value="">Nouveau texte, qui s\'ajoute</option>'
       + f.ctx.existants.map(function(e){ return '<option value="' + e.id + '"' + (f.remplace === e.id ? ' selected' : '') + '>Correction du texte de ' + esc(e.auteur || '?') + (e.publie ? '' : ' (dépublié)') + ' — « ' + esc(e.texte.slice(0, 50)) + '… »</option>'; }).join('')
       + '</select><small>Une correction remplace le texte en ligne, sans mention visible. Une seule validation sur Discord suffit.</small></div>';
   }
+  if(f.ancienTexte != null) h += '<details><summary>Pour mémoire : le texte de votre dépôt refusé</summary><div>' + rendreTexte(f.ancienTexte, null, 'verb') + '</div></details>';
   zone.innerHTML = h;
-  if($('btnReprendre')) $('btnReprendre').onclick = function(){ f.texte = f.ctx.position; $('fTexte').value = f.texte; majDiagnostic(); };
+  /* Correction (y compris après un refus) : on part toujours du texte en ligne. */
+  if(f.circuit === 'verbatim' && f.ctx.position != null && f.mode === 'remplacement' && !f.texte.trim()){
+    f.texte = f.ctx.position;
+    if($('fTexte')) $('fTexte').value = f.texte;
+  }
+  zone.querySelectorAll('input[name="fMode"]').forEach(function(r){
+    r.onchange = function(){
+      f.mode = this.value;
+      if(f.mode === 'remplacement' && !f.texte.trim()) f.texte = f.ctx.position;
+      if(f.mode === 'ajout' && f.texte === f.ctx.position) f.texte = '';
+      $('fTexte').value = f.texte;
+      majDiagnostic();
+    };
+  });
   if($('fRemplace')) $('fRemplace').onchange = function(){
     f.remplace = this.value ? parseInt(this.value, 10) : null;
     if(f.remplace){
@@ -374,6 +398,7 @@ async function majContexte(){
     }
     vueDeposer();
   };
+  majDiagnostic();
 }
 
 function diagnostics(f){
@@ -386,6 +411,18 @@ function diagnostics(f){
 
   if(f.circuit === 'verbatim'){
     if(!f.candidat) bloc.push('Choisissez un candidat.');
+    if(f.sujet && f.candidat){
+      if(!f.ctx) bloc.push('Vérification du contenu de la case en cours : réessayez dans un instant.');
+      else if(f.ctx.position != null){
+        var tt = t.trim();
+        if(!f.mode) bloc.push('Indiquez si votre texte s\'ajoute à la case ou corrige le texte en ligne.');
+        else if(f.mode === 'remplacement' && tt === f.ctx.position) bloc.push('Le texte est identique au texte en ligne : il n\'y a rien à corriger.');
+        else if(f.mode === 'ajout'){
+          if(tt && f.ctx.position.indexOf(tt) >= 0) avert.push('Ce texte figure déjà dans la case en ligne : vérifiez qu\'il ne s\'agit pas d\'un doublon.');
+          if(/^—/.test(tt)) avert.push('Inutile de commencer par « — » : la base l\'ajoute elle-même entre le texte en ligne et le vôtre.');
+        }
+      }
+    }
     if(/\[\s*…\s*\]|\(\s*(\.\.\.|…)\s*\)|\[\s*\.\.\s*\]|\[\s*\.{4,}\s*\]|\[\s+\.\.\.\s*\]|\[\.\.\.\s+\]/.test(t)) avert.push('Une coupe se note [...] : crochets droits et trois points saisis au clavier.');
     if(/\[\s*sic\s*\]/i.test(t)) avert.push('Pas de [sic] : une coquille du programme est reproduite telle quelle.');
     var crochets = (t.match(/\[[^\]]*\]/g) || []).filter(function(c){ return c !== '[...]' && !/^\[\s*(…|\.+)\s*\]$/.test(c) && !/^\[\s*sic\s*\]$/i.test(c); });
@@ -478,9 +515,9 @@ function vueDeposer(){
 
   /* --- liaisons --- */
   vue.querySelectorAll('.pill').forEach(function(b){ b.onclick = function(){ var anc = S.form; S.form = nouveauFormulaire(b.getAttribute('data-circuit')); S.form.theme = anc.theme; S.form.sujet = anc.sujet; vueDeposer(); }; });
-  $('fTheme').onchange = function(){ f.theme = this.value; f.sujet = ''; f.ctx = null; f.remplace = null; vueDeposer(); };
-  $('fSujet').onchange = function(){ f.sujet = this.value; f.ctx = null; f.remplace = null; vueDeposer(); };
-  if($('fCand')) $('fCand').onchange = function(){ f.candidat = this.value; f.ctx = null; vueDeposer(); };
+  $('fTheme').onchange = function(){ f.theme = this.value; f.sujet = ''; f.ctx = null; f.remplace = null; f.mode = null; vueDeposer(); };
+  $('fSujet').onchange = function(){ f.sujet = this.value; f.ctx = null; f.remplace = null; f.mode = null; vueDeposer(); };
+  if($('fCand')) $('fCand').onchange = function(){ f.candidat = this.value; f.ctx = null; f.mode = null; vueDeposer(); };
   var maj = function(){ majDiagnostic(); };
   $('fTexte').oninput = function(){ f.texte = this.value; maj(); };
   if($('fAuteur')) $('fAuteur').oninput = function(){ f.auteur = this.value; maj(); };
@@ -489,7 +526,9 @@ function vueDeposer(){
   [0, 1].forEach(function(i){ if($('fRel' + i)) $('fRel' + i).oninput = function(){ f.relecteurs[i] = this.value; maj(); }; });
   $('btnVider').onclick = function(){ S.form = nouveauFormulaire(f.circuit); vueDeposer(); };
   $('btnApercu').onclick = function(){
-    $('apercu').innerHTML = '<h3>Aperçu</h3>' + rendreTexte(f.texte, estVerb ? null : f.sources, estVerb ? 'verb' : (estPP ? 'pp' : ''));
+    var ajoutVerb = estVerb && f.ctx && f.ctx.position != null && f.mode === 'ajout';
+    $('apercu').innerHTML = '<h3>' + (ajoutVerb ? 'Aperçu de la case après validation' : 'Aperçu') + '</h3>'
+      + rendreTexte(ajoutVerb ? f.ctx.position + SEPARATEUR + f.texte.trim() : f.texte, estVerb ? null : f.sources, estVerb ? 'verb' : (estPP ? 'pp' : ''));
   };
   $('btnDeposer').onclick = deposer;
   if(!estVerb){ majSources(); lierSources(); lierImage(); }
@@ -603,13 +642,21 @@ async function deposer(){
     return;
   }
   var estVerb = f.circuit === 'verbatim';
+  /* Verbatim : ajout à la case (cas général), ou correction du texte en ligne,
+     avec le texte de départ pour que la base refuse une correction devenue obsolète. */
+  var mode = null, base = null;
+  if(estVerb){
+    if(f.ctx && f.ctx.position != null){ mode = f.mode; if(mode === 'remplacement') base = f.ctx.position; }
+    else mode = 'ajout';
+  }
   var ligne = {
     circuit:f.circuit, sujet_id:f.sujet, candidat:estVerb ? f.candidat : null,
     auteur:estVerb ? '' : f.auteur.trim(), initiales:estVerb ? '' : f.initiales.trim(),
     age:f.circuit === 'parti pris' ? parseInt(f.age, 10) : null,
     texte:f.texte, sources:estVerb ? [] : f.sources,
     relecteurs:f.relecteurs.slice(0, relecteursRequis(f)).map(function(x){ return x.trim(); }),
-    remplace:estVerb ? null : f.remplace, suite_de:f.suite_de, depose_par:S.session.user.id
+    remplace:estVerb ? null : f.remplace, suite_de:f.suite_de, depose_par:S.session.user.id,
+    mode:mode, texte_base:base
   };
   $('btnDeposer').disabled = true;
   var r = await sb.from('depots').insert(ligne);
@@ -627,23 +674,37 @@ async function deposer(){
 /* =====================================================================
    MES DÉPÔTS
    ===================================================================== */
+function natureDepot(d){
+  if(d.circuit === 'verbatim'){
+    var n = d.mode === 'ajout' ? 'Ajout à la case' : d.mode === 'remplacement' ? 'Correction de la case' : 'Remplace la case';
+    return (d.suite_de ? 'Nouveau dépôt après refus · ' : '') + n;
+  }
+  return d.suite_de ? 'Nouveau dépôt après refus' : d.remplace ? 'Correction d\'un texte en ligne' : 'Nouveau';
+}
 function carteDepot(d, mode){
   var statutClasse = { 'en attente':'attente', 'publié':'publie', 'refusé':'refuse' }[d.statut];
-  var nature = d.suite_de ? 'Nouveau dépôt après refus' : d.remplace ? 'Correction d\'un texte en ligne' : 'Nouveau';
+  var estVerb = d.circuit === 'verbatim', obsolete = false;
   var h = '<div class="card" data-depot="' + d.id + '">'
     + '<div><span class="badge">' + esc(nomCircuit(d.circuit)) + '</span> <span class="badge ' + statutClasse + '">' + esc(d.statut) + '</span></div>'
     + '<h2 style="margin-top:8px">' + esc(libelleSujet(d.sujet_id)) + (d.candidat ? ' — ' + esc(d.candidat) : '') + '</h2>'
     + '<div class="meta">' + (mode === 'valider' ? 'Déposé par <b>' + esc(S.pseudos[d.depose_par] || 'compte supprimé') + '</b> le ' : 'Déposé le ') + esc(dateFr(d.depose_le))
-    + ' · ' + esc(nature) + ' · Relu par <b>' + esc(d.relecteurs.join(', ')) + '</b>'
-    + (d.circuit !== 'verbatim' ? ' · Auteur : <b>' + esc(d.auteur) + (d.age ? ', ' + d.age + ' ans' : '') + '</b>' : '') + '</div>';
+    + ' · ' + esc(natureDepot(d)) + ' · Relu par <b>' + esc(d.relecteurs.join(', ')) + '</b>'
+    + (!estVerb ? ' · Auteur : <b>' + esc(d.auteur) + (d.age ? ', ' + d.age + ' ans' : '') + '</b>' : '') + '</div>';
   if(d.statut === 'refusé') h += '<div class="note err"><b>Refusé</b> le ' + esc(dateFr(d.traite_le)) + ' — ' + esc(d.motif || '') + '</div>';
   if(mode === 'valider' && d.suite_de && d._precedent) h += '<div class="note info">Fait suite à un refus — motif d\'alors : « ' + esc(d._precedent.motif || '') + ' »</div>';
-  h += '<details' + (mode === 'valider' ? ' open' : '') + '><summary>Le texte déposé</summary><div>' + rendreTexte(d.texte, d.sources, d.circuit === 'verbatim' ? 'verb' : d.circuit === 'parti pris' ? 'pp' : '') + '</div></details>';
-  if(mode === 'valider' && d._actuel != null) h += '<details><summary>Le texte actuellement en ligne, qui sera remplacé</summary><div>' + rendreTexte(d._actuel, null, d.circuit === 'verbatim' ? 'verb' : '') + '</div></details>';
+  if(mode === 'valider' && estVerb && d.mode === 'remplacement'){
+    obsolete = d._actuel !== d.texte_base;
+    if(obsolete) h += '<div class="note err"><b>La case a changé depuis ce dépôt</b> : un autre texte y a été validé, ou elle a été dépubliée. Cette correction ne peut plus être validée. Refusez-la en demandant au déposant de repartir du texte en ligne.</div>';
+  }
+  h += '<details' + (mode === 'valider' ? ' open' : '') + '><summary>' + (estVerb && d.mode === 'ajout' ? 'Le texte déposé, à ajouter à la suite' : 'Le texte déposé') + '</summary><div>' + rendreTexte(d.texte, d.sources, estVerb ? 'verb' : d.circuit === 'parti pris' ? 'pp' : '') + '</div></details>';
+  if(mode === 'valider' && d._actuel != null){
+    if(estVerb && d.mode === 'ajout') h += '<details open><summary>La case après validation</summary><div>' + rendreTexte(d._actuel + SEPARATEUR + d.texte, null, 'verb') + '</div></details>';
+    else h += '<details><summary>Le texte actuellement en ligne, qui sera remplacé</summary><div>' + rendreTexte(d._actuel, null, estVerb ? 'verb' : '') + '</div></details>';
+  }
   if(mode === 'mes' && d.statut === 'refusé') h += '<div class="actions"><button class="btn" data-act="redeposer">Corriger et redéposer</button></div>';
   if(mode === 'valider'){
     var sien = d.depose_par === S.session.user.id;
-    h += '<div class="actions"><button class="btn pri" data-act="valider"' + (sien ? ' disabled' : '') + '>Valider et publier</button><button class="btn danger" data-act="refuser">Refuser…</button>'
+    h += '<div class="actions"><button class="btn pri" data-act="valider"' + (sien || obsolete ? ' disabled' : '') + '>Valider et publier</button><button class="btn danger" data-act="refuser">Refuser…</button>'
       + (sien ? '<span class="muted">Vous avez déposé ce texte : un autre mainteneur doit le valider.</span>' : '') + '</div>';
   }
   return h + '</div>';
@@ -663,9 +724,13 @@ async function vueMes(){
     b.onclick = function(){
       var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10);
       var d = r.data.filter(function(x){ return x.id === id; })[0], s = S.sujetById[d.sujet_id];
+      /* Une correction refusée repart du texte en ligne actuel, jamais de l'ancien :
+         on évite ainsi d'effacer ce qui a été ajouté entre-temps. */
+      var correction = d.circuit === 'verbatim' && d.mode === 'remplacement';
       S.form = nouveauFormulaire(d.circuit);
       Object.assign(S.form, { theme:s ? s.thematique : '', sujet:d.sujet_id, candidat:d.candidat || '', auteur:d.auteur, initiales:d.initiales, age:d.age || '',
-        texte:d.texte, sources:d.sources.slice(), remplace:d.remplace, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
+        texte:correction ? '' : d.texte, ancienTexte:correction ? d.texte : null, mode:d.circuit === 'verbatim' ? d.mode : null,
+        sources:d.sources.slice(), remplace:d.remplace, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
       S.tab = 'deposer'; afficher();
     };
   });
@@ -682,7 +747,7 @@ async function vueValider(){
   if(r.error) throw r.error;
   var liste = r.data;
   S.nAttente = liste.length;
-  /* Pour chaque dépôt : le texte qu'il remplacerait, et le refus auquel il fait suite. */
+  /* Pour chaque dépôt : le texte en ligne à cet endroit, et le refus auquel il fait suite. */
   await Promise.all(liste.map(async function(d){
     if(d.circuit === 'verbatim'){
       var p = await sb.from('positions').select('texte').eq('sujet_id', d.sujet_id).eq('candidat', d.candidat).maybeSingle();
@@ -1019,8 +1084,8 @@ function construireClasseur(XLSX, x){
       [30, 40, 22].concat(x.candidats.map(function(){ return 60; })));
   });
 
-  ajouter('_Dépôts', [['N°', 'Circuit', 'Statut', 'ID_sujet', 'Candidat', 'Auteur', 'Initiales', 'Âge', 'Texte', 'Sources', 'Relecteurs', 'Corrige (ID_base)', 'Fait suite au dépôt', 'Déposé par', 'Déposé le', 'Traité par', 'Traité le', 'Motif du refus']].concat(
-    x.depots.map(function(d){ return [d.id, d.circuit, d.statut, d.sujet_id, d.candidat || '', d.auteur, d.initiales, d.age == null ? '' : d.age, d.texte, d.sources.join(', '), d.relecteurs.join(', '), d.remplace || '', d.suite_de || '', d.depose_par_pseudo || '', jour(d.depose_le), d.traite_par_pseudo || '', jour(d.traite_le), d.motif || '']; })));
+  ajouter('_Dépôts', [['N°', 'Circuit', 'Statut', 'ID_sujet', 'Candidat', 'Auteur', 'Initiales', 'Âge', 'Texte', 'Sources', 'Relecteurs', 'Corrige (ID_base)', 'Fait suite au dépôt', 'Déposé par', 'Déposé le', 'Traité par', 'Traité le', 'Motif du refus', 'Mode (verbatim)', 'Texte de départ (correction)']].concat(
+    x.depots.map(function(d){ return [d.id, d.circuit, d.statut, d.sujet_id, d.candidat || '', d.auteur, d.initiales, d.age == null ? '' : d.age, d.texte, d.sources.join(', '), d.relecteurs.join(', '), d.remplace || '', d.suite_de || '', d.depose_par_pseudo || '', jour(d.depose_le), d.traite_par_pseudo || '', jour(d.traite_le), d.motif || '', d.mode || '', d.texte_base || '']; })));
 
   ajouter('_Journal', [['Date', 'Par', 'Action', 'Détail']].concat(
     x.journal.map(function(j){ return [jour(j.quand), j.pseudo, j.action, JSON.stringify(j.detail)]; })), [20, 18, 20, 120]);
