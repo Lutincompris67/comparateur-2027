@@ -177,6 +177,33 @@ function dateFr(iso){
   return d.toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'numeric'}) + ' à ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
 }
 function nomCircuit(id){ var c = CIRCUITS.filter(function(x){ return x.id === id; })[0]; return c ? c.nom : id; }
+/* Sujets d'une thématique : ceux dont c'est l'onglet d'origine, puis ceux d'autres onglets
+   qui s'y affichent aussi (colonne « Aussi dans »). Un sujet n'a qu'une case par candidat,
+   quel que soit l'onglet par lequel on y arrive. */
+function sujetsDeTheme(t){
+  var propres = S.sujets.filter(function(s){ return s.thematique === t; });
+  var empruntes = S.sujets.filter(function(s){ return s.thematique !== t && (s.aussi_dans || []).indexOf(t) >= 0; })
+    .sort(function(a, b){ return a.libelle.localeCompare(b.libelle, 'fr'); });
+  return { propres:propres, empruntes:empruntes };
+}
+function optionsSujets(t, choisi){
+  var g = sujetsDeTheme(t);
+  var opt = function(s, autre){ return '<option value="' + esc(s.id) + '"' + (s.id === choisi ? ' selected' : '') + '>' + esc(s.libelle) + (autre ? ' (sujet de l\'onglet ' + esc(s.thematique) + ')' : '') + '</option>'; };
+  return '<option value="">— choisir —</option>'
+    + g.propres.map(function(s){ return opt(s, false); }).join('')
+    + (g.empruntes.length ? '<optgroup label="Sujets d\'autres onglets, affichés aussi ici">' + g.empruntes.map(function(s){ return opt(s, true); }).join('') + '</optgroup>' : '');
+}
+function noteSujet(id, theme){
+  var s = S.sujetById[id];
+  if(!s) return '';
+  var emprunte = theme && s.thematique !== theme;
+  var autres = [s.thematique].concat(s.aussi_dans || []).filter(function(x){ return x !== theme && !(emprunte && x === s.thematique); });
+  var h = 'ID : ' + esc(s.id) + '.';
+  if(emprunte) h += ' Sujet de l\'onglet « ' + esc(s.thematique) + ' », affiché aussi ici : il n\'a qu\'une case par candidat, le dépôt y va directement.';
+  if(autres.length) h += ' Il s\'affiche aussi dans : ' + autres.map(esc).join(', ') + '.';
+  if(emprunte || autres.length) h += ' Ne déposez pas le même texte dans un autre sujet de ces onglets.';
+  return h;
+}
 function libelleSujet(id){ var s = S.sujetById[id]; return s ? s.libelle + ' (' + s.thematique + ')' : id; }
 function flash(type, texte){ S.message = {type:type, texte:texte}; }
 function prendreFlash(){ var m = S.message; S.message = null; return m ? '<div class="note ' + m.type + '">' + esc(m.texte) + '</div>' : ''; }
@@ -277,7 +304,7 @@ function circuitsPermis(){ return CIRCUITS.filter(function(c){ return S.profil[c
 async function chargerReferentiel(){
   var r = await Promise.all([
     tout(function(){ return sb.from('thematiques').select('nom,ordre').order('ordre'); }),
-    tout(function(){ return sb.from('sujets').select('id,libelle,thematique,ordre').order('ordre'); }),
+    tout(function(){ return sb.from('sujets').select('id,libelle,thematique,ordre,aussi_dans').order('ordre'); }),
     tout(function(){ return sb.from('candidats').select('nom,ordre').order('ordre'); }),
     tout(function(){ return sb.from('sources').select('id,registre,auteurs,titre,organisme,date_publication,url').order('ordre'); }),
     tout(function(){ return sb.from('figures').select('id,type,titre,alt,credit,url,fichier').order('id'); })
@@ -463,7 +490,6 @@ function vueDeposer(){
   if(!S.form || !S.profil[CIRCUITS.filter(function(c){ return c.id === S.form.circuit; })[0].droit]) S.form = nouveauFormulaire(permis[0].id);
   var f = S.form;
   var estVerb = f.circuit === 'verbatim', estPP = f.circuit === 'parti pris';
-  var sujetsTheme = S.sujets.filter(function(s){ return s.thematique === f.theme; });
   var h = prendreFlash();
 
   h += '<div class="pills">' + permis.map(function(c){ return '<button class="pill' + (c.id === f.circuit ? ' on' : '') + '" data-circuit="' + c.id + '">' + c.nom + '</button>'; }).join('') + '</div>';
@@ -472,7 +498,7 @@ function vueDeposer(){
 
   h += '<div class="card"><h2>1. Où va ce texte ?</h2><div class="row">'
     + '<div class="field"><label for="fTheme">Thématique</label><select id="fTheme"><option value="">— choisir —</option>' + S.themes.map(function(t){ return '<option' + (t === f.theme ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select></div>'
-    + '<div class="field"><label for="fSujet">Sujet</label><select id="fSujet"' + (f.theme ? '' : ' disabled') + '><option value="">— choisir —</option>' + sujetsTheme.map(function(s){ return '<option value="' + esc(s.id) + '"' + (s.id === f.sujet ? ' selected' : '') + '>' + esc(s.libelle) + '</option>'; }).join('') + '</select><small>' + (f.sujet ? 'ID : ' + esc(f.sujet) : 'Un sujet se dépose dans sa thématique d\'origine.') + '</small></div>'
+    + '<div class="field"><label for="fSujet">Sujet</label><select id="fSujet"' + (f.theme ? '' : ' disabled') + '>' + optionsSujets(f.theme, f.sujet) + '</select><small id="noteSujet">' + (f.sujet ? noteSujet(f.sujet, f.theme) : 'Les sujets d\'autres onglets affichés dans celui-ci figurent en fin de liste.') + '</small></div>'
     + (estVerb ? '<div class="field"><label for="fCand">Candidat</label><select id="fCand"><option value="">— choisir —</option>' + S.candidats.map(function(c){ return '<option' + (c === f.candidat ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select></div>' : '')
     + '</div><div id="ctxZone"></div></div>';
 
@@ -816,7 +842,7 @@ async function vueEnLigne(){
   $('dvTheme').onchange = function(){
     var t = this.value, sel = $('dvSujet');
     sel.disabled = !t; $('dvCases').innerHTML = '';
-    sel.innerHTML = '<option value="">— choisir —</option>' + S.sujets.filter(function(s){ return s.thematique === t; }).map(function(s){ return '<option value="' + esc(s.id) + '">' + esc(s.libelle) + '</option>'; }).join('');
+    sel.innerHTML = optionsSujets(t, '');
   };
   $('dvSujet').onchange = async function(){
     var sid = this.value, w = $('dvCases');
