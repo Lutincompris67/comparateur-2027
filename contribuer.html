@@ -103,6 +103,10 @@ dialog{border:1px solid var(--rule);border-radius:12px;padding:20px;max-width:46
 dialog::backdrop{background:rgba(45,32,22,.45)}
 .compte{font-size:12.5px;color:var(--ink-3);text-align:right;margin-top:3px}
 .compte.trop{color:var(--rouge);font-weight:700}
+.filtre{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 14px}
+.filtre label{font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.filtre select{width:auto;max-width:100%;min-width:240px}
+.filtre .muted{margin-left:auto}
 .hidden{display:none!important}
 </style>
 </head>
@@ -145,8 +149,13 @@ var CIRCUITS = [
 var S = {
   session:null, profil:null, tab:null,
   themes:[], sujets:[], sujetById:{}, candidats:[], sources:[], srcById:{}, figById:{},
-  pseudos:{}, form:null, nAttente:0, nSignal:0, message:null
+  pseudos:{}, form:null, nAttente:0, nSignal:0, message:null,
+  filtreValider:null   /* 'tous', 'autres', 'moi' ou l'identifiant d'un déposant */
 };
+/* Le filtre de l'onglet « À valider » est retenu par ce navigateur. */
+var CLE_FILTRE = 'comparateur2027-filtre-valider';
+function lireFiltre(){ try { return localStorage.getItem(CLE_FILTRE) || 'tous'; } catch(e){ return 'tous'; } }
+function garderFiltre(v){ S.filtreValider = v; try { localStorage.setItem(CLE_FILTRE, v); } catch(e){} }
 
 /* ===== Outils ===== */
 function msgErreur(e){
@@ -788,7 +797,38 @@ async function vueValider(){
     }
   }));
   var tete = tete0 + '<p>Votre rôle ici : vérifier que le circuit a été respecté (bon sujet, relecteurs indiqués, registre respecté). Vous ne pouvez pas valider un texte que vous avez déposé.</p>';
-  vue.innerHTML = tete + (liste.length ? liste.map(function(d){ return carteDepot(d, 'valider'); }).join('') : '<div class="note ok">Rien à valider pour l\'instant.</div>');
+
+  /* Filtre par déposant : les miens, ceux des autres, ou une personne précise. */
+  var moi = S.session.user.id, parDeposant = {}, nMoi = 0;
+  liste.forEach(function(d){
+    var k = d.depose_par || 'inconnu';
+    parDeposant[k] = (parDeposant[k] || 0) + 1;
+    if(d.depose_par === moi) nMoi++;
+  });
+  var nomDe = function(k){ return k === 'inconnu' ? 'Compte supprimé' : (S.pseudos[k] || 'Compte supprimé'); };
+  var autresIds = Object.keys(parDeposant).filter(function(k){ return k !== moi; })
+    .sort(function(a, b){ return nomDe(a).localeCompare(nomDe(b), 'fr'); });
+  if(S.filtreValider == null) S.filtreValider = lireFiltre();
+  var f = S.filtreValider;
+  if(f !== 'tous' && f !== 'autres' && f !== 'moi' && !parDeposant[f]) f = 'tous';   /* déposant qui n'a plus rien en attente */
+  var garde = function(d){
+    if(f === 'tous') return true;
+    if(f === 'autres') return d.depose_par !== moi;
+    if(f === 'moi') return d.depose_par === moi;
+    return (d.depose_par || 'inconnu') === f;
+  };
+  var visibles = liste.filter(garde);
+  var opt = function(v, lib){ return '<option value="' + esc(v) + '"' + (v === f ? ' selected' : '') + '>' + esc(lib) + '</option>'; };
+  var barre = liste.length ? '<div class="filtre"><label for="filtreDep">Déposé par</label><select id="filtreDep">'
+      + opt('tous', 'Tous les déposants (' + liste.length + ')')
+      + opt('autres', 'Les autres, que je peux valider (' + (liste.length - nMoi) + ')')
+      + opt('moi', 'Moi (' + nMoi + ')')
+      + (autresIds.length ? '<optgroup label="Un déposant">' + autresIds.map(function(k){ return opt(k, nomDe(k) + ' (' + parDeposant[k] + ')'); }).join('') + '</optgroup>' : '')
+      + '</select>' + (f !== 'tous' ? '<span class="muted">' + visibles.length + ' sur ' + liste.length + ' affiché' + (visibles.length > 1 ? 's' : '') + '</span>' : '') + '</div>' : '';
+  var vide = !liste.length ? '<div class="note ok">Rien à valider pour l\'instant.</div>'
+    : !visibles.length ? '<div class="note info">Aucun dépôt en attente pour ce choix.</div>' : '';
+  vue.innerHTML = tete + barre + (vide || visibles.map(function(d){ return carteDepot(d, 'valider'); }).join(''));
+  if($('filtreDep')) $('filtreDep').onchange = function(){ garderFiltre(this.value); vueValider(); };
   document.querySelectorAll('.tab[data-tab="valider"]').forEach(function(t){ t.innerHTML = 'À valider' + (S.nAttente ? '<span class="n">' + S.nAttente + '</span>' : ''); });
   vue.querySelectorAll('[data-act]').forEach(function(b){
     b.onclick = async function(){
