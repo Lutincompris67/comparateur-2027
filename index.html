@@ -272,6 +272,13 @@ footer a{color:var(--terre)}
 .sig-pri{background:var(--terre-deep);border-color:var(--terre-deep);color:#fff}
 .sig-btn:disabled{opacity:.5;cursor:not-allowed}
 .hidden{display:none!important}
+/* ===== Bandeau « version de secours » : affiché quand la base n'a pas pu être jointe ===== */
+.secours{background:var(--terre-mist);border-bottom:1px solid var(--terre-soft);color:var(--ink-2);font-size:13px;line-height:1.5}
+.secours .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:9px;padding-bottom:9px}
+.secours p{flex:1;min-width:220px}
+.secours b{color:var(--terre-deep);font-weight:600}
+.secours button{flex:0 0 auto;border:1px solid var(--terre-soft);background:var(--card);border-radius:7px;padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--terre-deep)}
+.secours button:hover{border-color:var(--terre)}
 </style>
 </head>
 <body>
@@ -1209,11 +1216,28 @@ function valide(D){ return D && D.themes && D.themes.length && D.candidates; }
 function echec(){
   document.getElementById('cards').outerHTML='<p style="padding:30px 0;color:#5C5346">Les données du comparateur n\'ont pas pu être chargées. Vérifiez votre connexion, puis rechargez la page.</p>';
 }
+/* Bandeau affiché quand le site montre une version enregistrée au lieu des données
+   en ligne : le visiteur doit savoir que les dernières mises à jour peuvent manquer. */
+function bandeau(D, origine){
+  try{
+    var date = D && D.meta && D.meta.generated ? String(D.meta.generated) : '';
+    var quoi = origine==='cache' ? 'la dernière version enregistrée par votre navigateur' : 'la copie de secours du site';
+    var div=document.createElement('div');
+    div.className='secours'; div.setAttribute('role','status'); div.id='bandeauSecours';
+    div.innerHTML='<div class="wrap"><p><b>Version enregistrée'+(date?' (données du '+date.replace(/[<>&"]/g,'')+')':'')+'.</b> '
+      +'La base du comparateur n\'a pas pu être jointe : vous consultez '+quoi+', où les dernières mises à jour peuvent manquer. '
+      +'Un bloqueur de contenu ou une connexion instable peut en être la cause.</p>'
+      +'<button type="button">Réessayer</button></div>';
+    div.querySelector('button').addEventListener('click',function(){ location.reload(); });
+    var h=document.querySelector('header');
+    h.parentNode.insertBefore(div,h.nextSibling);
+  }catch(e){}
+}
 function secours(){
-  try{ var c=JSON.parse(localStorage.getItem(CACHE)||'null'); if(valide(c)){ demarrer(c); return; } }catch(e){}
+  try{ var c=JSON.parse(localStorage.getItem(CACHE)||'null'); if(valide(c)){ demarrer(c); bandeau(c,'cache'); return; } }catch(e){}
   var s=document.createElement('script');
   s.src='data.js';
-  s.onload=function(){ if(valide(window.COMPARATEUR_DATA)) demarrer(window.COMPARATEUR_DATA); else echec(); };
+  s.onload=function(){ if(valide(window.COMPARATEUR_DATA)){ demarrer(window.COMPARATEUR_DATA); bandeau(window.COMPARATEUR_DATA,'secours'); } else echec(); };
   s.onerror=echec;
   document.head.appendChild(s);
 }
