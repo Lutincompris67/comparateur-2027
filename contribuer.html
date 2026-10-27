@@ -823,7 +823,7 @@ function carteDepot(d, mode){
     if(estVerb && d.mode === 'ajout') h += '<details open><summary>La case après validation</summary><div>' + rendreTexte(d._actuel + SEPARATEUR + d.texte, null, 'verb') + '</div></details>';
     else h += '<details><summary>Le texte actuellement en ligne, qui sera remplacé</summary><div>' + rendreTexte(d._actuel, null, estVerb ? 'verb' : '') + '</div></details>';
   }
-  if(mode === 'mes' && d.statut === 'refusé') h += '<div class="actions"><button class="btn" data-act="redeposer">Corriger et redéposer</button></div>';
+  if(mode === 'mes' && d.statut === 'refusé') h += '<div class="actions"><button class="btn" data-act="redeposer">Corriger et redéposer</button><button class="btn danger small" data-act="supprimer">Supprimer ce dépôt…</button></div>';
   if(mode === 'valider'){
     var sien = d.depose_par === S.session.user.id;
     h += '<div class="actions"><button class="btn pri" data-act="valider"' + (sien || obsolete ? ' disabled' : '') + '>Valider et publier</button><button class="btn danger" data-act="refuser">Refuser…</button>'
@@ -929,6 +929,15 @@ async function vueMes(){
           texte:correction ? '' : d.texte, ancienTexte:correction ? d.texte : null, mode:d.circuit === 'verbatim' ? d.mode : null,
           sources:d.circuit === 'verbatim' ? [] : d.sources.slice(), docs:d.circuit === 'verbatim' ? d.sources.slice() : [], remplace:d.remplace, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
         S.tab = 'deposer'; afficher();
+      };
+    });
+    w.querySelectorAll('[data-act="supprimer"]').forEach(function(b){
+      b.onclick = async function(){
+        var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10);
+        if(!await demander({ titre:'Supprimer ce dépôt refusé ?', texte:'Il disparaît de vos dépôts et ne pourra plus être redéposé. Une copie reste dans le journal des mainteneurs.', ok:'Supprimer', danger:true })) return;
+        try { await rpc('supprimer_depot', { p_id:id }); flash('ok', 'Dépôt supprimé.'); }
+        catch(e){ flash('err', /supprimer_depot/.test(msgErreur(e)) ? 'La suppression n\'est pas encore installée dans la base : un mainteneur doit exécuter le script supprimer_depot.sql.' : msgErreur(e)); }
+        vueMes();
       };
     });
   }
