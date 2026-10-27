@@ -114,6 +114,17 @@ dialog::backdrop{background:rgba(45,32,22,.45)}
 .caseline .ex{display:block;font-family:var(--serif);color:var(--ink-2);font-size:13.5px;margin-top:2px}
 .caseline .aussi{display:block;color:var(--ink-3);font-size:12px;margin-top:2px}
 .doc-liens{font-size:13px;overflow-wrap:anywhere}
+.compteurs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.compteurs button{border:1px solid var(--rule);background:var(--card);border-radius:20px;padding:6px 13px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.compteurs button.on{background:var(--terre-soft);border-color:var(--terre);color:var(--terre-deep)}
+.compteurs button.alerte{border-color:#E3BDB8;color:var(--rouge)}
+.compteurs button.alerte.on{background:var(--rouge-soft);border-color:var(--rouge)}
+.filtres-mes{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+.filtres-mes>div{flex:1;min-width:150px}
+.filtres-mes>div.large{flex:2;min-width:220px}
+.filtres-mes label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:3px}
+.card.a-reprendre{border-color:#E3BDB8;border-left:4px solid var(--rouge)}
+.tab .n.alerte{background:var(--rouge)}
 .hidden{display:none!important}
 </style>
 </head>
@@ -158,8 +169,18 @@ var S = {
   themes:[], sujets:[], sujetById:{}, candidats:[], sources:[], srcById:{}, figById:{},
   pseudos:{}, form:null, nAttente:0, nSignal:0, nDocs:0, message:null,
   progCand:null, progDoc:null, progTheme:'', progSansDoc:true,   /* onglet Programmes */
-  filtreValider:null   /* 'tous', 'autres', 'moi' ou l'identifiant d'un déposant */
+  filtreValider:null,  /* 'tous', 'autres', 'moi' ou l'identifiant d'un déposant */
+  nReprendre:0,        /* mes dépôts refusés, pas encore redéposés */
+  mes:null             /* filtres de l'onglet « Mes dépôts » */
 };
+/* Filtres de « Mes dépôts », retenus par ce navigateur (sauf la recherche). */
+var CLE_MES = 'comparateur2027-filtres-mes-depots';
+function lireFiltresMes(){
+  var d = { statut:'tous', circuit:'', theme:'', tri:'recent', q:'', n:30 };
+  try { var v = JSON.parse(localStorage.getItem(CLE_MES) || 'null'); if(v) ['statut', 'circuit', 'theme', 'tri'].forEach(function(k){ if(typeof v[k] === 'string') d[k] = v[k]; }); } catch(e){}
+  return d;
+}
+function garderFiltresMes(){ var m = S.mes; try { localStorage.setItem(CLE_MES, JSON.stringify({ statut:m.statut, circuit:m.circuit, theme:m.theme, tri:m.tri })); } catch(e){} }
 /* Le filtre de l'onglet « À valider » est retenu par ce navigateur. */
 var CLE_FILTRE = 'comparateur2027-filtre-valider';
 function lireFiltre(){ try { return localStorage.getItem(CLE_FILTRE) || 'tous'; } catch(e){ return 'tous'; } }
@@ -335,6 +356,22 @@ async function chargerReferentiel(){
   S.figById = {};
   r[4].forEach(function(f){ S.figById[f.id] = f; });
   if(S.profil.mainteneur) await chargerCompteurs();
+  if(circuitsPermis().length) await compterAReprendre();
+}
+/* Dépôts refusés que je n'ai pas encore redéposés : signalés sur l'onglet « Mes dépôts ». */
+async function compterAReprendre(){
+  try {
+    var l = await tout(function(){ return sb.from('depots').select('id,statut,suite_de').eq('depose_par', S.session.user.id).order('id'); });
+    S.nReprendre = aReprendre(l).length;
+  } catch(e){ S.nReprendre = 0; }
+}
+function aReprendre(liste){
+  var repris = {};
+  liste.forEach(function(d){ if(d.suite_de) repris[d.suite_de] = 1; });
+  return liste.filter(function(d){ return d.statut === 'refusé' && !repris[d.id]; });
+}
+function majOngletMes(){
+  document.querySelectorAll('.tab[data-tab="mes"]').forEach(function(t){ t.innerHTML = 'Mes dépôts' + (S.nReprendre ? '<span class="n alerte" title="Dépôts refusés à reprendre">' + S.nReprendre + '</span>' : ''); });
 }
 async function chargerCompteurs(){
   var a = await sb.from('depots').select('id', {count:'exact', head:true}).eq('statut', 'en attente');
@@ -349,7 +386,7 @@ async function chargerCompteurs(){
 /* ===== Onglets ===== */
 function afficher(){
   var onglets = [];
-  if(circuitsPermis().length){ onglets.push(['deposer', 'Déposer']); onglets.push(['mes', 'Mes dépôts']); }
+  if(circuitsPermis().length){ onglets.push(['deposer', 'Déposer']); onglets.push(['mes', 'Mes dépôts' + (S.nReprendre ? '<span class="n alerte" title="Dépôts refusés à reprendre">' + S.nReprendre + '</span>' : '')]); }
   if(S.profil.mainteneur){
     onglets.push(['valider', 'À valider' + (S.nAttente ? '<span class="n">' + S.nAttente + '</span>' : '')]);
     onglets.push(['enligne', 'En ligne']);
@@ -767,7 +804,7 @@ function natureDepot(d){
 function carteDepot(d, mode){
   var statutClasse = { 'en attente':'attente', 'publié':'publie', 'refusé':'refuse' }[d.statut];
   var estVerb = d.circuit === 'verbatim', obsolete = false;
-  var h = '<div class="card" data-depot="' + d.id + '">'
+  var h = '<div class="card' + (mode === 'mes' && d.statut === 'refusé' ? ' a-reprendre' : '') + '" data-depot="' + d.id + '">'
     + '<div><span class="badge">' + esc(nomCircuit(d.circuit)) + '</span> <span class="badge ' + statutClasse + '">' + esc(d.statut) + '</span></div>'
     + '<h2 style="margin-top:8px">' + esc(libelleSujet(d.sujet_id)) + (d.candidat ? ' — ' + esc(d.candidat) : '') + '</h2>'
     + '<div class="meta">' + (mode === 'valider' ? 'Déposé par <b>' + esc(S.pseudos[d.depose_par] || 'compte supprimé') + '</b> le ' : 'Déposé le ') + esc(dateFr(d.depose_le))
@@ -775,6 +812,7 @@ function carteDepot(d, mode){
     + (!estVerb ? ' · Auteur : <b>' + esc(d.auteur) + (d.age ? ', ' + d.age + ' ans' : '') + '</b>' : '') + '</div>'
     + (estVerb && d.sources && d.sources.length ? '<div class="meta">Document(s) d\'origine indiqué(s) : ' + d.sources.map(function(id){ return '<b>' + esc(S.srcById[id] ? S.srcById[id].titre : id) + '</b>'; }).join(', ') + '</div>' : '');
   if(d.statut === 'refusé') h += '<div class="note err"><b>Refusé</b> le ' + esc(dateFr(d.traite_le)) + ' — ' + esc(d.motif || '') + '</div>';
+  if(mode === 'vu') h += '<p class="muted">Repris : un nouveau dépôt a été fait après ce refus.</p>';
   if(mode === 'valider' && d.suite_de && d._precedent) h += '<div class="note info">Fait suite à un refus — motif d\'alors : « ' + esc(d._precedent.motif || '') + ' »</div>';
   if(mode === 'valider' && estVerb && d.mode === 'remplacement'){
     obsolete = d._actuel !== d.texte_base;
@@ -798,26 +836,116 @@ async function vueMes(){
   var vue = $('vue');
   var tete = prendreFlash();
   vue.innerHTML = tete + '<p class="muted">Chargement…</p>';
-  var r = await sb.from('depots').select('*').eq('depose_par', S.session.user.id).order('depose_le', { ascending:false }).limit(200);
-  if(r.error) throw r.error;
-  var repris = {};
-  r.data.forEach(function(d){ if(d.suite_de) repris[d.suite_de] = 1; });
-  vue.innerHTML = tete
-    + (r.data.length ? r.data.map(function(d){ return carteDepot(d, repris[d.id] ? 'vu' : 'mes'); }).join('') : '<p class="muted">Vous n\'avez encore rien déposé.</p>');
-  vue.querySelectorAll('[data-act="redeposer"]').forEach(function(b){
+  var liste = await tout(function(){ return sb.from('depots').select('*').eq('depose_par', S.session.user.id).order('depose_le', { ascending:false }).order('id', { ascending:false }); });
+  if(!S.mes) S.mes = lireFiltresMes();
+  var m = S.mes;
+
+  /* État de chaque dépôt, du point de vue du déposant. */
+  var reprendre = aReprendre(liste), idsReprendre = {};
+  reprendre.forEach(function(d){ idsReprendre[d.id] = 1; });
+  var etat = function(d){ return idsReprendre[d.id] ? 'reprendre' : d.statut === 'refusé' ? 'repris' : d.statut === 'en attente' ? 'attente' : 'publie'; };
+  var n = { tous:liste.length, reprendre:0, attente:0, publie:0, repris:0 };
+  liste.forEach(function(d){ n[etat(d)]++; });
+  S.nReprendre = n.reprendre; majOngletMes();
+  if(m.statut !== 'tous' && !n[m.statut]) m.statut = n.reprendre ? 'reprendre' : 'tous';
+
+  if(!liste.length){ vue.innerHTML = tete + '<p class="muted">Vous n\'avez encore rien déposé.</p>'; return; }
+
+  var circuits = CIRCUITS.filter(function(c){ return liste.some(function(d){ return d.circuit === c.id; }); });
+  var themeDe = function(d){ var x = S.sujetById[d.sujet_id]; return x ? x.thematique : ''; };
+  var themes = S.themes.filter(function(t){ return liste.some(function(d){ var x = S.sujetById[d.sujet_id]; return x && (x.thematique === t || (x.aussi_dans || []).indexOf(t) >= 0); }); });
+  if(m.circuit && !circuits.some(function(c){ return c.id === m.circuit; })) m.circuit = '';
+  if(m.theme && themes.indexOf(m.theme) < 0) m.theme = '';
+
+  var puce = function(k, lib, alerte){ return '<button type="button" data-statut="' + k + '" class="' + (m.statut === k ? 'on ' : '') + (alerte ? 'alerte' : '') + '">' + lib + ' (' + n[k] + ')</button>'; };
+  var h = tete
+    + (n.reprendre ? '<div class="note err"><b>' + n.reprendre + ' dépôt' + (n.reprendre > 1 ? 's refusés' : ' refusé') + ' à reprendre.</b> ' + (n.reprendre > 1 ? 'Ils sont affichés' : 'Il est affiché') + ' en premier. Lisez le motif, faites valider la correction sur Discord, puis cliquez « Corriger et redéposer ».</div>' : '')
+    + '<div class="compteurs" role="group" aria-label="Filtrer par état">'
+    + puce('tous', 'Tous') + (n.reprendre ? puce('reprendre', 'À reprendre', true) : '') + puce('attente', 'En attente') + puce('publie', 'Publiés') + (n.repris ? puce('repris', 'Refusés déjà repris') : '')
+    + '</div>'
+    + '<div class="filtres-mes">'
+    + (circuits.length > 1 ? '<div><label for="mesCircuit">Circuit</label><select id="mesCircuit"><option value="">Tous</option>' + circuits.map(function(c){ return '<option value="' + c.id + '"' + (c.id === m.circuit ? ' selected' : '') + '>' + c.nom + '</option>'; }).join('') + '</select></div>' : '')
+    + '<div><label for="mesTheme">Thématique</label><select id="mesTheme"><option value="">Toutes</option>' + themes.map(function(t){ return '<option' + (t === m.theme ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select></div>'
+    + '<div><label for="mesTri">Ordre</label><select id="mesTri">'
+    + [['recent', 'Plus récents'], ['ancien', 'Plus anciens'], ['sujet', 'Par sujet']].map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === m.tri ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('')
+    + '</select></div>'
+    + '<div class="large"><label for="mesQ">Rechercher</label><input type="search" id="mesQ" placeholder="Sujet, candidat, auteur ou mot du texte" value="' + esc(m.q) + '"></div>'
+    + '</div><div id="mesListe"></div>';
+  vue.innerHTML = h;
+
+  var ordreTheme = {};
+  S.themes.forEach(function(t, i){ ordreTheme[t] = i; });
+  var trier = function(a, b){
+    if(m.tri === 'ancien') return a.depose_le < b.depose_le ? -1 : a.depose_le > b.depose_le ? 1 : a.id - b.id;
+    if(m.tri === 'sujet'){
+      var sa = S.sujetById[a.sujet_id] || {}, sb2 = S.sujetById[b.sujet_id] || {};
+      return ((ordreTheme[sa.thematique] || 0) - (ordreTheme[sb2.thematique] || 0)) || ((sa.ordre || 0) - (sb2.ordre || 0))
+        || String(a.candidat || '').localeCompare(String(b.candidat || ''), 'fr') || (a.depose_le < b.depose_le ? 1 : -1);
+    }
+    return a.depose_le < b.depose_le ? 1 : a.depose_le > b.depose_le ? -1 : b.id - a.id;
+  };
+  var normal = function(t){ return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); };
+
+  function dessinerListe(){
+    var q = normal(m.q.trim());
+    var garde = function(d){
+      if(m.statut !== 'tous' && etat(d) !== m.statut) return false;
+      if(m.circuit && d.circuit !== m.circuit) return false;
+      if(m.theme){ var x = S.sujetById[d.sujet_id]; if(!x || (x.thematique !== m.theme && (x.aussi_dans || []).indexOf(m.theme) < 0)) return false; }
+      if(q && normal([d.texte, libelleSujet(d.sujet_id), d.sujet_id, d.candidat, d.auteur, d.motif].join(' ')).indexOf(q) < 0) return false;
+      return true;
+    };
+    var visibles = liste.filter(garde).sort(trier);
+    /* Les refusés à reprendre passent toujours devant, quel que soit l'ordre choisi. */
+    var tete2 = visibles.filter(function(d){ return idsReprendre[d.id]; }), reste = visibles.filter(function(d){ return !idsReprendre[d.id]; });
+    var montres = tete2.concat(reste).slice(0, m.n);
+    var w = $('mesListe');
+    if(!visibles.length){ w.innerHTML = '<div class="note info">Aucun dépôt ne correspond à ces critères.</div>'; return; }
+    var html = '<p class="muted">' + visibles.length + ' dépôt' + (visibles.length > 1 ? 's' : '') + (visibles.length < liste.length ? ' sur ' + liste.length : '') + (montres.length < visibles.length ? ', ' + montres.length + ' affichés' : '') + '.</p>';
+    var section = null;
+    montres.forEach(function(d){
+      if(m.statut === 'tous' && tete2.length){
+        var sec = idsReprendre[d.id] ? 'r' : 'a';
+        if(sec !== section){ section = sec; html += '<h3>' + (sec === 'r' ? 'À reprendre (' + tete2.length + ')' : 'Les autres dépôts (' + reste.length + ')') + '</h3>'; }
+      }
+      html += carteDepot(d, idsReprendre[d.id] ? 'mes' : etat(d) === 'repris' ? 'vu' : 'mes');
+    });
+    if(montres.length < visibles.length){
+      var encore = Math.min(30, visibles.length - montres.length);
+      html += '<div class="actions" style="justify-content:center;margin-bottom:20px"><button class="btn" id="mesPlus">Afficher ' + encore + ' de plus</button><button class="btn" id="mesTout">Tout afficher (' + visibles.length + ')</button></div>';
+    }
+    w.innerHTML = html;
+    if($('mesPlus')) $('mesPlus').onclick = function(){ m.n += 30; dessinerListe(); };
+    if($('mesTout')) $('mesTout').onclick = function(){ m.n = visibles.length; dessinerListe(); };
+    w.querySelectorAll('[data-act="redeposer"]').forEach(function(b){
+      b.onclick = function(){
+        var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10);
+        var d = liste.filter(function(x){ return x.id === id; })[0], s = S.sujetById[d.sujet_id];
+        /* Une correction refusée repart du texte en ligne actuel, jamais de l'ancien :
+           on évite ainsi d'effacer ce qui a été ajouté entre-temps. */
+        var correction = d.circuit === 'verbatim' && d.mode === 'remplacement';
+        S.form = nouveauFormulaire(d.circuit);
+        Object.assign(S.form, { theme:s ? s.thematique : '', sujet:d.sujet_id, candidat:d.candidat || '', auteur:d.auteur, initiales:d.initiales, age:d.age || '',
+          texte:correction ? '' : d.texte, ancienTexte:correction ? d.texte : null, mode:d.circuit === 'verbatim' ? d.mode : null,
+          sources:d.circuit === 'verbatim' ? [] : d.sources.slice(), docs:d.circuit === 'verbatim' ? d.sources.slice() : [], remplace:d.remplace, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
+        S.tab = 'deposer'; afficher();
+      };
+    });
+  }
+  var change = function(){ m.n = 30; garderFiltresMes(); dessinerListe(); };
+  vue.querySelectorAll('[data-statut]').forEach(function(b){
     b.onclick = function(){
-      var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10);
-      var d = r.data.filter(function(x){ return x.id === id; })[0], s = S.sujetById[d.sujet_id];
-      /* Une correction refusée repart du texte en ligne actuel, jamais de l'ancien :
-         on évite ainsi d'effacer ce qui a été ajouté entre-temps. */
-      var correction = d.circuit === 'verbatim' && d.mode === 'remplacement';
-      S.form = nouveauFormulaire(d.circuit);
-      Object.assign(S.form, { theme:s ? s.thematique : '', sujet:d.sujet_id, candidat:d.candidat || '', auteur:d.auteur, initiales:d.initiales, age:d.age || '',
-        texte:correction ? '' : d.texte, ancienTexte:correction ? d.texte : null, mode:d.circuit === 'verbatim' ? d.mode : null,
-        sources:d.circuit === 'verbatim' ? [] : d.sources.slice(), docs:d.circuit === 'verbatim' ? d.sources.slice() : [], remplace:d.remplace, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
-      S.tab = 'deposer'; afficher();
+      m.statut = b.getAttribute('data-statut');
+      vue.querySelectorAll('[data-statut]').forEach(function(x){ x.classList.toggle('on', x === b); });
+      change();
     };
   });
+  if($('mesCircuit')) $('mesCircuit').onchange = function(){ m.circuit = this.value; change(); };
+  $('mesTheme').onchange = function(){ m.theme = this.value; change(); };
+  $('mesTri').onchange = function(){ m.tri = this.value; change(); };
+  var minuteur = null;
+  $('mesQ').oninput = function(){ var v = this.value; clearTimeout(minuteur); minuteur = setTimeout(function(){ m.q = v; m.n = 30; dessinerListe(); }, 200); };
+  dessinerListe();
 }
 
 /* =====================================================================
