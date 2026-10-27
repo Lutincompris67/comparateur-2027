@@ -107,6 +107,13 @@ dialog::backdrop{background:rgba(45,32,22,.45)}
 .filtre label{font-size:12.5px;font-weight:600;color:var(--ink-2)}
 .filtre select{width:auto;max-width:100%;min-width:240px}
 .filtre .muted{margin-left:auto}
+.badge.retire{background:var(--graphite-soft);color:var(--graphite)}
+.caseline{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--rule-soft);font-size:13.5px;cursor:pointer}
+.caseline input{margin-top:3px;flex:none;width:16px;height:16px}
+.caseline .t{flex:1;min-width:0;overflow-wrap:anywhere}
+.caseline .ex{display:block;font-family:var(--serif);color:var(--ink-2);font-size:13.5px;margin-top:2px}
+.caseline .aussi{display:block;color:var(--ink-3);font-size:12px;margin-top:2px}
+.doc-liens{font-size:13px;overflow-wrap:anywhere}
 .hidden{display:none!important}
 </style>
 </head>
@@ -149,7 +156,8 @@ var CIRCUITS = [
 var S = {
   session:null, profil:null, tab:null,
   themes:[], sujets:[], sujetById:{}, candidats:[], sources:[], srcById:{}, figById:{},
-  pseudos:{}, form:null, nAttente:0, nSignal:0, message:null,
+  pseudos:{}, form:null, nAttente:0, nSignal:0, nDocs:0, message:null,
+  progCand:null, progDoc:null, progTheme:'', progSansDoc:true,   /* onglet Programmes */
   filtreValider:null   /* 'tous', 'autres', 'moi' ou l'identifiant d'un déposant */
 };
 /* Le filtre de l'onglet « À valider » est retenu par ce navigateur. */
@@ -298,13 +306,13 @@ async function demarrer(session){
   $('btnOut').onclick = function(){ sb.auth.signOut(); };
 
   var p = S.profil;
-  if(!p || !(p.analyses || p.partis_pris || p.verbatims || p.mainteneur)){
+  if(!p || !(p.analyses || p.partis_pris || p.verbatims || p.mainteneur || p.veille)){
     app.innerHTML = '<h1>Compte en attente</h1><div class="card"><p>Votre compte est créé' + (p ? ' sous le pseudo <b>' + esc(p.pseudo) + '</b>' : '') + ', mais aucun circuit ne lui est encore attribué.</p><p>Prévenez un mainteneur sur le Discord : il ouvrira vos droits, puis rechargez cette page.</p></div>';
     return;
   }
   try { await chargerReferentiel(); }
   catch(e){ app.innerHTML = '<div class="note err" style="margin-top:30px">' + esc(msgErreur(e)) + '</div>'; return; }
-  S.tab = circuitsPermis().length ? 'deposer' : 'valider';
+  S.tab = circuitsPermis().length ? 'deposer' : S.profil.mainteneur ? 'valider' : 'programmes';
   afficher();
 }
 
@@ -315,7 +323,7 @@ async function chargerReferentiel(){
     tout(function(){ return sb.from('thematiques').select('nom,ordre').order('ordre'); }),
     tout(function(){ return sb.from('sujets').select('id,libelle,thematique,ordre,aussi_dans').order('ordre'); }),
     tout(function(){ return sb.from('candidats').select('nom,ordre').order('ordre'); }),
-    tout(function(){ return sb.from('sources').select('id,registre,auteurs,titre,organisme,date_publication,url').order('ordre'); }),
+    tout(function(){ return sb.from('sources').select('id,registre,auteurs,titre,organisme,date_publication,url,date_consultation,archive,statut,motif,cree_par,traite_le').order('ordre'); }),
     tout(function(){ return sb.from('figures').select('id,type,titre,alt,credit,url,fichier').order('id'); })
   ]);
   S.themes = r[0].map(function(t){ return t.nom; });
@@ -332,6 +340,7 @@ async function chargerCompteurs(){
   var a = await sb.from('depots').select('id', {count:'exact', head:true}).eq('statut', 'en attente');
   var b = await sb.from('signalements').select('id', {count:'exact', head:true}).eq('traite', false);
   S.nAttente = a.count || 0; S.nSignal = b.count || 0;
+  S.nDocs = S.sources.filter(function(x){ return x.registre === 'programme' && x.statut === 'en attente'; }).length;
   var p = await tout(function(){ return sb.from('profils').select('id,pseudo'); });
   S.pseudos = {};
   p.forEach(function(x){ S.pseudos[x.id] = x.pseudo; });
@@ -345,6 +354,9 @@ function afficher(){
     onglets.push(['valider', 'À valider' + (S.nAttente ? '<span class="n">' + S.nAttente + '</span>' : '')]);
     onglets.push(['enligne', 'En ligne']);
     onglets.push(['signalements', 'Signalements' + (S.nSignal ? '<span class="n">' + S.nSignal + '</span>' : '')]);
+  }
+  if(S.profil.veille || S.profil.mainteneur) onglets.push(['programmes', 'Programmes' + (S.profil.mainteneur && S.nDocs ? '<span class="n">' + S.nDocs + '</span>' : '')]);
+  if(S.profil.mainteneur){
     onglets.push(['droits', 'Droits']);
     onglets.push(['excel', 'Excel']);
   }
@@ -352,7 +364,7 @@ function afficher(){
     return '<button class="tab' + (o[0] === S.tab ? ' on' : '') + '" data-tab="' + o[0] + '">' + o[1] + '</button>';
   }).join('') + '</nav><div id="vue"></div>';
   app.querySelectorAll('.tab').forEach(function(b){ b.onclick = function(){ S.tab = b.getAttribute('data-tab'); afficher(); }; });
-  var vues = { deposer:vueDeposer, mes:vueMes, valider:vueValider, enligne:vueEnLigne, signalements:vueSignalements, droits:vueDroits, excel:vueExcel };
+  var vues = { deposer:vueDeposer, mes:vueMes, valider:vueValider, enligne:vueEnLigne, signalements:vueSignalements, programmes:vueProgrammes, droits:vueDroits, excel:vueExcel };
   Promise.resolve(vues[S.tab]()).catch(function(e){ $('vue').innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; });
 }
 
@@ -362,7 +374,7 @@ function afficher(){
 function nouveauFormulaire(circuit){
   return { circuit:circuit, theme:'', sujet:'', candidat:'', auteur:'', initiales:'', age:'', texte:'',
            sources:[], relecteurs:['', ''], remplace:null, suite_de:null, ctx:null, motifPrecedent:null,
-           mode:null, ancienTexte:null };
+           mode:null, ancienTexte:null, docs:[], docsOuvert:false };
 }
 function relecteursRequis(f){ return (f.circuit === 'verbatim' || f.remplace || f.suite_de) ? 1 : 2; }
 
@@ -382,6 +394,9 @@ async function majContexte(){
         var r = await sb.from('positions').select('texte').eq('sujet_id', f.sujet).eq('candidat', f.candidat).maybeSingle();
         if(r.error) throw r.error;
         ctx.position = r.data ? r.data.texte : null;
+        /* Documents déjà rattachés à cette case. Une erreur ici ne bloque rien. */
+        var l = await sb.from('cases_sources').select('source_id').eq('sujet_id', f.sujet).eq('candidat', f.candidat);
+        ctx.lies = (!l.error && l.data) ? l.data.map(function(x){ return x.source_id; }) : [];
       } else {
         var e = await sb.from('editorial').select('*').eq('sujet_id', f.sujet).eq('type', f.circuit).order('id');
         if(e.error) throw e.error;
@@ -412,6 +427,7 @@ async function majContexte(){
   }
   if(f.ancienTexte != null) h += '<details><summary>Pour mémoire : le texte de votre dépôt refusé</summary><div>' + rendreTexte(f.ancienTexte, null, 'verb') + '</div></details>';
   zone.innerHTML = h;
+  majDocs();
   /* Correction (y compris après un refus) : on part toujours du texte en ligne. */
   if(f.circuit === 'verbatim' && f.ctx.position != null && f.mode === 'remplacement' && !f.texte.trim()){
     f.texte = f.ctx.position;
@@ -513,7 +529,7 @@ function vueDeposer(){
 
   h += '<div class="card"><h2>2. Le texte</h2>';
   if(estVerb){
-    h += '<div class="field"><label for="fTexte">Transcription mot à mot</label><textarea id="fTexte" class="verb" spellcheck="false">' + esc(f.texte) + '</textarea><small>Le texte du programme, sans aucune modification ni correction. Coupes notées [...]. Plusieurs mesures séparées par « — ».</small></div>';
+    h += '<div class="field"><label for="fTexte">Transcription mot à mot</label><textarea id="fTexte" class="verb" spellcheck="false">' + esc(f.texte) + '</textarea><small>Le texte du programme, sans aucune modification ni correction. Coupes notées [...]. Plusieurs mesures séparées par « — ».</small></div><div id="docsZone"></div>';
   } else {
     h += '<div class="row"><div class="field"><label for="fAuteur">' + (estPP ? 'Pseudonyme ou initiales de l\'auteur (publié)' : 'Auteur') + '</label><input type="text" id="fAuteur" maxlength="60" value="' + esc(f.auteur) + '">' + (estPP ? '<small>Ni le vrai nom, ni une référence à un candidat, un parti ou une personnalité.</small>' : '') + '</div>'
       + '<div class="field narrow"><label for="fInit">Initiales</label><input type="text" id="fInit" maxlength="3" value="' + esc(f.initiales) + '"></div>'
@@ -552,7 +568,7 @@ function vueDeposer(){
   vue.querySelectorAll('.pill').forEach(function(b){ b.onclick = function(){ var anc = S.form; S.form = nouveauFormulaire(b.getAttribute('data-circuit')); S.form.theme = anc.theme; S.form.sujet = anc.sujet; vueDeposer(); }; });
   $('fTheme').onchange = function(){ f.theme = this.value; f.sujet = ''; f.ctx = null; f.remplace = null; f.mode = null; vueDeposer(); };
   $('fSujet').onchange = function(){ f.sujet = this.value; f.ctx = null; f.remplace = null; f.mode = null; vueDeposer(); };
-  if($('fCand')) $('fCand').onchange = function(){ f.candidat = this.value; f.ctx = null; f.mode = null; vueDeposer(); };
+  if($('fCand')) $('fCand').onchange = function(){ f.candidat = this.value; f.ctx = null; f.mode = null; f.docs = []; vueDeposer(); };
   var maj = function(){ majDiagnostic(); };
   $('fTexte').oninput = function(){ f.texte = this.value; maj(); };
   if($('fAuteur')) $('fAuteur').oninput = function(){ f.auteur = this.value; maj(); };
@@ -568,7 +584,39 @@ function vueDeposer(){
   $('btnDeposer').onclick = deposer;
   if(!estVerb){ majSources(); lierSources(); lierImage(); }
   majDiagnostic();
+  majDocs();
   majContexte();
+}
+
+/* Documents du corpus dont un verbatim est tiré : à cocher au dépôt, facultatif.
+   Rien n'est vérifié à la validation, et ces liens ne s'affichent pas sur le site. */
+function docsDuCandidat(c){
+  return S.sources.filter(function(b){ return b.registre === 'programme' && b.auteurs === c && (b.statut === 'publié' || b.statut === 'en attente'); });
+}
+function titreDocs(f){ var n = f.docs.length; return 'Document(s) d\'où vient ce texte — facultatif' + (n ? ' (' + n + ' coché' + (n > 1 ? 's' : '') + ')' : ''); }
+function majDocs(){
+  var f = S.form, z = $('docsZone');
+  if(!z) return;
+  var docs = (f.circuit === 'verbatim' && f.candidat) ? docsDuCandidat(f.candidat) : [];
+  if(!docs.length){ z.innerHTML = ''; return; }
+  var lies = (f.ctx && f.ctx.lies) || [];
+  z.innerHTML = '<details id="detDocs"' + (f.docsOuvert ? ' open' : '') + '><summary>' + esc(titreDocs(f)) + '</summary><div>'
+    + '<p class="muted">Si vous le savez, cochez le ou les documents du corpus dont ce texte est tiré. Ce n\'est ni obligatoire ni vérifié à la validation, et ces liens ne s\'affichent pas sur le site.</p>'
+    + docs.map(function(b){
+        var deja = lies.indexOf(b.id) >= 0;
+        return '<label class="choix"><input type="checkbox" data-doc="' + esc(b.id) + '"' + (deja || f.docs.indexOf(b.id) >= 0 ? ' checked' : '') + (deja ? ' disabled' : '') + '><span>' + esc(b.titre)
+          + (b.statut === 'en attente' ? ' <span class="badge attente">en attente</span>' : '') + (deja ? ' <span class="muted">— déjà rattaché à cette case</span>' : '') + '</span></label>';
+      }).join('')
+    + '</div></details>';
+  $('detDocs').ontoggle = function(){ f.docsOuvert = this.open; };
+  z.querySelectorAll('input[data-doc]').forEach(function(c){
+    c.onchange = function(){
+      var id = c.getAttribute('data-doc'), i = f.docs.indexOf(id);
+      if(c.checked && i < 0) f.docs.push(id);
+      if(!c.checked && i >= 0) f.docs.splice(i, 1);
+      $('detDocs').querySelector('summary').textContent = titreDocs(f);
+    };
+  });
 }
 
 function majDiagnostic(){
@@ -688,7 +736,7 @@ async function deposer(){
     circuit:f.circuit, sujet_id:f.sujet, candidat:estVerb ? f.candidat : null,
     auteur:estVerb ? '' : f.auteur.trim(), initiales:estVerb ? '' : f.initiales.trim(),
     age:f.circuit === 'parti pris' ? parseInt(f.age, 10) : null,
-    texte:f.texte, sources:estVerb ? [] : f.sources,
+    texte:f.texte, sources:estVerb ? f.docs.slice() : f.sources,
     relecteurs:f.relecteurs.slice(0, relecteursRequis(f)).map(function(x){ return x.trim(); }),
     remplace:estVerb ? null : f.remplace, suite_de:f.suite_de, depose_par:S.session.user.id,
     mode:mode, texte_base:base
@@ -724,7 +772,8 @@ function carteDepot(d, mode){
     + '<h2 style="margin-top:8px">' + esc(libelleSujet(d.sujet_id)) + (d.candidat ? ' — ' + esc(d.candidat) : '') + '</h2>'
     + '<div class="meta">' + (mode === 'valider' ? 'Déposé par <b>' + esc(S.pseudos[d.depose_par] || 'compte supprimé') + '</b> le ' : 'Déposé le ') + esc(dateFr(d.depose_le))
     + ' · ' + esc(natureDepot(d)) + ' · Relu par <b>' + esc(d.relecteurs.join(', ')) + '</b>'
-    + (!estVerb ? ' · Auteur : <b>' + esc(d.auteur) + (d.age ? ', ' + d.age + ' ans' : '') + '</b>' : '') + '</div>';
+    + (!estVerb ? ' · Auteur : <b>' + esc(d.auteur) + (d.age ? ', ' + d.age + ' ans' : '') + '</b>' : '') + '</div>'
+    + (estVerb && d.sources && d.sources.length ? '<div class="meta">Document(s) d\'origine indiqué(s) : ' + d.sources.map(function(id){ return '<b>' + esc(S.srcById[id] ? S.srcById[id].titre : id) + '</b>'; }).join(', ') + '</div>' : '');
   if(d.statut === 'refusé') h += '<div class="note err"><b>Refusé</b> le ' + esc(dateFr(d.traite_le)) + ' — ' + esc(d.motif || '') + '</div>';
   if(mode === 'valider' && d.suite_de && d._precedent) h += '<div class="note info">Fait suite à un refus — motif d\'alors : « ' + esc(d._precedent.motif || '') + ' »</div>';
   if(mode === 'valider' && estVerb && d.mode === 'remplacement'){
@@ -765,7 +814,7 @@ async function vueMes(){
       S.form = nouveauFormulaire(d.circuit);
       Object.assign(S.form, { theme:s ? s.thematique : '', sujet:d.sujet_id, candidat:d.candidat || '', auteur:d.auteur, initiales:d.initiales, age:d.age || '',
         texte:correction ? '' : d.texte, ancienTexte:correction ? d.texte : null, mode:d.circuit === 'verbatim' ? d.mode : null,
-        sources:d.sources.slice(), remplace:d.remplace, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
+        sources:d.circuit === 'verbatim' ? [] : d.sources.slice(), docs:d.circuit === 'verbatim' ? d.sources.slice() : [], remplace:d.remplace, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
       S.tab = 'deposer'; afficher();
     };
   });
@@ -945,17 +994,199 @@ async function vueSignalements(){
 }
 
 /* =====================================================================
+   PROGRAMMES : le corpus des documents et les rattachements (veille, mainteneurs)
+   ===================================================================== */
+var CLASSE_DOC = { 'en attente':'attente', 'publié':'publie', 'refusé':'refuse', 'retiré':'retire' };
+function docActif(b){ return b.statut === 'publié' || b.statut === 'en attente'; }
+
+function carteDoc(d, mode, ctx){
+  var h = '<div class="card" data-doc="' + esc(d.id) + '"><span class="badge ' + (CLASSE_DOC[d.statut] || '') + '">' + esc(d.statut) + '</span> <span class="muted">' + esc(d.id) + '</span>'
+    + '<h2 style="margin-top:8px">' + esc(d.titre) + '</h2>'
+    + '<div class="meta">' + [mode === 'valider' ? '<b>' + esc(d.auteurs) + '</b>' : '', esc(d.organisme), d.date_publication ? 'publié en ' + esc(d.date_publication) : '', d.date_consultation ? 'consulté le ' + esc(d.date_consultation) : '',
+        S.profil.mainteneur && d.cree_par && S.pseudos[d.cree_par] ? 'déposé par <b>' + esc(S.pseudos[d.cree_par]) + '</b>' : ''].filter(Boolean).join(' · ') + '</div>'
+    + '<div class="doc-liens">' + (/^https?:\/\//i.test(d.url) ? '<a href="' + esc(d.url) + '" target="_blank" rel="noopener">' + esc(d.url) + ' ↗</a>' : esc(d.url))
+    + (/^https?:\/\//i.test(d.archive || '') ? ' · <a href="' + esc(d.archive) + '" target="_blank" rel="noopener">version archivée ↗</a>' : '') + '</div>';
+  if(d.motif && (d.statut === 'refusé' || d.statut === 'retiré')) h += '<div class="note ' + (d.statut === 'refusé' ? 'err' : 'info') + '">' + (d.statut === 'refusé' ? 'Refusé' : 'Retiré') + (d.traite_le ? ' le ' + esc(dateFr(d.traite_le)) : '') + ' — ' + esc(d.motif) + '</div>';
+  if(mode === 'liste' && ctx.estCand && docActif(d)){
+    var n = ctx.parDoc[d.id] || 0;
+    h += '<div class="meta"><span data-compte="' + esc(d.id) + '">' + n + ' case' + (n > 1 ? 's' : '') + ' rattachée' + (n > 1 ? 's' : '') + '</span></div>';
+  }
+  var act = [];
+  if(mode === 'valider'){
+    var sien = d.cree_par === S.session.user.id;
+    act.push('<button class="btn pri" data-act="valider"' + (sien ? ' disabled' : '') + '>Valider et publier</button>', '<button class="btn danger" data-act="refuser">Refuser…</button>');
+    if(sien) act.push('<span class="muted">Vous avez déposé ce document : un autre mainteneur doit le valider.</span>');
+  } else {
+    if(ctx.estCand && docActif(d) && (S.profil.veille || S.profil.mainteneur)) act.push('<button class="btn" data-act="ratt">Rattacher des cases</button>');
+    if(S.profil.mainteneur && d.statut === 'publié') act.push('<button class="btn danger small" data-act="retirer">Retirer du site…</button>');
+  }
+  if(act.length) h += '<div class="actions">' + act.join('') + '</div>';
+  return h + '</div>';
+}
+
+async function vueProgrammes(){
+  var vue = $('vue'), tete = prendreFlash();
+  vue.innerHTML = tete + '<p class="muted">Chargement…</p>';
+  var docs = await tout(function(){ return sb.from('sources').select('id,registre,auteurs,titre,organisme,date_publication,url,date_consultation,archive,statut,motif,cree_par,traite_le').eq('registre', 'programme').order('ordre'); });
+  docs.forEach(function(b){ if(S.srcById[b.id]) Object.assign(S.srcById[b.id], b); else { S.sources.push(b); S.srcById[b.id] = b; } });
+  S.nDocs = docs.filter(function(b){ return b.statut === 'en attente'; }).length;
+  document.querySelectorAll('.tab[data-tab="programmes"]').forEach(function(t){ t.innerHTML = 'Programmes' + (S.profil.mainteneur && S.nDocs ? '<span class="n">' + S.nDocs + '</span>' : ''); });
+
+  /* Candidats de la grille, puis les éventuels auteurs de documents qui n'en font pas partie. */
+  var auteurs = S.candidats.slice();
+  docs.forEach(function(b){ if(b.auteurs && auteurs.indexOf(b.auteurs) < 0) auteurs.push(b.auteurs); });
+  if(!S.progCand || auteurs.indexOf(S.progCand) < 0){
+    var avec = auteurs.filter(function(a){ return docs.some(function(b){ return b.auteurs === a; }); });
+    S.progCand = avec[0] || auteurs[0] || '';
+  }
+  var c = S.progCand, estCand = S.candidats.indexOf(c) >= 0;
+  var pos = [], liens = [];
+  if(estCand){
+    pos = await tout(function(){ return sb.from('positions').select('sujet_id,texte').eq('candidat', c).order('sujet_id'); });
+    liens = await tout(function(){ return sb.from('cases_sources').select('sujet_id,source_id').eq('candidat', c).order('sujet_id'); });
+  }
+  var ctx = { c:c, estCand:estCand, pos:pos, parCase:{}, parDoc:{} };
+  liens.forEach(function(l){ (ctx.parCase[l.sujet_id] = ctx.parCase[l.sujet_id] || []).push(l.source_id); ctx.parDoc[l.source_id] = (ctx.parDoc[l.source_id] || 0) + 1; });
+  var siens = docs.filter(function(b){ return b.auteurs === c; });
+  var actifs = siens.filter(docActif), autres = siens.filter(function(b){ return !docActif(b); });
+
+  var h = tete + '<p>Le corpus : les documents de programme publiés par les candidats, tels qu\'ils figurent sur la page Sources du site. Un document déposé y paraît après validation par un mainteneur, autre que le déposant ; tout mainteneur peut retirer seul un document dépassé. Rattacher les cases à leurs documents ne demande pas de validation : ces liens servent au suivi et <b>ne s\'affichent pas sur le site</b>.</p>';
+  if(S.profil.mainteneur){
+    var att = docs.filter(function(b){ return b.statut === 'en attente'; });
+    if(att.length) h += '<h3>Documents à valider (' + att.length + ')</h3>' + att.map(function(d){ return carteDoc(d, 'valider', ctx); }).join('');
+  }
+  h += '<h3>Documents par candidat</h3><div class="filtre"><label for="progCand">Candidat</label><select id="progCand">' + auteurs.map(function(a){ return '<option' + (a === c ? ' selected' : '') + '>' + esc(a) + '</option>'; }).join('') + '</select></div>';
+  if(estCand){
+    h += '<div class="note info" id="progBilan"></div>';
+    ctx.bilan = function(){ var s2 = pos.filter(function(p){ return !(ctx.parCase[p.sujet_id] || []).length; }).length; if($('progBilan')) $('progBilan').innerHTML = pos.length + ' case' + (pos.length > 1 ? 's remplies' : ' remplie') + ' pour ce candidat' + (pos.length ? ', dont <b>' + s2 + '</b> sans document rattaché' : '') + '.'; };
+  } else if(c){
+    h += '<div class="note warn">« ' + esc(c) + ' » ne correspond à aucun candidat de la grille : ses documents ne peuvent pas être rattachés à des cases.</div>';
+  }
+  h += actifs.length ? actifs.map(function(d){ return carteDoc(d, 'liste', ctx); }).join('') : '<p class="muted">Aucun document en ligne ou en attente pour ce candidat.</p>';
+  if(autres.length) h += '<details><summary>Documents retirés ou refusés (' + autres.length + ')</summary><div>' + autres.map(function(d){ return carteDoc(d, 'liste', ctx); }).join('') + '</div></details>';
+  h += '<div id="rattZone"></div>';
+
+  if(S.profil.veille){
+    var opts = S.candidats.map(function(x){ return '<option' + (x === (estCand ? c : '') ? ' selected' : '') + '>' + esc(x) + '</option>'; }).join('');
+    h += '<details id="detDepDoc"' + (S.progOuvert ? ' open' : '') + '><summary>Déposer un nouveau document</summary><div><div class="card">'
+      + '<div class="row"><div class="field"><label for="ndCand">Candidat</label><select id="ndCand"><option value="">— choisir —</option>' + opts + '</select></div>'
+      + '<div class="field"><label for="ndTitre">Titre du document</label><input type="text" id="ndTitre" placeholder="Tel qu\'il figure sur la page"></div></div>'
+      + '<div class="row"><div class="field"><label for="ndUrl">Adresse web</label><input type="url" id="ndUrl" placeholder="https://…"></div>'
+      + '<div class="field"><label for="ndOrg">Site ou éditeur (facultatif)</label><input type="text" id="ndOrg" placeholder="Ex. nom du site de campagne"></div></div>'
+      + '<div class="row"><div class="field"><label for="ndDate">Date de publication</label><input type="text" id="ndDate" placeholder="2026"></div>'
+      + '<div class="field"><label for="ndConsult">Date de consultation</label><input type="text" id="ndConsult" value="' + esc(new Date().toLocaleDateString('fr-FR')) + '"><small>Remplie avec la date du jour : modifiez-la si vous avez consulté le document un autre jour.</small></div></div>'
+      + '<div class="field"><label for="ndArch">Lien d\'archive (facultatif)</label><input type="url" id="ndArch" placeholder="https://web.archive.org/…"><small>Une copie datée de la page, utile si le candidat modifie ou retire son texte.</small></div>'
+      + '<div class="actions"><button class="btn pri" id="btnDepDoc">Déposer pour validation</button></div><div id="ndMsg"></div></div></div></details>';
+  }
+  vue.innerHTML = h;
+  if(ctx.bilan) ctx.bilan();
+
+  $('progCand').onchange = function(){ S.progCand = this.value; S.progDoc = null; vueProgrammes(); };
+  if($('detDepDoc')) $('detDepDoc').ontoggle = function(){ S.progOuvert = this.open; };
+  vue.querySelectorAll('[data-doc] [data-act]').forEach(function(b){
+    b.onclick = async function(){
+      var id = b.closest('[data-doc]').getAttribute('data-doc'), act = b.getAttribute('data-act');
+      if(act === 'ratt'){ S.progDoc = id; afficherRattachement(ctx); $('rattZone').scrollIntoView({ block:'start' }); return; }
+      try {
+        if(act === 'valider'){
+          if(!await demander({ titre:'Publier ce document ?', texte:'Il paraîtra aussitôt sur la page Sources du site, dans le corpus de son candidat.', ok:'Valider et publier' })) return;
+          await rpc('valider_programme', { p_id:id });
+          flash('ok', 'Document publié sur la page Sources.');
+        } else if(act === 'refuser'){
+          var motif = await demander({ titre:'Refuser ce document', motif:'Motif, visible dans cet onglet', ok:'Refuser', danger:true });
+          if(motif == null) return;
+          await rpc('refuser_programme', { p_id:id, p_motif:motif });
+          flash('ok', 'Document refusé.');
+        } else if(act === 'retirer'){
+          var m2 = await demander({ titre:'Retirer ce document du site ?', texte:'Il disparaît aussitôt de la page Sources. Il reste conservé avec ses rattachements, et peut revenir par un nouveau dépôt validé par un autre mainteneur. Si le candidat a abandonné ces positions, pensez à dépublier les cases qui en sont tirées (onglet En ligne).', motif:'Motif (facultatif)', motifFacultatif:true, ok:'Retirer', danger:true });
+          if(m2 == null) return;
+          await rpc('retirer_programme', { p_id:id, p_motif:m2 });
+          flash('ok', 'Document retiré du site.');
+        }
+      } catch(e){ flash('err', msgErreur(e)); }
+      vueProgrammes();
+    };
+  });
+  if($('btnDepDoc')) $('btnDepDoc').onclick = async function(){
+    var m = $('ndMsg'), bouton = this, cand = $('ndCand').value, titre = $('ndTitre').value.trim(), url = $('ndUrl').value.trim(), arch = $('ndArch').value.trim();
+    if(!cand || !titre || !url){ m.innerHTML = '<div class="note err">Le candidat, le titre et l\'adresse web sont obligatoires.</div>'; return; }
+    if(!/^https?:\/\//i.test(url) || (arch && !/^https?:\/\//i.test(arch))){ m.innerHTML = '<div class="note err">Les adresses doivent commencer par https://</div>'; return; }
+    bouton.disabled = true;
+    try {
+      var id = await rpc('deposer_programme', { p_candidat:cand, p_titre:titre, p_url:url, p_organisme:$('ndOrg').value, p_date_publication:$('ndDate').value, p_date_consultation:$('ndConsult').value, p_archive:arch });
+      S.progCand = cand; S.progOuvert = false;
+      flash('ok', 'Document déposé (' + id + '). Il paraîtra sur la page Sources dès qu\'un mainteneur l\'aura validé. Vous pouvez déjà y rattacher des cases.');
+      vueProgrammes();
+    } catch(e){ m.innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; bouton.disabled = false; }
+  };
+  if(S.progDoc && S.srcById[S.progDoc] && S.srcById[S.progDoc].auteurs === c && docActif(S.srcById[S.progDoc])) afficherRattachement(ctx);
+  else S.progDoc = null;
+}
+
+/* Rattacher les cases d'un candidat à l'un de ses documents. Chaque coche est
+   enregistrée aussitôt ; la liste n'est pas redessinée, pour ne pas perdre sa place. */
+function afficherRattachement(ctx){
+  var d = S.srcById[S.progDoc], z = $('rattZone');
+  if(!d || !z) return;
+  var ordreTheme = {};
+  S.themes.forEach(function(t, i){ ordreTheme[t] = i; });
+  var cases = ctx.pos.map(function(p){ return { p:p, s:S.sujetById[p.sujet_id] || { id:p.sujet_id, libelle:p.sujet_id, thematique:'', ordre:0, aussi_dans:[] } }; })
+    .sort(function(a, b){ return (ordreTheme[a.s.thematique] || 0) - (ordreTheme[b.s.thematique] || 0) || (a.s.ordre || 0) - (b.s.ordre || 0); });
+  var themes = S.themes.filter(function(t){ return cases.some(function(x){ return x.s.thematique === t || (x.s.aussi_dans || []).indexOf(t) >= 0; }); });
+  if(S.progTheme && themes.indexOf(S.progTheme) < 0) S.progTheme = '';
+  var visibles = cases.filter(function(x){
+    var l = ctx.parCase[x.p.sujet_id] || [];
+    if(S.progTheme && x.s.thematique !== S.progTheme && (x.s.aussi_dans || []).indexOf(S.progTheme) < 0) return false;
+    if(S.progSansDoc && l.length && l.indexOf(d.id) < 0) return false;
+    return true;
+  });
+  var extrait = function(t){ t = String(t); return t.length > 220 ? t.slice(0, 220) + '…' : t; };
+  z.innerHTML = '<div class="card" id="rattCard"><h2>Rattacher des cases à « ' + esc(d.titre) + ' »</h2>'
+    + '<p class="muted">Cochez les cases de ' + esc(ctx.c) + ' tirées de ce document, en tout ou partie. Chaque coche est enregistrée aussitôt. Une case peut être rattachée à plusieurs documents.</p>'
+    + '<div class="row"><div class="field"><label for="rattTheme">Thématique</label><select id="rattTheme"><option value="">Toutes</option>' + themes.map(function(t){ return '<option' + (t === S.progTheme ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select></div></div>'
+    + '<label class="choix"><input type="checkbox" id="rattSans"' + (S.progSansDoc ? ' checked' : '') + '><span>Masquer les cases déjà rattachées à un autre document</span></label>'
+    + '<p class="muted" style="margin:8px 0 0">' + visibles.length + ' case' + (visibles.length > 1 ? 's' : '') + ' affichée' + (visibles.length > 1 ? 's' : '') + '.</p><div id="rattMsg"></div>'
+    + '<div id="rattListe">' + (visibles.length ? visibles.map(function(x){
+        var l = ctx.parCase[x.p.sujet_id] || [], autresDocs = l.filter(function(id){ return id !== d.id; });
+        return '<label class="caseline"><input type="checkbox" data-sujet="' + esc(x.p.sujet_id) + '"' + (l.indexOf(d.id) >= 0 ? ' checked' : '') + '><span class="t"><b>' + esc(x.s.libelle) + '</b> <span class="muted">(' + esc(x.s.thematique) + ')</span>'
+          + '<span class="ex">« ' + esc(extrait(x.p.texte)) + ' »</span>'
+          + (autresDocs.length ? '<span class="aussi">Aussi rattachée à : ' + autresDocs.map(function(id){ return esc(S.srcById[id] ? S.srcById[id].titre : id); }).join(', ') + '</span>' : '') + '</span></label>';
+      }).join('') : '<p class="muted">Aucune case à afficher avec ces filtres.</p>') + '</div>'
+    + '<div class="actions"><button class="btn" id="rattFermer">Fermer</button></div></div>';
+  $('rattTheme').onchange = function(){ S.progTheme = this.value; afficherRattachement(ctx); };
+  $('rattSans').onchange = function(){ S.progSansDoc = this.checked; afficherRattachement(ctx); };
+  $('rattFermer').onclick = function(){ S.progDoc = null; z.innerHTML = ''; };
+  z.querySelectorAll('input[data-sujet]').forEach(function(cb){
+    cb.onchange = async function(){
+      var sid = cb.getAttribute('data-sujet'), oui = cb.checked;
+      cb.disabled = true;
+      try {
+        await rpc(oui ? 'rattacher_case' : 'detacher_case', { p_sujet:sid, p_candidat:ctx.c, p_source:d.id });
+        var l = ctx.parCase[sid] = ctx.parCase[sid] || [], i = l.indexOf(d.id);
+        if(oui && i < 0){ l.push(d.id); ctx.parDoc[d.id] = (ctx.parDoc[d.id] || 0) + 1; }
+        if(!oui && i >= 0){ l.splice(i, 1); ctx.parDoc[d.id] = Math.max(0, (ctx.parDoc[d.id] || 0) - 1); }
+        var n = ctx.parDoc[d.id] || 0, sp = document.querySelector('[data-compte="' + d.id + '"]');
+        if(sp) sp.textContent = n + ' case' + (n > 1 ? 's' : '') + ' rattachée' + (n > 1 ? 's' : '');
+        if(ctx.bilan) ctx.bilan();
+        $('rattMsg').innerHTML = '';
+      } catch(e){ cb.checked = !oui; $('rattMsg').innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
+      cb.disabled = false;
+    };
+  });
+}
+
+/* =====================================================================
    DROITS (mainteneurs)
    ===================================================================== */
 async function vueDroits(){
   var vue = $('vue');
   vue.innerHTML = '<p class="muted">Chargement…</p>';
   var p = await tout(function(){ return sb.from('profils').select('*').order('pseudo'); });
-  var cols = [['analyses', 'Analyses'], ['partis_pris', 'Partis pris'], ['verbatims', 'Verbatims'], ['mainteneur', 'Mainteneur']];
-  vue.innerHTML = prendreFlash() + '<p>Toute personne qui se connecte avec Discord apparaît ici, sans aucun droit. Cochez les circuits où elle peut déposer. Chaque changement est enregistré aussitôt et noté au journal.</p>'
+  var cols = [['analyses', 'Analyses'], ['partis_pris', 'Partis pris'], ['verbatims', 'Verbatims'], ['veille', 'Veille'], ['mainteneur', 'Mainteneur']];
+  vue.innerHTML = prendreFlash() + '<p>Toute personne qui se connecte avec Discord apparaît ici, sans aucun droit. Cochez les circuits où elle peut déposer. « Veille » : veille programmatique (dépôt des documents de programme, rattachement des cases à leurs documents). Chaque changement est enregistré aussitôt et noté au journal.</p>'
     + '<div class="card" style="overflow-x:auto"><table class="droits"><thead><tr><th>Pseudo Discord</th>' + cols.map(function(c){ return '<th>' + c[1] + '</th>'; }).join('') + '</tr></thead><tbody>'
     + p.map(function(x){
-        var aucun = !(x.analyses || x.partis_pris || x.verbatims || x.mainteneur);
+        var aucun = !(x.analyses || x.partis_pris || x.verbatims || x.mainteneur || x.veille);
         return '<tr data-id="' + x.id + '"><td>' + esc(x.pseudo) + (aucun ? ' <span class="badge attente">nouveau</span>' : '') + '<br><span class="muted">inscrit le ' + esc(dateFr(x.cree_le)) + '</span></td>'
           + cols.map(function(c){ return '<td><input type="checkbox" data-col="' + c[0] + '"' + (x[c[0]] ? ' checked' : '') + ' aria-label="' + c[1] + ' pour ' + esc(x.pseudo) + '"></td>'; }).join('') + '</tr>';
       }).join('') + '</tbody></table></div><div id="droitsMsg"></div>';
@@ -964,7 +1195,7 @@ async function vueDroits(){
       var tr = c.closest('tr'), v = {};
       tr.querySelectorAll('input').forEach(function(i){ v[i.getAttribute('data-col')] = i.checked; });
       try {
-        await rpc('definir_roles', { p_id:tr.getAttribute('data-id'), p_analyses:v.analyses, p_partis_pris:v.partis_pris, p_verbatims:v.verbatims, p_mainteneur:v.mainteneur });
+        await rpc('definir_roles', { p_id:tr.getAttribute('data-id'), p_analyses:v.analyses, p_partis_pris:v.partis_pris, p_verbatims:v.verbatims, p_mainteneur:v.mainteneur, p_veille:v.veille });
         $('droitsMsg').innerHTML = '<div class="note ok">Droits enregistrés.</div>';
         if(tr.getAttribute('data-id') === S.session.user.id) Object.assign(S.profil, v);
       } catch(e){ c.checked = !c.checked; $('droitsMsg').innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
@@ -1128,8 +1359,8 @@ function construireClasseur(XLSX, x){
   ajouter('Analyses & partis pris', [['ID_sujet', 'Type', 'Auteur', 'Initiales', 'Texte', 'Sources', 'Âge', 'En ligne', 'ID_base', 'Dernière modification']].concat(
     x.editorial.map(function(e){ return [e.sujet_id, e.type, e.auteur, e.initiales, e.texte, e.sources.join(', '), e.age == null ? '' : e.age, e.publie ? 'oui' : 'non', e.id, jour(e.maj)]; })), [28, 12, 16, 9, 90, 40, 6, 9, 8, 20]);
 
-  ajouter('Bibliographie', [['ID_source', 'Registre', 'Auteurs', 'Titre', 'Type', 'Éditeur/Organisme', 'Date de publication', 'URL', 'Date de consultation']].concat(
-    x.sources.map(function(s){ return [s.id, s.registre, s.auteurs, s.titre, s.type, s.organisme, s.date_publication, s.url, s.date_consultation]; })), [20, 11, 34, 60, 22, 34, 16, 50, 16]);
+  ajouter('Bibliographie', [['ID_source', 'Registre', 'Auteurs', 'Titre', 'Type', 'Éditeur/Organisme', 'Date de publication', 'URL', 'Date de consultation', 'Statut', 'Lien d\'archive']].concat(
+    x.sources.map(function(s){ return [s.id, s.registre, s.auteurs, s.titre, s.type, s.organisme, s.date_publication, s.url, s.date_consultation, s.statut || 'publié', s.archive || '']; })), [20, 11, 34, 60, 22, 34, 16, 50, 16, 11, 50]);
 
   ajouter('Figures', [['ID_figure', 'Type', 'Titre', 'Unité', 'Axe_min', 'Axe_max', 'Note de lecture', 'Sources', 'Édition des données', 'Fichier', 'Texte alternatif', 'Adresse de l\'image', 'Source des données']].concat(
     x.figures.map(function(f){ return [f.id, f.type, f.titre, f.unite, f.axe_min == null ? '' : f.axe_min, f.axe_max == null ? '' : f.axe_max, f.note, f.sources.join(', '), f.edition, f.fichier, f.alt, f.url, f.credit]; })), [24, 9, 50, 16, 8, 8, 60, 30, 30, 16, 50, 50, 30]);
@@ -1140,7 +1371,7 @@ function construireClasseur(XLSX, x){
   }); }); });
   ajouter('Données des figures', pts, [24, 44, 9, 8, 10, 12, 11]);
 
-  var pris = { 'lisez-moi':1, 'analyses & partis pris':1, 'bibliographie':1, 'figures':1, 'données des figures':1, '_dépôts':1, '_journal':1 };
+  var pris = { 'lisez-moi':1, 'analyses & partis pris':1, 'bibliographie':1, 'figures':1, 'données des figures':1, '_dépôts':1, '_rattachements':1, '_journal':1 };
   x.thematiques.forEach(function(t){
     var nom = t.nom.replace(/[:\\\/?*\[\]]/g, ' ').slice(0, 31);
     if(pris[nom.toLowerCase()]) return;
@@ -1152,6 +1383,11 @@ function construireClasseur(XLSX, x){
 
   ajouter('_Dépôts', [['N°', 'Circuit', 'Statut', 'ID_sujet', 'Candidat', 'Auteur', 'Initiales', 'Âge', 'Texte', 'Sources', 'Relecteurs', 'Corrige (ID_base)', 'Fait suite au dépôt', 'Déposé par', 'Déposé le', 'Traité par', 'Traité le', 'Motif du refus', 'Mode (verbatim)', 'Texte de départ (correction)']].concat(
     x.depots.map(function(d){ return [d.id, d.circuit, d.statut, d.sujet_id, d.candidat || '', d.auteur, d.initiales, d.age == null ? '' : d.age, d.texte, d.sources.join(', '), d.relecteurs.join(', '), d.remplace || '', d.suite_de || '', d.depose_par_pseudo || '', jour(d.depose_le), d.traite_par_pseudo || '', jour(d.traite_le), d.motif || '', d.mode || '', d.texte_base || '']; })));
+
+  /* Rattachements case ↔ documents du corpus : sauvegardés, jamais réimportés
+     (comme tous les onglets dont le nom commence par « _ »). */
+  ajouter('_Rattachements', [['ID_sujet', 'Candidat', 'ID_source', 'Titre du document', 'Rattaché par', 'Rattaché le']].concat(
+    (x.rattachements || []).map(function(r){ return [r.sujet_id, r.candidat, r.source_id, r.titre || '', r.ajoute_par_pseudo || '', jour(r.ajoute_le)]; })), [30, 22, 22, 60, 18, 20]);
 
   ajouter('_Journal', [['Date', 'Par', 'Action', 'Détail']].concat(
     x.journal.map(function(j){ return [jour(j.quand), j.pseudo, j.action, JSON.stringify(j.detail)]; })), [20, 18, 20, 120]);
@@ -1168,7 +1404,7 @@ async function vueExcel(){
   var lu = null;
 
   vue.innerHTML = prendreFlash()
-    + '<div class="card"><h2>Sauvegarde : exporter toute la base vers Excel</h2><p>Produit un classeur au format du fichier source : un onglet par thématique, les analyses et partis pris, la bibliographie, les figures, plus l\'historique des dépôts et le journal. À faire régulièrement, et à ranger hors de ce service.</p><div class="actions"><button class="btn pri" id="btnExport"' + (vide ? ' disabled' : '') + '>Télécharger la sauvegarde Excel</button><button class="btn" id="btnSecours"' + (vide ? ' disabled' : '') + '>Télécharger data.js (copie de secours du site)</button></div><p class="muted" style="margin-top:8px">Le fichier data.js se dépose dans le dépôt GitHub à côté de index.html : le site l\'affiche si la base ne répond pas.</p><div id="exportMsg"></div></div>'
+    + '<div class="card"><h2>Sauvegarde : exporter toute la base vers Excel</h2><p>Produit un classeur au format du fichier source : un onglet par thématique, les analyses et partis pris, la bibliographie, les figures, plus l\'historique des dépôts, les rattachements des cases à leurs documents et le journal. À faire régulièrement, et à ranger hors de ce service.</p><div class="actions"><button class="btn pri" id="btnExport"' + (vide ? ' disabled' : '') + '>Télécharger la sauvegarde Excel</button><button class="btn" id="btnSecours"' + (vide ? ' disabled' : '') + '>Télécharger data.js (copie de secours du site)</button></div><p class="muted" style="margin-top:8px">Le fichier data.js se dépose dans le dépôt GitHub à côté de index.html : le site l\'affiche si la base ne répond pas.</p><div id="exportMsg"></div></div>'
     + '<div class="card"><h2>' + (vide ? 'Import initial : charger le classeur source' : 'Mettre à jour la structure depuis Excel') + '</h2>'
     + (vide ? '<p>La base est vide. Déposez le classeur <b>Comparateur_2027_source.xlsx</b> : sa structure et tous ses textes seront chargés. Cette opération n\'est possible qu\'une seule fois.</p>'
             : '<p>Déposez un classeur pour mettre à jour <b>la structure seulement</b> : thématiques, sujets, libellés, colonne « Aussi dans », candidats. Aucun texte n\'est modifié. Un sujet absent du fichier est supprimé s\'il est vide, conservé et signalé s\'il contient quoi que ce soit.</p><div class="note warn">Ne renommez jamais un ID_sujet qui porte déjà des textes : l\'outil y verrait un nouveau sujet vide.</div>')

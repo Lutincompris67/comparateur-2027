@@ -1089,6 +1089,8 @@ function bibItem(b,showCited){
     +'<div class="bt">'+esc(b.title)+'</div>'
     +'<div class="bm">'+esc(b.authors)+(b.org?' — '+esc(b.org):'')+(b.date?' · '+esc(b.date):'')+(b.consulted?' · consulté le '+esc(b.consulted):'')+'</div>'
     +(b.url?'<a href="'+esc(b.url)+'" target="_blank" rel="noopener">'+esc(b.url)+'</a>':'')
+    /* Copie datée de la page, quand la veille en a fourni une. */
+    +(/^https?:\/\//i.test(b.archive||'')?'<div class="bm"><a href="'+esc(b.archive)+'" target="_blank" rel="noopener">Version archivée ↗</a></div>':'')
     +(showCited?citedInHtml(b.id):'')
     +'</div>';
 }
