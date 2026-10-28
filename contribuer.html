@@ -79,6 +79,9 @@ textarea.verb{font-family:var(--serif);font-size:15.5px;min-height:130px}
 .texte.verb::before{content:"«\00a0";color:var(--ink-3)}
 .texte.verb::after{content:"\00a0»";color:var(--ink-3)}
 .texte.pp{border-color:#7A4E83}
+.texte.lex{border-color:var(--vert)}
+.lex-terme{font-family:var(--serif);font-size:17px;font-weight:600}
+.lex-dev{font-size:13px;color:var(--ink-2);font-style:italic}
 .texte sup{font-weight:600;color:var(--terre-deep)}
 .texte figure{margin:12px 0;padding:10px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);font-size:12.5px;color:var(--ink-2)}
 .texte figure img{display:block;max-width:100%;height:auto;margin-bottom:6px;border-radius:5px}
@@ -147,6 +150,8 @@ var SUPABASE_URL = 'https://bwkqtcxygzxcvrbzvdzg.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_iaBd03vrVGP-NxntLO9dzg_enTfgPHa';
 var MOTS_REPERE_PARTI_PRIS = 800;   /* ordre de grandeur visé */
 var MOTS_MAX_PARTI_PRIS = 1000;     /* au-delà, le dépôt est bloqué */
+var CAR_REPERE_DEFINITION = 400;    /* une définition doit tenir dans une bulle */
+var CAR_MAX_DEFINITION = 1500;      /* au-delà, la base refuse le dépôt */
 var SEPARATEUR = ' — ';             /* entre deux mesures d'une même case (ajouté par la base) */
 
 var $ = function(id){ return document.getElementById(id); };
@@ -162,11 +167,12 @@ var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 var CIRCUITS = [
   { id:'analyse',    droit:'analyses',    nom:'Analyse' },
   { id:'parti pris', droit:'partis_pris', nom:'Parti pris' },
-  { id:'verbatim',   droit:'verbatims',   nom:'Verbatim' }
+  { id:'verbatim',   droit:'verbatims',   nom:'Verbatim' },
+  { id:'lexique',    droit:'lexique',     nom:'Lexique' }
 ];
 var S = {
   session:null, profil:null, tab:null,
-  themes:[], sujets:[], sujetById:{}, candidats:[], sources:[], srcById:{}, figById:{},
+  themes:[], sujets:[], sujetById:{}, candidats:[], sources:[], srcById:{}, figById:{}, lexique:[], lexById:{},
   pseudos:{}, form:null, nAttente:0, nSignal:0, nDocs:0, message:null,
   progCand:null, progDoc:null, progTheme:'', progSansDoc:true,   /* onglet Programmes */
   filtreValider:null,  /* 'tous', 'autres', 'moi' ou l'identifiant d'un déposant */
@@ -243,6 +249,9 @@ function noteSujet(id, theme){
   return h;
 }
 function libelleSujet(id){ var s = S.sujetById[id]; return s ? s.libelle + ' (' + s.thematique + ')' : id; }
+/* Lexique : formes reconnues d'un terme (le terme lui-même, puis ses variantes). */
+function listeVariantes(t){ return String(t || '').split(/[,;\n]/).map(function(x){ return x.trim(); }).filter(Boolean); }
+function formesLex(terme, variantes){ return [terme].concat(variantes || []).map(function(x){ return String(x || '').trim(); }).filter(Boolean); }
 function flash(type, texte){ S.message = {type:type, texte:texte}; }
 function prendreFlash(){ var m = S.message; S.message = null; return m ? '<div class="note ' + m.type + '">' + esc(m.texte) + '</div>' : ''; }
 
@@ -300,7 +309,7 @@ function compterMots(texte){
 function ecranConnexion(erreur){
   $('who').innerHTML = '';
   app.innerHTML = '<h1>Espace des contributeurs</h1>'
-    + '<p>Cette page sert à déposer les textes validés sur le Discord du projet : analyses, partis pris et verbatims. Un mainteneur vérifie ensuite que le circuit a été respecté, puis le texte paraît sur le site.</p>'
+    + '<p>Cette page sert à déposer les textes validés sur le Discord du projet : analyses, partis pris, verbatims et définitions du lexique. Un mainteneur vérifie ensuite que le circuit a été respecté, puis le texte paraît sur le site.</p>'
     + (erreur ? '<div class="note err">' + esc(erreur) + '</div>' : '')
     + '<div class="card"><p>La connexion se fait avec votre compte Discord. Seul votre pseudo Discord est utilisé ici.</p><button class="btn pri" id="btnDiscord">Se connecter avec Discord</button></div>'
     + '<p class="muted">Lire le site ne demande aucun compte : <a href="index.html">retour au comparateur</a>.</p>';
@@ -327,7 +336,7 @@ async function demarrer(session){
   $('btnOut').onclick = function(){ sb.auth.signOut(); };
 
   var p = S.profil;
-  if(!p || !(p.analyses || p.partis_pris || p.verbatims || p.mainteneur || p.veille)){
+  if(!p || !(p.analyses || p.partis_pris || p.verbatims || p.mainteneur || p.veille || p.lexique)){
     app.innerHTML = '<h1>Compte en attente</h1><div class="card"><p>Votre compte est créé' + (p ? ' sous le pseudo <b>' + esc(p.pseudo) + '</b>' : '') + ', mais aucun circuit ne lui est encore attribué.</p><p>Prévenez un mainteneur sur le Discord : il ouvrira vos droits, puis rechargez cette page.</p></div>';
     return;
   }
@@ -355,8 +364,18 @@ async function chargerReferentiel(){
   S.sources.forEach(function(b){ S.srcById[b.id] = b; });
   S.figById = {};
   r[4].forEach(function(f){ S.figById[f.id] = f; });
+  await chargerLexique();
   if(S.profil.mainteneur) await chargerCompteurs();
   if(circuitsPermis().length) await compterAReprendre();
+}
+/* Le lexique, publié ou non (lisible par tout compte qui a un droit). Si la base n'a
+   pas encore le lexique (script lexique.sql non exécuté), la page fonctionne sans. */
+async function chargerLexique(){
+  try { S.lexique = await tout(function(){ return sb.from('lexique').select('*').order('terme'); }); }
+  catch(e){ S.lexique = []; }
+  S.lexique.sort(function(a, b){ return a.terme.localeCompare(b.terme, 'fr', { sensitivity:'base' }); });
+  S.lexById = {};
+  S.lexique.forEach(function(l){ S.lexById[l.id] = l; });
 }
 /* Dépôts refusés que je n'ai pas encore redéposés : signalés sur l'onglet « Mes dépôts ». */
 async function compterAReprendre(){
@@ -411,9 +430,12 @@ function afficher(){
 function nouveauFormulaire(circuit){
   return { circuit:circuit, theme:'', sujet:'', candidat:'', auteur:'', initiales:'', age:'', texte:'',
            sources:[], relecteurs:['', ''], remplace:null, suite_de:null, ctx:null, motifPrecedent:null,
-           mode:null, ancienTexte:null, docs:[], docsOuvert:false };
+           mode:null, ancienTexte:null, docs:[], docsOuvert:false,
+           terme:'', developpe:'', variantes:'', remplace_terme:null };
 }
-function relecteursRequis(f){ return (f.circuit === 'verbatim' || f.remplace || f.suite_de) ? 1 : 2; }
+/* Un seul relecteur pour un verbatim, une définition du lexique, une correction ou
+   un nouveau dépôt après refus ; deux pour une nouvelle analyse ou un parti pris. */
+function relecteursRequis(f){ return (f.circuit === 'verbatim' || f.circuit === 'lexique' || f.remplace || f.suite_de) ? 1 : 2; }
 
 /* Ce qui existe déjà à l'endroit visé : la case en ligne (verbatim) ou les textes
    du sujet (analyse, parti pris). Chargé à part, sans redessiner le formulaire,
@@ -492,6 +514,7 @@ async function majContexte(){
 
 function diagnostics(f){
   var avert = [], bloc = [], t = f.texte;
+  if(f.circuit === 'lexique') return diagnosticsLexique(f);
   if(!f.sujet) bloc.push('Choisissez un sujet.');
   if(!t.trim()) bloc.push('Le texte est vide.');
   var relus = f.relecteurs.slice(0, relecteursRequis(f)).map(function(x){ return x.trim(); }).filter(Boolean);
@@ -547,6 +570,90 @@ function diagnostics(f){
   return { avert:avert, bloc:bloc };
 }
 
+/* =====================================================================
+   LEXIQUE : dépôt d'une définition
+   ===================================================================== */
+/* Dans une définition, les noms de candidats n'ont pas leur place. */
+function nommeCandidat(t){
+  var bas = ' ' + String(t || '').toLowerCase() + ' ', trouves = [];
+  S.candidats.forEach(function(c){
+    var nom = c.trim().split(/\s+/).pop().toLowerCase();
+    if(nom.length > 3 && !/^candidat/i.test(c) && bas.indexOf(nom) >= 0) trouves.push(c);
+  });
+  return trouves;
+}
+function diagnosticsLexique(f){
+  var avert = [], bloc = [], t = f.texte.trim(), terme = f.terme.trim();
+  if(!terme) bloc.push('Indiquez le terme à définir.');
+  if(!t) bloc.push('La définition est vide.');
+  if(!(f.relecteurs[0] || '').trim()) bloc.push('Indiquez le relecteur.');
+  if(t.length > CAR_MAX_DEFINITION) bloc.push('La définition compte ' + t.length + ' caractères : la limite est de ' + CAR_MAX_DEFINITION + '.');
+  else if(t.length > CAR_REPERE_DEFINITION) avert.push('La définition compte ' + t.length + ' caractères : visez ' + CAR_REPERE_DEFINITION + ' au plus, pour qu\'elle reste lisible dans la bulle.');
+  /* Une forme ne peut appartenir qu'à un seul terme (la base le vérifie aussi). */
+  var miennes = formesLex(terme, listeVariantes(f.variantes)).map(function(x){ return x.toLowerCase(); });
+  S.lexique.forEach(function(l){
+    if(l.id === f.remplace_terme) return;
+    formesLex(l.terme, l.variantes).forEach(function(x){
+      if(miennes.indexOf(x.toLowerCase()) >= 0) bloc.push('« ' + x + ' » figure déjà dans le lexique (terme « ' + l.terme + ' »). Déposez plutôt une correction de ce terme.');
+    });
+  });
+  if(/^[A-ZÀ-Ý0-9.\- ]+$/.test(terme) && /[A-Z]/.test(terme) && terme.length <= 12 && !f.developpe.trim()) avert.push('« ' + terme + ' » ressemble à un sigle : indiquez sa forme développée.');
+  if(!f.sources.length) avert.push('Une définition est sourcée : aucune source n\'est listée.');
+  if(/\[\d+\]/.test(t)) avert.push('Pas d\'appel de note dans une définition : les sources sont simplement listées sous le texte.');
+  nommeCandidat(t + ' ' + terme).forEach(function(c){ avert.push('La définition semble nommer un candidat (« ' + c + ' ») : le lexique définit des notions, sans référence aux candidats.'); });
+  if(/\n/.test(t)) avert.push('Une définition tient en un seul paragraphe.');
+  return { avert:avert, bloc:bloc };
+}
+function vueDeposerLexique(h){
+  var f = S.form, vue = $('vue');
+  h += '<div class="card"><h2>1. Quel terme ?</h2>'
+    + '<div class="field"><label for="fLexRemplace">Nouveau terme ou correction ?</label><select id="fLexRemplace"><option value="">Nouveau terme</option>'
+    + S.lexique.map(function(l){ return '<option value="' + l.id + '"' + (f.remplace_terme === l.id ? ' selected' : '') + '>Correction de « ' + esc(l.terme) + ' »' + (l.publie ? '' : ' (dépublié)') + '</option>'; }).join('')
+    + '</select><small>Une correction remplace la définition en ligne, sans mention visible.</small></div>'
+    + '<div class="row"><div class="field"><label for="fTerme">Terme, tel qu\'il figurera au lexique</label><input type="text" id="fTerme" maxlength="80" value="' + esc(f.terme) + '" placeholder="Ex. Dette publique, HATVP"></div>'
+    + '<div class="field"><label for="fDev">Forme développée (pour un sigle)</label><input type="text" id="fDev" maxlength="200" value="' + esc(f.developpe) + '" placeholder="Ex. Haute Autorité pour la transparence de la vie publique"></div></div>'
+    + '<div class="field"><label for="fVar">Autres formes à reconnaître dans les textes</label><input type="text" id="fVar" value="' + esc(f.variantes) + '" placeholder="Ex. dettes publiques, dette de l\'État"><small>Séparées par des virgules : pluriel, féminin, autre graphie, forme développée d\'un sigle. Le site rend cliquables le terme et ces formes partout où ils apparaissent, mot entier seulement. Un sigle écrit en majuscules n\'est reconnu qu\'en majuscules ; les autres formes, sans tenir compte des majuscules.</small></div>'
+    + '</div>';
+  h += '<div class="card"><h2>2. La définition</h2>'
+    + '<div class="field"><label for="fTexte">Définition validée sur Discord</label><textarea id="fTexte" class="court" style="min-height:130px">' + esc(f.texte) + '</textarea><div class="compte" id="compte"></div>'
+    + '<small>Un seul paragraphe, factuel et neutre, compréhensible sans connaissance préalable. Pas d\'appel de note : les sources sont listées ci-dessous.</small></div>'
+    + '<h3>Sources</h3><div id="listeSources"></div>'
+    + '<details id="detSrc"><summary>Ajouter une source</summary><div>'
+    + '<div class="field"><label for="srcCherche">Chercher dans la bibliographie</label><input type="search" id="srcCherche" placeholder="Titre, auteur, organisme ou adresse…"><div class="results" id="srcResultats"></div></div>'
+    + '<p class="muted">Elle n\'y est pas ? Créez-la :</p>'
+    + '<div class="row"><div class="field"><label for="nsTitre">Titre</label><input type="text" id="nsTitre"></div><div class="field"><label for="nsAuteurs">Auteurs</label><input type="text" id="nsAuteurs"></div></div>'
+    + '<div class="row"><div class="field"><label for="nsOrg">Éditeur ou organisme</label><input type="text" id="nsOrg"></div><div class="field"><label for="nsType">Nature</label><select id="nsType"><option>Dictionnaire ou glossaire</option><option>Texte officiel</option><option>Rapport institutionnel</option><option>Données statistiques</option><option>Étude scientifique</option><option>Presse et vulgarisation</option><option>Autre</option></select></div></div>'
+    + '<div class="row"><div class="field"><label for="nsDate">Date de publication</label><input type="text" id="nsDate" placeholder="2026"></div><div class="field"><label for="nsUrl">Adresse web</label><input type="url" id="nsUrl" placeholder="https://…"></div></div>'
+    + '<button class="btn" id="btnCreerSrc">Créer et ajouter cette source</button><div id="srcMsg"></div></div></details></div>';
+  h += '<div class="card"><h2>3. La relecture sur Discord</h2><div class="row"><div class="field"><label for="fRel0">Relecteur qui a validé</label><input type="text" id="fRel0" maxlength="60" value="' + esc(f.relecteurs[0] || '') + '" placeholder="Pseudo Discord"></div></div></div>';
+  h += '<div id="diag"></div><div class="actions"><button class="btn pri" id="btnDeposer">Déposer pour validation</button><button class="btn" id="btnApercu">Aperçu</button><button class="btn" id="btnVider">Tout effacer</button></div><div id="apercu"></div>';
+  vue.innerHTML = h;
+
+  vue.querySelectorAll('.pill').forEach(function(b){ b.onclick = function(){ var anc = S.form; S.form = nouveauFormulaire(b.getAttribute('data-circuit')); S.form.theme = anc.theme; S.form.sujet = anc.sujet; vueDeposer(); }; });
+  $('fLexRemplace').onchange = function(){
+    f.remplace_terme = this.value ? parseInt(this.value, 10) : null;
+    var l = S.lexById[f.remplace_terme];
+    if(l){ f.terme = l.terme; f.developpe = l.developpe; f.variantes = l.variantes.join(', '); f.texte = l.definition; f.sources = l.sources.slice(); }
+    vueDeposer();
+  };
+  var maj = function(){ majDiagnostic(); };
+  $('fTerme').oninput = function(){ f.terme = this.value; maj(); };
+  $('fDev').oninput = function(){ f.developpe = this.value; maj(); };
+  $('fVar').oninput = function(){ f.variantes = this.value; maj(); };
+  $('fTexte').oninput = function(){ f.texte = this.value; maj(); };
+  $('fRel0').oninput = function(){ f.relecteurs[0] = this.value; maj(); };
+  $('btnVider').onclick = function(){ S.form = nouveauFormulaire('lexique'); vueDeposer(); };
+  $('btnApercu').onclick = function(){ $('apercu').innerHTML = '<h3>Aperçu</h3>' + rendreDefinition({ terme:f.terme, developpe:f.developpe, variantes:listeVariantes(f.variantes), texte:f.texte, sources:f.sources }); };
+  $('btnDeposer').onclick = deposer;
+  majSources(); lierSources(); majDiagnostic();
+}
+/* Une définition telle que la relit un mainteneur : terme, forme développée, formes reconnues. */
+function rendreDefinition(o){
+  return '<div class="lex-terme">' + esc(o.terme) + '</div>' + (o.developpe ? '<div class="lex-dev">' + esc(o.developpe) + '</div>' : '')
+    + '<div class="meta">Formes reconnues : <b>' + esc(formesLex(o.terme, o.variantes).join(' · ')) + '</b></div>'
+    + rendreTexte(o.texte, o.sources, 'lex');
+}
+
 function vueDeposer(){
   var permis = circuitsPermis(), vue = $('vue');
   if(!S.form || !S.profil[CIRCUITS.filter(function(c){ return c.id === S.form.circuit; })[0].droit]) S.form = nouveauFormulaire(permis[0].id);
@@ -557,6 +664,7 @@ function vueDeposer(){
   h += '<div class="pills">' + permis.map(function(c){ return '<button class="pill' + (c.id === f.circuit ? ' on' : '') + '" data-circuit="' + c.id + '">' + c.nom + '</button>'; }).join('') + '</div>';
 
   if(f.suite_de) h += '<div class="note info">Nouveau dépôt après un refus' + (f.motifPrecedent ? ' — motif : « ' + esc(f.motifPrecedent) + ' »' : '') + '. Une seule nouvelle validation sur Discord suffit.</div>';
+  if(f.circuit === 'lexique') return vueDeposerLexique(h);
 
   h += '<div class="card"><h2>1. Où va ce texte ?</h2><div class="row">'
     + '<div class="field"><label for="fTheme">Thématique</label><select id="fTheme"><option value="">— choisir —</option>' + S.themes.map(function(t){ return '<option' + (t === f.theme ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select></div>'
@@ -660,7 +768,11 @@ function majDiagnostic(){
   var f = S.form, d = diagnostics(f), h = '';
   if(d.avert.length) h += '<div class="note warn"><b>À vérifier avant de déposer</b><ul>' + d.avert.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
   if($('diag')) $('diag').innerHTML = h;
-  if($('compte')){
+  if($('compte') && f.circuit === 'lexique'){
+    var nc = f.texte.trim().length;
+    $('compte').textContent = nc + ' caractères — repère : ' + CAR_REPERE_DEFINITION + ', maximum : ' + CAR_MAX_DEFINITION;
+    $('compte').className = 'compte' + (nc > CAR_MAX_DEFINITION ? ' trop' : '');
+  } else if($('compte')){
     var n = compterMots(f.texte);
     $('compte').textContent = n + ' mots — repère : ' + MOTS_REPERE_PARTI_PRIS + ', maximum : ' + MOTS_MAX_PARTI_PRIS + ' (notes non comptées)';
     $('compte').className = 'compte' + (n > MOTS_MAX_PARTI_PRIS ? ' trop' : '');
@@ -769,7 +881,11 @@ async function deposer(){
     if(f.ctx && f.ctx.position != null){ mode = f.mode; if(mode === 'remplacement') base = f.ctx.position; }
     else mode = 'ajout';
   }
-  var ligne = {
+  var ligne = f.circuit === 'lexique' ? {
+    circuit:'lexique', sujet_id:null, terme:f.terme.trim(), developpe:f.developpe.trim(), variantes:listeVariantes(f.variantes),
+    texte:f.texte, sources:f.sources, remplace_terme:f.remplace_terme, suite_de:f.suite_de,
+    relecteurs:[f.relecteurs[0].trim()], depose_par:S.session.user.id
+  } : {
     circuit:f.circuit, sujet_id:f.sujet, candidat:estVerb ? f.candidat : null,
     auteur:estVerb ? '' : f.auteur.trim(), initiales:estVerb ? '' : f.initiales.trim(),
     age:f.circuit === 'parti pris' ? parseInt(f.age, 10) : null,
@@ -795,6 +911,7 @@ async function deposer(){
    MES DÉPÔTS
    ===================================================================== */
 function natureDepot(d){
+  if(d.circuit === 'lexique') return d.suite_de ? 'Nouveau dépôt après refus' : d.remplace_terme ? 'Correction d\'une définition en ligne' : 'Nouveau terme';
   if(d.circuit === 'verbatim'){
     var n = d.mode === 'ajout' ? 'Ajout à la case' : d.mode === 'remplacement' ? 'Correction de la case' : 'Remplace la case';
     return (d.suite_de ? 'Nouveau dépôt après refus · ' : '') + n;
@@ -803,13 +920,13 @@ function natureDepot(d){
 }
 function carteDepot(d, mode){
   var statutClasse = { 'en attente':'attente', 'publié':'publie', 'refusé':'refuse' }[d.statut];
-  var estVerb = d.circuit === 'verbatim', obsolete = false;
+  var estVerb = d.circuit === 'verbatim', estLex = d.circuit === 'lexique', obsolete = false;
   var h = '<div class="card' + (mode === 'mes' && d.statut === 'refusé' ? ' a-reprendre' : '') + '" data-depot="' + d.id + '">'
     + '<div><span class="badge">' + esc(nomCircuit(d.circuit)) + '</span> <span class="badge ' + statutClasse + '">' + esc(d.statut) + '</span></div>'
-    + '<h2 style="margin-top:8px">' + esc(libelleSujet(d.sujet_id)) + (d.candidat ? ' — ' + esc(d.candidat) : '') + '</h2>'
+    + '<h2 style="margin-top:8px">' + (estLex ? 'Lexique — « ' + esc(d.terme) + ' »' : esc(libelleSujet(d.sujet_id)) + (d.candidat ? ' — ' + esc(d.candidat) : '')) + '</h2>'
     + '<div class="meta">' + (mode === 'valider' ? 'Déposé par <b>' + esc(S.pseudos[d.depose_par] || 'compte supprimé') + '</b> le ' : 'Déposé le ') + esc(dateFr(d.depose_le))
     + ' · ' + esc(natureDepot(d)) + ' · Relu par <b>' + esc(d.relecteurs.join(', ')) + '</b>'
-    + (!estVerb ? ' · Auteur : <b>' + esc(d.auteur) + (d.age ? ', ' + d.age + ' ans' : '') + '</b>' : '') + '</div>'
+    + (!estVerb && !estLex ? ' · Auteur : <b>' + esc(d.auteur) + (d.age ? ', ' + d.age + ' ans' : '') + '</b>' : '') + '</div>'
     + (estVerb && d.sources && d.sources.length ? '<div class="meta">Document(s) d\'origine indiqué(s) : ' + d.sources.map(function(id){ return '<b>' + esc(S.srcById[id] ? S.srcById[id].titre : id) + '</b>'; }).join(', ') + '</div>' : '');
   if(d.statut === 'refusé') h += '<div class="note err"><b>Refusé</b> le ' + esc(dateFr(d.traite_le)) + ' — ' + esc(d.motif || '') + '</div>';
   if(mode === 'vu') h += '<p class="muted">Repris : un nouveau dépôt a été fait après ce refus.</p>';
@@ -818,8 +935,12 @@ function carteDepot(d, mode){
     obsolete = d._actuel !== d.texte_base;
     if(obsolete) h += '<div class="note err"><b>La case a changé depuis ce dépôt</b> : un autre texte y a été validé, ou elle a été dépubliée. Cette correction ne peut plus être validée. Refusez-la en demandant au déposant de repartir du texte en ligne.</div>';
   }
+  if(estLex){
+    h += '<details' + (mode === 'valider' ? ' open' : '') + '><summary>La définition déposée</summary><div>' + rendreDefinition(d) + '</div></details>';
+    if(mode === 'valider' && d._actuel) h += '<details><summary>La définition actuellement en ligne, qui sera remplacée</summary><div>' + rendreDefinition(d._actuel) + '</div></details>';
+  } else
   h += '<details' + (mode === 'valider' ? ' open' : '') + '><summary>' + (estVerb && d.mode === 'ajout' ? 'Le texte déposé, à ajouter à la suite' : 'Le texte déposé') + '</summary><div>' + rendreTexte(d.texte, d.sources, estVerb ? 'verb' : d.circuit === 'parti pris' ? 'pp' : '') + '</div></details>';
-  if(mode === 'valider' && d._actuel != null){
+  if(mode === 'valider' && d._actuel != null && !estLex){
     if(estVerb && d.mode === 'ajout') h += '<details open><summary>La case après validation</summary><div>' + rendreTexte(d._actuel + SEPARATEUR + d.texte, null, 'verb') + '</div></details>';
     else h += '<details><summary>Le texte actuellement en ligne, qui sera remplacé</summary><div>' + rendreTexte(d._actuel, null, estVerb ? 'verb' : '') + '</div></details>';
   }
@@ -892,7 +1013,7 @@ async function vueMes(){
       if(m.statut !== 'tous' && etat(d) !== m.statut) return false;
       if(m.circuit && d.circuit !== m.circuit) return false;
       if(m.theme){ var x = S.sujetById[d.sujet_id]; if(!x || (x.thematique !== m.theme && (x.aussi_dans || []).indexOf(m.theme) < 0)) return false; }
-      if(q && normal([d.texte, libelleSujet(d.sujet_id), d.sujet_id, d.candidat, d.auteur, d.motif].join(' ')).indexOf(q) < 0) return false;
+      if(q && normal([d.texte, libelleSujet(d.sujet_id), d.sujet_id, d.candidat, d.auteur, d.motif, d.terme].join(' ')).indexOf(q) < 0) return false;
       return true;
     };
     var visibles = liste.filter(garde).sort(trier);
@@ -921,6 +1042,12 @@ async function vueMes(){
       b.onclick = function(){
         var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10);
         var d = liste.filter(function(x){ return x.id === id; })[0], s = S.sujetById[d.sujet_id];
+        if(d.circuit === 'lexique'){
+          S.form = nouveauFormulaire('lexique');
+          Object.assign(S.form, { terme:d.terme || '', developpe:d.developpe || '', variantes:(d.variantes || []).join(', '), texte:d.texte,
+            sources:d.sources.slice(), remplace_terme:d.remplace_terme, suite_de:d.id, motifPrecedent:d.motif, relecteurs:['', ''] });
+          S.tab = 'deposer'; afficher(); return;
+        }
         /* Une correction refusée repart du texte en ligne actuel, jamais de l'ancien :
            on évite ainsi d'effacer ce qui a été ajouté entre-temps. */
         var correction = d.circuit === 'verbatim' && d.mode === 'remplacement';
@@ -976,13 +1103,16 @@ async function vueValider(){
     } else if(d.remplace){
       var e = await sb.from('editorial').select('texte').eq('id', d.remplace).maybeSingle();
       d._actuel = e.data ? e.data.texte : null;
+    } else if(d.remplace_terme){
+      var l = await sb.from('lexique').select('*').eq('id', d.remplace_terme).maybeSingle();
+      d._actuel = l.data ? { terme:l.data.terme, developpe:l.data.developpe, variantes:l.data.variantes, texte:l.data.definition, sources:l.data.sources } : null;
     }
     if(d.suite_de){
       var x = await sb.from('depots').select('motif').eq('id', d.suite_de).maybeSingle();
       d._precedent = x.data;
     }
   }));
-  var tete = tete0 + '<p>Votre rôle ici : vérifier que le circuit a été respecté (bon sujet, relecteurs indiqués, registre respecté). Vous ne pouvez pas valider un texte que vous avez déposé.</p>';
+  var tete = tete0 + '<p>Votre rôle ici : vérifier que le circuit a été respecté (bon sujet ou bon terme, relecteurs indiqués, registre respecté). Vous ne pouvez pas valider un texte que vous avez déposé.</p>';
 
   /* Filtre par déposant : les miens, ceux des autres, ou une personne précise. */
   var moi = S.session.user.id, parDeposant = {}, nMoi = 0;
@@ -1024,6 +1154,7 @@ async function vueValider(){
           if(!await demander({ titre:'Publier ce texte sur le site ?', texte:'Il sera visible de tous les visiteurs immédiatement.', ok:'Valider et publier' })) return;
           await rpc('valider_depot', { p_id:id });
           flash('ok', 'Texte publié.');
+          await chargerLexique();
         } else {
           var motif = await demander({ titre:'Refuser ce dépôt', motif:'Motif, transmis au déposant', ok:'Refuser', danger:true });
           if(motif == null) return;
@@ -1051,11 +1182,28 @@ async function vueEnLigne(){
       + '<p class="muted">« ' + esc(e.texte.slice(0, 180)) + '… »</p>'
       + (e.publie ? '<button class="btn danger small" data-act="depub-ed">Dépublier</button>' : '') + '</div>';
   }).join('') : '<p class="muted">Aucun texte.</p>';
+  await chargerLexique();
+  h += '<h3>Lexique</h3>';
+  h += S.lexique.length ? S.lexique.map(function(l){
+    return '<div class="card" data-lex="' + l.id + '"><span class="badge">lexique</span> <span class="badge ' + (l.publie ? 'publie">en ligne' : 'hors">dépublié') + '</span>'
+      + '<h2 style="margin-top:8px">' + esc(l.terme) + (l.developpe ? ' <span class="lex-dev">— ' + esc(l.developpe) + '</span>' : '') + '</h2><div class="meta">Formes reconnues : <b>' + esc(formesLex(l.terme, l.variantes).join(' · ')) + '</b> · modifié le ' + esc(dateFr(l.maj)) + '</div>'
+      + '<p class="muted">' + esc(l.definition.slice(0, 180)) + (l.definition.length > 180 ? '…' : '') + '</p>'
+      + (l.publie ? '<button class="btn danger small" data-act="depub-lex">Dépublier</button>' : '') + '</div>';
+  }).join('') : '<p class="muted">Aucun terme.</p>';
   h += '<h3>Verbatims</h3><div class="card"><div class="row">'
     + '<div class="field"><label for="dvTheme">Thématique</label><select id="dvTheme"><option value="">— choisir —</option>' + S.themes.map(function(t){ return '<option>' + esc(t) + '</option>'; }).join('') + '</select></div>'
     + '<div class="field"><label for="dvSujet">Sujet</label><select id="dvSujet" disabled><option value="">— choisir —</option></select></div></div><div id="dvCases"></div></div>';
   vue.innerHTML = h;
 
+  vue.querySelectorAll('[data-act="depub-lex"]').forEach(function(b){
+    b.onclick = async function(){
+      var id = parseInt(b.closest('[data-lex]').getAttribute('data-lex'), 10);
+      var motif = await demander({ titre:'Dépublier ce terme ?', texte:'Il cesse aussitôt d\'être cliquable sur le site et disparaît du lexique. La définition reste conservée dans la base.', motif:'Motif (facultatif, noté au journal)', motifFacultatif:true, ok:'Dépublier', danger:true });
+      if(motif == null) return;
+      try { await rpc('depublier_lexique', { p_id:id, p_motif:motif }); flash('ok', 'Terme dépublié.'); } catch(e){ flash('err', msgErreur(e)); }
+      vueEnLigne();
+    };
+  });
   vue.querySelectorAll('[data-act="depub-ed"]').forEach(function(b){
     b.onclick = async function(){
       var id = parseInt(b.closest('[data-ed]').getAttribute('data-ed'), 10);
@@ -1319,11 +1467,11 @@ async function vueDroits(){
   var vue = $('vue');
   vue.innerHTML = '<p class="muted">Chargement…</p>';
   var p = await tout(function(){ return sb.from('profils').select('*').order('pseudo'); });
-  var cols = [['analyses', 'Analyses'], ['partis_pris', 'Partis pris'], ['verbatims', 'Verbatims'], ['veille', 'Veille'], ['mainteneur', 'Mainteneur']];
-  vue.innerHTML = prendreFlash() + '<p>Toute personne qui se connecte avec Discord apparaît ici, sans aucun droit. Cochez les circuits où elle peut déposer. « Veille » : veille programmatique (dépôt des documents de programme, rattachement des cases à leurs documents). Chaque changement est enregistré aussitôt et noté au journal.</p>'
+  var cols = [['analyses', 'Analyses'], ['partis_pris', 'Partis pris'], ['verbatims', 'Verbatims'], ['veille', 'Veille'], ['lexique', 'Lexique'], ['mainteneur', 'Mainteneur']];
+  vue.innerHTML = prendreFlash() + '<p>Toute personne qui se connecte avec Discord apparaît ici, sans aucun droit. Cochez les circuits où elle peut déposer. « Veille » : veille programmatique (dépôt des documents de programme, rattachement des cases à leurs documents). « Lexique » : dépôt des définitions du lexique. Chaque changement est enregistré aussitôt et noté au journal.</p>'
     + '<div class="card" style="overflow-x:auto"><table class="droits"><thead><tr><th>Pseudo Discord</th>' + cols.map(function(c){ return '<th>' + c[1] + '</th>'; }).join('') + '</tr></thead><tbody>'
     + p.map(function(x){
-        var aucun = !(x.analyses || x.partis_pris || x.verbatims || x.mainteneur || x.veille);
+        var aucun = !(x.analyses || x.partis_pris || x.verbatims || x.mainteneur || x.veille || x.lexique);
         return '<tr data-id="' + x.id + '"><td>' + esc(x.pseudo) + (aucun ? ' <span class="badge attente">nouveau</span>' : '') + '<br><span class="muted">inscrit le ' + esc(dateFr(x.cree_le)) + '</span></td>'
           + cols.map(function(c){ return '<td><input type="checkbox" data-col="' + c[0] + '"' + (x[c[0]] ? ' checked' : '') + ' aria-label="' + c[1] + ' pour ' + esc(x.pseudo) + '"></td>'; }).join('') + '</tr>';
       }).join('') + '</tbody></table></div><div id="droitsMsg"></div>';
@@ -1332,7 +1480,7 @@ async function vueDroits(){
       var tr = c.closest('tr'), v = {};
       tr.querySelectorAll('input').forEach(function(i){ v[i.getAttribute('data-col')] = i.checked; });
       try {
-        await rpc('definir_roles', { p_id:tr.getAttribute('data-id'), p_analyses:v.analyses, p_partis_pris:v.partis_pris, p_verbatims:v.verbatims, p_mainteneur:v.mainteneur, p_veille:v.veille });
+        await rpc('definir_roles', { p_id:tr.getAttribute('data-id'), p_analyses:v.analyses, p_partis_pris:v.partis_pris, p_verbatims:v.verbatims, p_mainteneur:v.mainteneur, p_veille:v.veille, p_lexique:v.lexique });
         $('droitsMsg').innerHTML = '<div class="note ok">Droits enregistrés.</div>';
         if(tr.getAttribute('data-id') === S.session.user.id) Object.assign(S.profil, v);
       } catch(e){ c.checked = !c.checked; $('droitsMsg').innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }
@@ -1356,7 +1504,7 @@ function chargerXLSX(){
 /*<PASSERELLE>*/
 /* Lecture du classeur source. Reprend les règles du convertisseur d'origine. */
 function lireClasseur(XLSX, wb){
-  var SPECIAL = { 'Lisez-moi':1, 'Analyses & partis pris':1, 'Bibliographie':1, 'Journal':1, 'Figures':1, 'Données des figures':1 };
+  var SPECIAL = { 'Lisez-moi':1, 'Analyses & partis pris':1, 'Bibliographie':1, 'Journal':1, 'Figures':1, 'Données des figures':1, 'Lexique':1 };
   var horsDonnees = function(n){ return !!SPECIAL[n] || /^journal/i.test(n) || n.charAt(0) === '_'; };
   var cell = function(v){ return v == null ? '' : String(v).trim(); };
   var lignes = function(ws){ return XLSX.utils.sheet_to_json(ws, { header:1, defval:'' }); };
@@ -1502,13 +1650,16 @@ function construireClasseur(XLSX, x){
   ajouter('Figures', [['ID_figure', 'Type', 'Titre', 'Unité', 'Axe_min', 'Axe_max', 'Note de lecture', 'Sources', 'Édition des données', 'Fichier', 'Texte alternatif', 'Adresse de l\'image', 'Source des données']].concat(
     x.figures.map(function(f){ return [f.id, f.type, f.titre, f.unite, f.axe_min == null ? '' : f.axe_min, f.axe_max == null ? '' : f.axe_max, f.note, f.sources.join(', '), f.edition, f.fichier, f.alt, f.url, f.credit]; })), [24, 9, 50, 16, 8, 8, 60, 30, 30, 16, 50, 50, 30]);
 
+  ajouter('Lexique', [['Terme', 'Forme développée', 'Autres formes reconnues', 'Définition', 'Sources', 'En ligne', 'ID_base', 'Dernière modification']].concat(
+    (x.lexique || []).map(function(l){ return [l.terme, l.developpe, l.variantes.join(', '), l.definition, l.sources.join(', '), l.publie ? 'oui' : 'non', l.id, jour(l.maj)]; })), [26, 40, 40, 90, 30, 9, 8, 20]);
+
   var pts = [['ID_figure', 'Série', 'Rendu', 'X', 'Valeur', 'Valeur_haute', 'Statut']];
   x.figures.forEach(function(f){ (f.series || []).forEach(function(s){ s.points.forEach(function(p){
     pts.push([f.id, s.name, s.render, p.x, p.v, p.hi == null ? '' : p.hi, p.s || (s.render === 'mesure' ? 'consolidé' : '')]);
   }); }); });
   ajouter('Données des figures', pts, [24, 44, 9, 8, 10, 12, 11]);
 
-  var pris = { 'lisez-moi':1, 'analyses & partis pris':1, 'bibliographie':1, 'figures':1, 'données des figures':1, '_dépôts':1, '_rattachements':1, '_journal':1 };
+  var pris = { 'lisez-moi':1, 'analyses & partis pris':1, 'bibliographie':1, 'figures':1, 'données des figures':1, 'lexique':1, '_dépôts':1, '_rattachements':1, '_journal':1 };
   x.thematiques.forEach(function(t){
     var nom = t.nom.replace(/[:\\\/?*\[\]]/g, ' ').slice(0, 31);
     if(pris[nom.toLowerCase()]) return;
@@ -1518,8 +1669,8 @@ function construireClasseur(XLSX, x){
       [30, 40, 22].concat(x.candidats.map(function(){ return 60; })));
   });
 
-  ajouter('_Dépôts', [['N°', 'Circuit', 'Statut', 'ID_sujet', 'Candidat', 'Auteur', 'Initiales', 'Âge', 'Texte', 'Sources', 'Relecteurs', 'Corrige (ID_base)', 'Fait suite au dépôt', 'Déposé par', 'Déposé le', 'Traité par', 'Traité le', 'Motif du refus', 'Mode (verbatim)', 'Texte de départ (correction)']].concat(
-    x.depots.map(function(d){ return [d.id, d.circuit, d.statut, d.sujet_id, d.candidat || '', d.auteur, d.initiales, d.age == null ? '' : d.age, d.texte, d.sources.join(', '), d.relecteurs.join(', '), d.remplace || '', d.suite_de || '', d.depose_par_pseudo || '', jour(d.depose_le), d.traite_par_pseudo || '', jour(d.traite_le), d.motif || '', d.mode || '', d.texte_base || '']; })));
+  ajouter('_Dépôts', [['N°', 'Circuit', 'Statut', 'ID_sujet', 'Candidat', 'Auteur', 'Initiales', 'Âge', 'Texte', 'Sources', 'Relecteurs', 'Corrige (ID_base)', 'Fait suite au dépôt', 'Déposé par', 'Déposé le', 'Traité par', 'Traité le', 'Motif du refus', 'Mode (verbatim)', 'Texte de départ (correction)', 'Terme (lexique)']].concat(
+    x.depots.map(function(d){ return [d.id, d.circuit, d.statut, d.sujet_id || '', d.candidat || '', d.auteur, d.initiales, d.age == null ? '' : d.age, d.texte, d.sources.join(', '), d.relecteurs.join(', '), d.remplace || '', d.suite_de || '', d.depose_par_pseudo || '', jour(d.depose_le), d.traite_par_pseudo || '', jour(d.traite_le), d.motif || '', d.mode || '', d.texte_base || '', d.terme || '']; })));
 
   /* Rattachements case ↔ documents du corpus : sauvegardés, jamais réimportés
      (comme tous les onglets dont le nom commence par « _ »). */
@@ -1541,7 +1692,7 @@ async function vueExcel(){
   var lu = null;
 
   vue.innerHTML = prendreFlash()
-    + '<div class="card"><h2>Sauvegarde : exporter toute la base vers Excel</h2><p>Produit un classeur au format du fichier source : un onglet par thématique, les analyses et partis pris, la bibliographie, les figures, plus l\'historique des dépôts, les rattachements des cases à leurs documents et le journal. À faire régulièrement, et à ranger hors de ce service.</p><div class="actions"><button class="btn pri" id="btnExport"' + (vide ? ' disabled' : '') + '>Télécharger la sauvegarde Excel</button><button class="btn" id="btnSecours"' + (vide ? ' disabled' : '') + '>Télécharger data.js (copie de secours du site)</button></div><p class="muted" style="margin-top:8px">Le fichier data.js se dépose dans le dépôt GitHub à côté de index.html : le site l\'affiche si la base ne répond pas.</p><div id="exportMsg"></div></div>'
+    + '<div class="card"><h2>Sauvegarde : exporter toute la base vers Excel</h2><p>Produit un classeur au format du fichier source : un onglet par thématique, les analyses et partis pris, la bibliographie, les figures, le lexique, plus l\'historique des dépôts, les rattachements des cases à leurs documents et le journal. À faire régulièrement, et à ranger hors de ce service.</p><div class="actions"><button class="btn pri" id="btnExport"' + (vide ? ' disabled' : '') + '>Télécharger la sauvegarde Excel</button><button class="btn" id="btnSecours"' + (vide ? ' disabled' : '') + '>Télécharger data.js (copie de secours du site)</button></div><p class="muted" style="margin-top:8px">Le fichier data.js se dépose dans le dépôt GitHub à côté de index.html : le site l\'affiche si la base ne répond pas.</p><div id="exportMsg"></div></div>'
     + '<div class="card"><h2>' + (vide ? 'Import initial : charger le classeur source' : 'Mettre à jour la structure depuis Excel') + '</h2>'
     + (vide ? '<p>La base est vide. Déposez le classeur <b>Comparateur_2027_source.xlsx</b> : sa structure et tous ses textes seront chargés. Cette opération n\'est possible qu\'une seule fois.</p>'
             : '<p>Déposez un classeur pour mettre à jour <b>la structure seulement</b> : thématiques, sujets, libellés, colonne « Aussi dans », candidats. Aucun texte n\'est modifié. Un sujet absent du fichier est supprimé s\'il est vide, conservé et signalé s\'il contient quoi que ce soit.</p><div class="note warn">Ne renommez jamais un ID_sujet qui porte déjà des textes : l\'outil y verrait un nouveau sujet vide.</div>')

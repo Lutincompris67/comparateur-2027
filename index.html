@@ -48,6 +48,8 @@ nav a.nav-contrib:hover{border-color:var(--terre)}
 .accroche{max-width:1180px;margin:0 auto;padding:18px 16px;text-align:center}
 .accroche-hl{font-family:var(--serif);font-weight:600;font-size:clamp(19px,4.6vw,30px);line-height:1.28;color:#fff;letter-spacing:.2px}
 @media(max-width:560px){.accroche{padding:20px 16px}.accroche-hl{font-size:22px}}
+/* Petits écrans : le titre reste sur une ligne, les liens passent dessous si besoin. */
+@media(max-width:600px){.head-in{flex-wrap:wrap;row-gap:6px}.brand b{white-space:nowrap}nav{gap:12px;flex-wrap:wrap}}
 
 /* ===== Bandeau registres (signature) : dégradé de terracotta ===== */
 .registres{display:flex;gap:0;border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;margin:20px 0 6px;background:var(--card)}
@@ -271,6 +273,41 @@ footer a{color:var(--terre)}
 .sig-btn{border:1px solid var(--rule);background:var(--card);border-radius:8px;padding:8px 15px;font-size:14px;font-weight:600;color:var(--ink-2)}
 .sig-pri{background:var(--terre-deep);border-color:var(--terre-deep);color:#fff}
 .sig-btn:disabled{opacity:.5;cursor:not-allowed}
+/* ===== Lexique =====
+   Un terme défini est souligné en pointillé, partout où il apparaît (première
+   occurrence de chaque bloc). Le repérage est automatique et identique pour tous
+   les candidats : aucun texte n'est modifié, seul un lien est posé sur le mot. */
+.lex{cursor:help;text-decoration:underline dotted;text-decoration-color:var(--ink-3);text-decoration-thickness:1.5px;text-underline-offset:3px;border-radius:2px;-webkit-tap-highlight-color:transparent}
+.lex:hover,.lex.lex-on{text-decoration-color:var(--terre);color:var(--terre-deep);background:var(--terre-mist)}
+.lex:focus-visible{outline:2px solid var(--terre);outline-offset:1px}
+.lex-pop{position:fixed;z-index:80;width:min(350px,calc(100vw - 24px));max-height:min(60vh,420px);overflow-y:auto;background:var(--card);border:1px solid var(--rule);border-top:3px solid var(--terre);border-radius:var(--r);box-shadow:var(--shadow);padding:12px 16px 14px;font-family:var(--sans);font-size:14px;line-height:1.55;color:var(--ink);text-align:left}
+.lex-pop:focus{outline:none}
+.lp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:2px}
+.lp-kick{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-3);font-weight:700}
+.lp-close{border:none;background:none;font-size:16px;line-height:1;color:var(--ink-3);padding:4px 2px 4px 8px}
+.lp-close:hover{color:var(--ink)}
+.lp-term{font-family:var(--serif);font-size:18px;font-weight:600;line-height:1.3}
+.lp-dev{font-size:13px;color:var(--ink-2);font-style:italic;margin-top:1px}
+.lp-def{margin-top:8px}
+.lp-src{margin-top:8px;font-size:12px;color:var(--ink-3)}
+.lp-src a{text-decoration:none}
+.lp-more{display:inline-block;margin-top:10px;font-size:12.5px;font-weight:600;color:var(--terre-deep);text-decoration:none}
+.lp-more:hover{text-decoration:underline}
+@media(max-width:640px){
+  .lex-pop{left:0!important;right:0;top:auto!important;bottom:0;width:100%;max-height:70vh;border-radius:16px 16px 0 0;border:none;border-top:3px solid var(--terre);padding:14px 18px 22px}
+}
+.lex-search{width:100%;max-width:420px;padding:10px 14px;border:1px solid var(--rule);border-radius:8px;background:var(--card);font-family:var(--sans);font-size:14px;color:var(--ink);margin-bottom:12px}
+.lex-letters{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.lex-letters a{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 6px;border:1px solid var(--rule);border-radius:6px;background:var(--card);font-size:12.5px;font-weight:600;color:var(--terre-deep);text-decoration:none}
+.lex-letters a:hover{border-color:var(--terre)}
+.page h2.lex-lettre{font-size:22px;color:var(--terre);margin:26px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--rule)}
+.lex-item{background:var(--card);border:1px solid var(--rule);border-left:4px solid var(--graphite);border-radius:var(--r);padding:12px 17px;margin-bottom:10px;scroll-margin:90px;transition:background-color .8s}
+.lex-item.lex-vise{background:var(--terre-mist)}
+.lex-item h3{font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.3}
+.lex-item h3 span{font-family:var(--sans);font-size:13px;font-weight:400;font-style:italic;color:var(--ink-2)}
+.page .lex-item p{margin:6px 0 0;font-size:14.5px}
+.page .lex-item p.lex-src{font-size:12.5px;color:var(--ink-3)}
+.lex-src a{text-decoration:none}
 .hidden{display:none!important}
 /* ===== Bandeau « version de secours » : affiché quand la base n'a pas pu être jointe ===== */
 .secours{background:var(--terre-mist);border-bottom:1px solid var(--terre-soft);color:var(--ink-2);font-size:13px;line-height:1.5}
@@ -287,6 +324,7 @@ footer a{color:var(--terre)}
   <div class="wrap head-in">
     <a class="brand" href="#" id="brandLink"><b>Comparateur 2027</b><span>Les programmes des candidats, mot à mot</span></a>
     <nav>
+      <a href="#lexique" data-nav="lexique">Lexique</a>
       <a href="#methodologie" data-nav="methodologie">Méthodologie</a>
       <a href="#sources" data-nav="sources">Sources</a>
       <a href="contribuer.html" class="nav-contrib hidden" id="navContrib">Espace contributeurs</a>
@@ -365,11 +403,25 @@ footer a{color:var(--terre)}
     <h2>Le sourçage</h2>
     <p>Les analyses suivent une exigence de type universitaire : les affirmations factuelles sont reliées à des sources identifiées (rapports officiels, études, textes juridiques, données statistiques, programmes eux-mêmes), réunies dans une bibliographie centralisée et consultable. Chaque source est datée et accompagnée de son lien d'origine, pour que chacun puisse vérifier par lui-même.</p>
 
+    <h2>Le lexique</h2>
+    <p>Pour que le comparateur reste lisible sans connaissance préalable, les termes techniques, les sigles et les abréviations sont définis dans un <a href="#lexique" data-nav="lexique">lexique</a>. Partout sur le site, y compris dans les programmes mot à mot, un terme défini est souligné en pointillé : un clic affiche sa définition. Le repérage est automatique et s'applique de la même façon à tous les textes, si bien qu'aucun candidat n'est traité différemment ; le texte des programmes n'est pas modifié. Les définitions relèvent du registre de l'analyse : factuelles, neutres et sourcées, elles sont validées par une relecture indépendante. Les mots dont le sens fait lui-même l'objet du débat politique n'y figurent pas.</p>
+
     <h2>Les figures</h2>
     <p>Certains textes sont accompagnés de figures. Chacune indique ses sources, et le bouton « Voir les données » affiche les valeurs qui la composent. Le choix d'une figure dépend du registre : une analyse retient les données qui éclairent le sujet, un parti pris celles qui appuient l'argument de son auteur. Leur construction, en revanche, obéit aux mêmes règles dans les deux cas, car un graphique pourrait véhiculer un argument fallacieux sans un mot d'opinion : les données provisoires sont signalées, et aucune couleur n'est associée à un candidat ou à un parti.</p>
 
     <h2>La neutralité, rendue vérifiable</h2>
     <p>Nous ne prétendons pas être sans opinions : nous les signons et les séparons. Aucun candidat ne reçoit de traitement visuel distinctif ; les colonnes du tableau sont strictement identiques. La fidélité de la restitution est vérifiable par les liens vers les programmes d'origine. Si vous constatez une erreur de transcription ou d'attribution, <button class="cite-link" type="button" data-signaler style="font-size:inherit">signalez-la nous</button>.</p>
+  </div>
+</main>
+
+<!-- ===== Vue lexique ===== -->
+<main id="view-lexique" class="hidden">
+  <div class="page">
+    <h1>Lexique</h1>
+    <p class="lede">Les termes techniques, sigles et abréviations employés dans les programmes et les analyses, définis simplement. Partout sur le site, un mot souligné en pointillé renvoie à sa définition : il suffit de cliquer dessus.</p>
+    <input type="search" class="lex-search" id="lexSearch" placeholder="Chercher un terme…" aria-label="Chercher un terme du lexique" autocomplete="off">
+    <nav class="lex-letters" id="lexLetters" aria-label="Initiales"></nav>
+    <div id="lexList"></div>
   </div>
 </main>
 
@@ -384,7 +436,7 @@ footer a{color:var(--terre)}
     <div id="corpusList"></div>
 
     <h2>Bibliographie des analyses</h2>
-    <p>Les références appelées en note dans les analyses. Chaque entrée indique sa nature, sa date, son lien d'origine et les sujets où elle est citée.</p>
+    <p>Les références appelées en note dans les analyses, et celles sur lesquelles reposent les définitions du lexique. Chaque entrée indique sa nature, sa date, son lien d'origine et les sujets ou les termes où elle est citée.</p>
     <div id="anaList"></div>
   </div>
 </main>
@@ -416,6 +468,9 @@ footer a{color:var(--terre)}
     <span><button class="cite-link" type="button" data-signaler>Signaler un problème</button> · <a href="contribuer.html">Espace contributeurs</a></span>
   </div>
 </footer>
+
+<!-- ===== Bulle de définition (lexique) ===== -->
+<div class="lex-pop hidden" id="lexPop" role="dialog" aria-labelledby="lexPopT" tabindex="-1"></div>
 
 <!-- ===== Signalement ===== -->
 <dialog id="sigDlg" aria-labelledby="sigTitre">
@@ -472,14 +527,181 @@ var PP_COLORS = ['#534AB7','#1D7A5F','#A14E2B','#7A4E83','#6B6B23','#3D6E9E'];
 function ppColor(name){var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;return PP_COLORS[h%PP_COLORS.length];}
 function initials(e){if(e.initials)return e.initials.slice(0,3);var p=(e.author||'?').split(/\s+/);return p.map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';}
 
+/* ===== Lexique : repérage des termes =====
+   Chaque terme publié et ses variantes forment une seule expression régulière, les
+   formes les plus longues d'abord (« dette publique » avant « dette »). Un mot n'est
+   reconnu qu'entier. Un sigle écrit en majuscules (HATVP) n'est reconnu qu'en
+   majuscules ; les autres formes, sans tenir compte des majuscules. */
+var LEX=(D.glossary||[]).filter(function(l){return l&&l.term&&l.definition;}).slice().sort(function(a,b){
+  return a.term.localeCompare(b.term,'fr',{sensitivity:'base'});
+});
+var lexById={}, lexFormes={}, lexRe=null;
+LEX.forEach(function(l){lexById[l.id]=l;});
+function lexCle(t){return String(t).replace(/[\s\u00a0]+/g,' ').replace(/\u2019/g,"'").trim().toLowerCase();}
+function estSigle(f){return !/[a-zà-ÿ]/.test(f)&&(f.match(/[A-ZÀ-Ý]/g)||[]).length>=2;}
+(function(){
+  var motifs=[];
+  LEX.forEach(function(l){
+    [l.term].concat(l.forms||[]).forEach(function(f){
+      f=String(f||'').replace(/[\s\u00a0]+/g,' ').trim();
+      if(f.length<2)return;
+      var k=lexCle(f);
+      if(lexFormes[k])return;   /* la base interdit qu'une forme serve deux termes */
+      lexFormes[k]={id:l.id,sigle:estSigle(f),forme:f};
+      motifs.push(f);
+    });
+  });
+  if(!motifs.length)return;
+  motifs.sort(function(a,b){return b.length-a.length;});
+  var src=motifs.map(function(f){
+    return f.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/ /g,'[\\s\\u00a0]+').replace(/['\u2019]/g,"['\u2019]").replace(/-/g,'[-\u2011]');
+  }).join('|');
+  try{ lexRe=new RegExp('(?<![\\p{L}\\p{N}])(?:'+src+')(?![\\p{L}\\p{N}])','giu'); }
+  catch(e){ lexRe=null; }   /* navigateur trop ancien : le texte s'affiche sans liens */
+})();
+/* Texte brut → HTML échappé, termes du lexique rendus cliquables. « vus » retient
+   les termes déjà soulignés dans le bloc : seule leur première occurrence l'est.
+   « sauf » écarte un terme (une définition ne renvoie pas à elle-même). */
+function lexHTML(t,vus,sauf){
+  t=String(t==null?'':t);
+  if(!lexRe)return esc(t);
+  var out='',dernier=0,m;
+  lexRe.lastIndex=0;
+  while((m=lexRe.exec(t))){
+    var f=lexFormes[lexCle(m[0])];
+    if(!f||f.id===sauf||(vus&&vus[f.id]))continue;
+    if(f.sigle&&m[0].replace(/[\s\u00a0]+/g,' ')!==f.forme)continue;
+    if(vus)vus[f.id]=1;
+    out+=esc(t.slice(dernier,m.index))+'<span class="lex" role="button" tabindex="0" aria-haspopup="dialog" data-lex="'+f.id+'" title="Définition : '+esc(lexById[f.id].term)+'">'+esc(m[0])+'</span>';
+    dernier=m.index+m[0].length;
+  }
+  return out+esc(t.slice(dernier));
+}
+function lexSources(l){
+  return (l.sources||[]).map(function(sid){
+    var b=bibById[sid]; if(!b)return '';
+    return esc(b.org||b.authors||'')+(b.org||b.authors?', ':'')+'<i>'+esc(b.title)+'</i>'+(b.date?', '+esc(b.date):'')+(b.url?' <a href="'+esc(b.url)+'" target="_blank" rel="noopener">↗</a>':'');
+  }).filter(Boolean);
+}
+
+/* ===== Lexique : bulle de définition ===== */
+var bulleDe=null;
+function ouvrirBulle(el){
+  var l=lexById[el.getAttribute('data-lex')]; if(!l)return;
+  var pop=$('lexPop');
+  if(bulleDe===el&&!pop.classList.contains('hidden')){fermerBulle(true);return;}
+  if(bulleDe)bulleDe.classList.remove('lex-on');
+  bulleDe=el; el.classList.add('lex-on'); el.setAttribute('aria-expanded','true');
+  var src=lexSources(l);
+  pop.innerHTML='<div class="lp-head"><span class="lp-kick">Lexique</span><button type="button" class="lp-close" aria-label="Fermer la définition">✕</button></div>'
+    +'<div class="lp-term" id="lexPopT">'+esc(l.term)+'</div>'
+    +(l.expanded?'<div class="lp-dev">'+esc(l.expanded)+'</div>':'')
+    +'<p class="lp-def">'+lexHTML(l.definition,{},l.id)+'</p>'
+    +(src.length?'<p class="lp-src">Source'+(src.length>1?'s':'')+' : '+src.join(' ; ')+'</p>':'')
+    +'<a class="lp-more" href="#lexique/'+l.id+'" data-lex-voir="'+l.id+'">Voir dans le lexique →</a>';
+  pop.classList.remove('hidden');
+  placerBulle();
+  pop.scrollTop=0;
+  pop.focus({preventScroll:true});
+}
+function placerBulle(){
+  var pop=$('lexPop'), el=bulleDe; if(!el||pop.classList.contains('hidden'))return;
+  if(window.innerWidth<=640){pop.style.left='';pop.style.top='';return;}   /* feuille en bas d'écran */
+  var r=el.getClientRects()[0]||el.getBoundingClientRect(), vw=document.documentElement.clientWidth, vh=window.innerHeight;
+  var w=pop.offsetWidth, h=pop.offsetHeight;
+  var x=Math.max(12,Math.min(r.left,vw-w-12)), y=r.bottom+8;
+  if(y+h>vh-12)y=(r.top-h-8>=12)?r.top-h-8:Math.max(12,vh-h-12);
+  pop.style.left=x+'px'; pop.style.top=y+'px';
+}
+function fermerBulle(rendreFocus){
+  var pop=$('lexPop');
+  if(pop.classList.contains('hidden'))return;
+  pop.classList.add('hidden'); pop.innerHTML='';
+  if(bulleDe){
+    bulleDe.classList.remove('lex-on'); bulleDe.removeAttribute('aria-expanded');
+    if(rendreFocus&&document.body.contains(bulleDe))bulleDe.focus({preventScroll:true});
+  }
+  bulleDe=null;
+}
+/* Capture : le clic sur un terme ne doit pas ouvrir aussi le panneau du sujet. */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('.lex');
+  if(t){e.preventDefault();e.stopPropagation();ouvrirBulle(t);return;}
+  var pop=$('lexPop');
+  if(pop.classList.contains('hidden'))return;
+  if(e.target.closest('.lp-close')){fermerBulle(true);return;}
+  var voir=e.target.closest('[data-lex-voir]');
+  if(voir){e.preventDefault();var id=voir.getAttribute('data-lex-voir');fermerBulle(false);location.hash='lexique/'+id;showView('lexique');allerTerme(id);return;}
+  if(!pop.contains(e.target))fermerBulle(false);
+},true);
+document.addEventListener('keydown',function(e){
+  if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('lex')){
+    e.preventDefault();e.stopPropagation();ouvrirBulle(e.target);
+  }
+},true);
+/* La bulle suit son mot : on la referme si la page ou le panneau défile. */
+document.addEventListener('scroll',function(e){
+  if(!bulleDe)return;
+  if(e.target&&e.target.nodeType===1&&$('lexPop').contains(e.target))return;
+  if(window.innerWidth<=640)return;
+  fermerBulle(false);
+},true);
+window.addEventListener('resize',function(){placerBulle();});
+
+/* ===== Lexique : page ===== */
+function lettreDe(t){
+  var c=String(t).normalize('NFD').replace(/[\u0300-\u036f]/g,'').charAt(0).toUpperCase();
+  return /[A-Z]/.test(c)?c:'#';
+}
+function sansAccent(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function renderLexique(q){
+  var w=$('lexList'), nav=$('lexLetters');
+  if(!LEX.length){
+    nav.innerHTML='';
+    w.innerHTML='<p class="p-empty">Le lexique est en cours de constitution : les premières définitions paraîtront après relecture.</p>';
+    $('lexSearch').classList.add('hidden');
+    return;
+  }
+  q=sansAccent(q).trim();
+  var liste=LEX.filter(function(l){
+    return !q||sansAccent([l.term,l.expanded].concat(l.forms||[]).join(' ')).indexOf(q)>=0||sansAccent(l.definition).indexOf(q)>=0;
+  });
+  var lettres=[], h='';
+  liste.forEach(function(l){
+    var c=lettreDe(l.term);
+    if(lettres.indexOf(c)<0){lettres.push(c);h+='<h2 class="lex-lettre" id="lexL-'+c+'">'+c+'</h2>';}
+    var src=lexSources(l);
+    h+='<article class="lex-item" id="lex-'+l.id+'"><h3>'+esc(l.term)+(l.expanded?' <span>— '+esc(l.expanded)+'</span>':'')+'</h3>'
+      +'<p>'+lexHTML(l.definition,{},l.id)+'</p>'
+      +(src.length?'<p class="lex-src">Source'+(src.length>1?'s':'')+' : '+src.join(' ; ')+'</p>':'')+'</article>';
+  });
+  nav.innerHTML=q?'':lettres.map(function(c){return '<a href="#lexique" data-lettre="'+c+'">'+c+'</a>';}).join('');
+  w.innerHTML=h||'<p class="p-empty">Aucun terme ne correspond à cette recherche.</p>';
+}
+$('lexSearch').addEventListener('input',function(){renderLexique(this.value);});
+$('lexLetters').addEventListener('click',function(e){
+  var a=e.target.closest('[data-lettre]'); if(!a)return;
+  e.preventDefault();
+  var h=$('lexL-'+a.getAttribute('data-lettre')); if(h)h.scrollIntoView({block:'start',behavior:'smooth'});
+});
+function allerTerme(id){
+  if($('lexSearch').value){$('lexSearch').value='';renderLexique('');}
+  setTimeout(function(){
+    var el=$('lex-'+id); if(!el)return;
+    el.scrollIntoView({block:'center',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    el.classList.add('lex-vise');
+    setTimeout(function(){el.classList.remove('lex-vise');},2000);
+  },30);
+}
+
 /* ===== Navigation entre vues ===== */
-var views = ['accueil','theme','methodologie','sources'];
+var views = ['accueil','theme','lexique','methodologie','sources'];
 function showView(v){
   /* Tout changement de vue referme le panneau et libère le défilement : sans cela, le
      bouton « retour » du navigateur laisserait la page figée derrière un panneau ouvert.
      openPanel appelle showView AVANT d'ouvrir le panneau, l'ordre est donc sans effet. */
   $('overlay').classList.remove('open'); $('panel').classList.remove('open');
-  lockPageScroll(false);
+  lockPageScroll(false); fermerBulle(false);
   views.forEach(function(name){ $('view-'+name).classList.toggle('hidden', name!==v); });
   /* L'accroche n'apparaît que sur la page d'accueil. */
   $('accrocheWrap').classList.toggle('hidden', v!=='accueil');
@@ -619,7 +841,7 @@ function renderGrid(){
   h+='</tbody></table>';
   w.innerHTML=h;
   w.querySelectorAll('tr[data-sid]').forEach(function(tr){
-    tr.addEventListener('click',function(){openPanel(tr.getAttribute('data-sid'));});
+    tr.addEventListener('click',function(e){if(e.target.closest('.lex'))return;openPanel(tr.getAttribute('data-sid'));});
   });
   markClamped();
   /* La mesure dépend de la police : on la refait une fois la mise en page et les
@@ -702,9 +924,10 @@ boutonDefil($('gNext'),1);
 /* Un verbatim peut réunir plusieurs mesures, séparées à la saisie par un tiret
    cadratin entouré d'espaces. Chacune est rendue comme une citation à part. */
 function verbatimHTML(p){
+  var vus={};
   var parts=String(p).split(/\s+\u2014\s+/).map(function(x){return x.trim();}).filter(Boolean);
-  if(parts.length<2)return '<span class="verbatim">'+esc(p)+'</span>';
-  return parts.map(function(x){return '<span class="verbatim vb-item">'+esc(x)+'</span>';}).join('');
+  if(parts.length<2)return '<span class="verbatim">'+lexHTML(p,vus)+'</span>';
+  return parts.map(function(x){return '<span class="verbatim vb-item">'+lexHTML(x,vus)+'</span>';}).join('');
 }
 function findSubject(sid){
   for(var i=0;i<D.themes.length;i++){var t=D.themes[i];
@@ -918,10 +1141,11 @@ function figureHTML(f){
 }
 /* Texte éditorial : paragraphes, appels de note (si ids fournis) et figures. */
 function richText(text, ids){
+  var vus={};
   return String(text||'').split(/\r?\n+/).map(function(l){return l.trim();}).filter(Boolean).map(function(l){
     var fm=l.match(/^\{\{\s*([^}]+?)\s*\}\}$/);
     if(fm){ var fg=figById[fm[1]]; return fg?figureHTML(fg):''; }
-    var html=esc(l);
+    var html=lexHTML(l,vus);
     if(ids)html=html.replace(/\[(\d+)\]/g,function(m,n){
       var i=parseInt(n,10)-1, sid=ids[i];
       if(sid===undefined)return '<sup>['+n+']</sup>';
@@ -1012,12 +1236,17 @@ function closePanel(){
   var wasOpen=$('panel').classList.contains('open');
   state.subject=null;
   $('overlay').classList.remove('open'); $('panel').classList.remove('open');
-  lockPageScroll(false);
+  lockPageScroll(false); fermerBulle(false);
   if(wasOpen&&state.theme)location.hash='t/'+encodeURIComponent(state.theme);
 }
 $('overlay').addEventListener('click',closePanel);
 $('pClose').addEventListener('click',closePanel);
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closePanel();});
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Escape')return;
+  /* Échap ferme d'abord la bulle de définition, puis le panneau. */
+  if(!$('lexPop').classList.contains('hidden')){fermerBulle(true);return;}
+  closePanel();
+});
 document.querySelectorAll('.p-tab').forEach(function(b){
   b.addEventListener('click',function(){
     state.tab=b.getAttribute('data-tab');
@@ -1030,6 +1259,7 @@ document.querySelectorAll('.p-tab').forEach(function(b){
 function applyHash(){
   var h=decodeURIComponent(location.hash.replace(/^#/,''));
   if(h==='methodologie'){showView(h);return;}
+  if(h==='lexique'||h.indexOf('lexique/')===0){showView('lexique');if(h.length>8)allerTerme(h.slice(8));return;}
   /* « bibliographie » est conservé : les liens partagés avant la refonte
      de la page Sources doivent continuer de fonctionner. */
   if(h==='sources'||h==='bibliographie'){showView('sources');return;}
@@ -1077,11 +1307,14 @@ var citedBy={};
 });
 function citedInHtml(sid){
   var ids=citedBy[sid]||[];
-  if(!ids.length)return '';
   var parts=ids.map(function(id){
     var f=findSubject(id);
     return f?'<button class="cite-link" data-sid="'+esc(id)+'">'+esc(f.subject.label)+'</button>':esc(id);
   });
+  LEX.forEach(function(l){
+    if((l.sources||[]).indexOf(sid)>=0)parts.push('<a class="cite-link" href="#lexique/'+l.id+'">Lexique : '+esc(l.term)+'</a>');
+  });
+  if(!parts.length)return '';
   return '<div class="cited-in">Cité dans : '+parts.join(' · ')+'</div>';
 }
 function bibItem(b,showCited){
@@ -1128,7 +1361,7 @@ function renderSources(){
     ? anas.map(function(b){return bibItem(b,true);}).join('')
     : '<p class="p-empty">La bibliographie se remplira au fil des analyses.</p>';
 
-  wa.querySelectorAll('.cite-link').forEach(function(btn){
+  wa.querySelectorAll('button.cite-link').forEach(function(btn){
     btn.addEventListener('click',function(){openPanel(btn.getAttribute('data-sid'));});
   });
 }
@@ -1208,7 +1441,7 @@ $('pBody').addEventListener('click',function(e){
   b.setAttribute('aria-expanded',open?'true':'false');
   b.textContent=open?'Masquer les données':'Voir les données';
 });
-renderCards(); renderSources(); applyHash();
+renderCards(); renderSources(); renderLexique(''); applyHash();
 }
 
 (function(){
