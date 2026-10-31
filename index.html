@@ -110,6 +110,17 @@ nav a.nav-contrib:hover{border-color:var(--terre)}
 .t-switch select{font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:7px;padding:7px 9px;max-width:230px}
 .t-title{font-family:var(--serif);font-size:26px;font-weight:600;margin:2px 0 2px}
 .t-sub{font-size:13px;color:var(--ink-3);margin-bottom:12px}
+/* Choix des candidats affichés : même apparence pour tous, dans l'ordre des colonnes. */
+.cand-filter{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 12px}
+.cand-filter .cf-lab{font-size:12px;color:var(--ink-3);margin-right:2px}
+.cand-filter button{border:1px solid var(--rule);background:var(--card);border-radius:16px;padding:4px 11px;font-size:12.5px;font-weight:600;color:var(--ink-3);display:inline-flex;align-items:center;gap:5px}
+.cand-filter button .cf-box{width:13px;height:13px;border:1.5px solid var(--rule);border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;line-height:1;color:#fff}
+.cand-filter button[aria-pressed="true"]{border-color:var(--terre);background:var(--terre-soft);color:var(--terre-deep)}
+.cand-filter button[aria-pressed="true"] .cf-box{background:var(--terre-deep);border-color:var(--terre-deep)}
+.cand-filter button:hover{border-color:var(--terre)}
+.cand-filter .cf-all{border:none;background:none;padding:4px 4px;font-weight:600;color:var(--terre);text-decoration:underline;text-underline-offset:2px}
+.cand-filter .cf-etat{font-size:12px;color:var(--ink-3)}
+.p-masques{font-size:12.5px;color:var(--ink-3);margin:-4px 0 10px}
 
 /* ===== Grille comparative ===== */
 .grid-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--card);margin-bottom:30px}
@@ -376,6 +387,7 @@ footer a{color:var(--terre)}
     </div>
     <h1 class="t-title" id="tTitle"></h1>
     <p class="t-sub" id="tSub"></p>
+    <div class="cand-filter" id="candFilter" role="group" aria-label="Candidats affichés"></div>
     <div class="grid-nav hidden" id="gridNav" aria-label="Faire défiler les candidats">
       <button type="button" id="gPrev" aria-label="Candidats précédents">‹ Précédents</button>
       <div class="grid-bar" id="gridBar"><div></div></div>
@@ -811,6 +823,57 @@ function renderThemeView(){
 }
 $('themeSelect').addEventListener('change',function(){openTheme(this.value);});
 
+/* ===== Choix des candidats affichés =====
+   Le lecteur peut masquer des colonnes pour rapprocher les candidats qu'il compare.
+   Le choix vaut pour toutes les thématiques et reste mémorisé par ce navigateur.
+   On retient les candidats MASQUÉS : un candidat nouvellement ajouté s'affiche
+   donc d'office. Au moins un candidat reste toujours affiché. */
+var CLE_MASQUES='comparateur2027-candidats-masques';
+var masques={};
+try{ JSON.parse(localStorage.getItem(CLE_MASQUES)||'[]').forEach(function(n){masques[n]=1;}); }catch(e){}
+function candidatsVisibles(){
+  var v=D.candidates.filter(function(c){return !masques[c];});
+  return v.length?v:D.candidates.slice();
+}
+function candidatsMasques(){
+  var v=candidatsVisibles();
+  return D.candidates.filter(function(c){return v.indexOf(c)<0;});
+}
+function garderMasques(){
+  try{ localStorage.setItem(CLE_MASQUES,JSON.stringify(Object.keys(masques).filter(function(n){return masques[n];}))); }catch(e){}
+}
+function renderCandFilter(){
+  var w=$('candFilter');
+  if(D.candidates.length<2){w.innerHTML='';return;}
+  var vis=candidatsVisibles(), n=vis.length, tot=D.candidates.length;
+  w.innerHTML='<span class="cf-lab">Candidats affichés :</span>'
+    +D.candidates.map(function(c){
+      var on=vis.indexOf(c)>=0;
+      return '<button type="button" data-cand="'+esc(c)+'" aria-pressed="'+on+'"'+(on&&n===1?' title="Au moins un candidat reste affiché"':'')+'><span class="cf-box" aria-hidden="true">'+(on?'✓':'')+'</span>'+esc(c)+'</button>';
+    }).join('')
+    +(n<tot?'<span class="cf-etat">'+n+' sur '+tot+'</span><button type="button" class="cf-all" data-tout-afficher>Tout afficher</button>':'');
+}
+function changerMasques(){
+  garderMasques();
+  var x=$('gridWrap').scrollLeft;
+  renderGrid();
+  $('gridWrap').scrollLeft=Math.min(x,$('gridWrap').scrollWidth);
+  if($('panel').classList.contains('open')&&state.tab==='positions')renderPanelBody();
+}
+$('candFilter').addEventListener('click',function(e){
+  if(e.target.closest('[data-tout-afficher]'))return;   /* traité plus bas, pour tout le site */
+  var b=e.target.closest('[data-cand]'); if(!b)return;
+  var c=b.getAttribute('data-cand'), vis=candidatsVisibles();
+  if(vis.indexOf(c)>=0){ if(vis.length===1)return; masques[c]=1; }
+  else delete masques[c];
+  changerMasques();
+  var nb=$('candFilter').querySelector('[data-cand="'+c.replace(/"/g,'\\"')+'"]'); if(nb)nb.focus();
+});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('[data-tout-afficher]'))return;
+  masques={}; changerMasques();
+});
+
 /* Signale « Lire la suite » uniquement sur les cases réellement tronquées */
 function markClamped(){
   document.querySelectorAll('#gridWrap td.cand').forEach(function(td){
@@ -823,8 +886,10 @@ function renderGrid(){
   var t=themeByName(state.theme), w=$('gridWrap');
   if(!t){w.innerHTML='';return;}
   if(!t.subjects.length){w.innerHTML='<div class="empty-theme">Aucun sujet dans cette thématique pour l\'instant.</div>';return;}
+  renderCandFilter();
+  var cands=candidatsVisibles();
   var h='<table><thead><tr><th class="subj">Sujet</th>';
-  D.candidates.forEach(function(c){h+='<th>'+esc(c)+'</th>';});
+  cands.forEach(function(c){h+='<th>'+esc(c)+'</th>';});
   h+='</tr></thead><tbody>';
   t.subjects.forEach(function(s){
     var ed=edBySubject[s.id]||[], na=ed.filter(function(e){return e.type==='analyse';}).length,
@@ -832,7 +897,7 @@ function renderGrid(){
     h+='<tr data-sid="'+esc(s.id)+'"><td class="subj"><button class="subj-btn">'+esc(s.label)+' <span class="arr">›</span></button>';
     if(na||np){h+='<span class="badge-ed">'+(na?'<span class="ba">Analyse</span>':'')+(np?'<span class="bp">'+np+' parti'+(np>1?'s':'')+' pris</span>':'')+'</span>';}
     h+='</td>';
-    D.candidates.forEach(function(c){
+    cands.forEach(function(c){
       var p=s.positions[c];
       h+='<td class="cand">'+(p?'<div class="clamp">'+verbatimHTML(p)+'</div><div class="more">Lire la suite ›</div>':'<span class="avenir">À venir</span>')+'</td>';
     });
@@ -1175,8 +1240,10 @@ function renderPanelBody(){
   figTargetW=Math.max(260,Math.min(560,(body.clientWidth||560)-(state.tab==='analyse'?118:114)));
   if(state.tab==='positions'){
     h+='<p class="p-section-label">« Le programme, mot à mot » — transcription littérale</p>';
+    var caches=candidatsMasques();
+    if(caches.length)h+='<p class="p-masques">'+caches.length+' candidat'+(caches.length>1?'s':'')+' masqué'+(caches.length>1?'s':'')+' : '+caches.map(esc).join(', ')+' · <button class="cite-link" type="button" data-tout-afficher>Tout afficher</button></p>';
     var any=false;
-    D.candidates.forEach(function(c){
+    candidatsVisibles().forEach(function(c){
       var p=s.positions[c];
       h+='<div class="pos-card"><h4>'+esc(c)+'</h4>'+(p?verbatimHTML(p):'<span class="avenir">À venir — pas encore de position publiée par écrit.</span>')+'</div>';
       if(p)any=true;
