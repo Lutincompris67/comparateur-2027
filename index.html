@@ -143,8 +143,12 @@ td.cand{min-width:235px;max-width:330px}
 tbody tr{cursor:pointer}
 tbody tr:hover td{background:#FBF8F4}
 tbody tr:hover td.subj{background:#F6F0E9}
-.subj-btn{background:none;border:none;text-align:left;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink);padding:0;display:flex;gap:6px;align-items:baseline}
-.subj-btn .arr{color:var(--terre);font-size:12px}
+.subj-btn{background:none;border:none;text-align:left;font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--ink);padding:0;display:flex;gap:8px;align-items:flex-start;width:100%;justify-content:space-between}
+/* Un sujet s'ouvre au clic : libellé souligné au survol, pastille fléchée toujours visible. */
+.subj-lab{text-decoration:underline;text-decoration-color:var(--rule);text-decoration-thickness:1.5px;text-underline-offset:3px}
+.subj-btn .arr{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--terre-soft);color:var(--terre-deep);font-size:14px;font-weight:700;line-height:1;display:inline-flex;align-items:center;justify-content:center;margin-top:-1px;transition:background .12s,color .12s,transform .12s}
+tbody tr:hover .subj-lab,.subj-btn:focus-visible .subj-lab{color:var(--terre-deep);text-decoration-color:var(--terre)}
+tbody tr:hover .subj-btn .arr,.subj-btn:focus-visible .arr{background:var(--terre-deep);color:#fff;transform:translateX(2px)}
 .verbatim{font-family:var(--serif);color:var(--ink);font-size:13.8px;line-height:1.55}
 .verbatim::before{content:"«\00a0";color:var(--ink-3)}
 .verbatim::after{content:"\00a0»";color:var(--ink-3)}
@@ -894,7 +898,7 @@ function renderGrid(){
   t.subjects.forEach(function(s){
     var ed=edBySubject[s.id]||[], na=ed.filter(function(e){return e.type==='analyse';}).length,
         np=ed.filter(function(e){return e.type==='parti pris';}).length;
-    h+='<tr data-sid="'+esc(s.id)+'"><td class="subj"><button class="subj-btn">'+esc(s.label)+' <span class="arr">›</span></button>';
+    h+='<tr data-sid="'+esc(s.id)+'"><td class="subj"><button class="subj-btn"><span class="subj-lab">'+esc(s.label)+'</span><span class="arr" aria-hidden="true">›</span></button>';
     if(na||np){h+='<span class="badge-ed">'+(na?'<span class="ba">Analyse</span>':'')+(np?'<span class="bp">'+np+' parti'+(np>1?'s':'')+' pris</span>':'')+'</span>';}
     h+='</td>';
     cands.forEach(function(c){
