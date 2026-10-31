@@ -180,6 +180,29 @@ tbody tr:hover .subj-btn .arr,.subj-btn:focus-visible .arr{background:var(--terr
   th.subj,td.subj{min-width:92px;max-width:100px}
   td.cand{min-width:calc(100vw - 134px);max-width:calc(100vw - 134px)}
 }
+/* ===== Grands écrans : le site s'élargit et le texte grossit un peu =====
+   En dessous de 1440 px de large (ordinateurs portables, tablettes, téléphones),
+   rien ne change. */
+@media(min-width:1440px){
+  .wrap{max-width:min(94vw,1880px)}
+  th,td{padding:15px 17px;font-size:14.5px}
+  thead th{font-size:12.5px}
+  th.subj,td.subj{min-width:200px;max-width:250px}
+  .subj-btn{font-size:14.5px}
+  td.cand{min-width:265px;max-width:420px}
+  .verbatim{font-size:15px}
+  .avenir{font-size:14px}
+  .t-title{font-size:30px}
+}
+@media(min-width:1900px){
+  th,td{font-size:15px}
+  .subj-btn{font-size:15px}
+  td.cand{min-width:255px;max-width:460px}
+  .verbatim{font-size:16px}
+}
+/* Quand la grille a défilé vers la droite, une ombre légère sous la colonne « Sujet »
+   montre que des colonnes passent dessous : le bout de texte coupé se lit comme caché. */
+.grid-wrap.defile th.subj,.grid-wrap.defile td.subj{box-shadow:7px 0 9px -7px rgba(60,40,25,.28)}
 
 /* ===== Panneau de détail ===== */
 .overlay{position:fixed;inset:0;background:rgba(45,32,22,.45);z-index:60;opacity:0;pointer-events:none;transition:opacity .18s}
@@ -951,6 +974,7 @@ function majGridNav(){
    légèrement en retard serait renvoyée à la grille et interromprait l'animation. */
 var ignorerBarre=0;
 $('gridWrap').addEventListener('scroll',function(){
+  this.classList.toggle('defile',this.scrollLeft>1);
   var bar=$('gridBar');
   if(Math.abs(bar.scrollLeft-this.scrollLeft)>1){ ignorerBarre=Date.now()+200; bar.scrollLeft=this.scrollLeft; }
   majFleches();
