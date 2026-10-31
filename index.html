@@ -933,8 +933,12 @@ function majGridNav(){
   nav.classList.toggle('hidden',!trop);
   if(!trop)return;
   nav.style.top=(document.querySelector('header').offsetHeight)+'px';
-  bar.firstElementChild.style.width=w.scrollWidth+'px';
   bar.style.width='';
+  /* La barre est plus étroite que la grille : sa course doit être exactement celle de
+     la grille (largeur défilable de la grille + largeur visible de la barre). Sinon
+     la barre continue au-delà de la fin de la grille, et au retour les premiers crans
+     de molette ne font rien bouger. */
+  bar.firstElementChild.style.width=(w.scrollWidth-w.clientWidth+bar.clientWidth)+'px';
   bar.scrollLeft=w.scrollLeft;
   majFleches();
 }
