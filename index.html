@@ -5,10 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Comparateur 2027 — Les programmes, mot à mot</title>
 <meta name="description" content="Comparateur des programmes écrits des candidats à l'élection présidentielle 2027 : transcription littérale, analyses sourcées, partis pris assumés.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* Polices hébergées sur le site (dossier polices/), sans appel à Google Fonts :
+   Source Serif 4 et Archivo, licence SIL Open Font License. */
+@font-face{font-family:'Source Serif 4';font-style:normal;font-weight:200 900;font-display:swap;src:url(polices/source-serif-4-latin-ext-opsz-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Source Serif 4';font-style:italic;font-weight:200 900;font-display:swap;src:url(polices/source-serif-4-latin-ext-opsz-italic.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;font-display:swap;src:url(polices/archivo-latin-ext-wght-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Source Serif 4';font-style:normal;font-weight:200 900;font-display:swap;src:url(polices/source-serif-4-latin-opsz-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Source Serif 4';font-style:italic;font-weight:200 900;font-display:swap;src:url(polices/source-serif-4-latin-opsz-italic.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Archivo';font-style:normal;font-weight:100 900;font-display:swap;src:url(polices/archivo-latin-wght-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 :root{
   --paper:#F7F5F0; --card:#FFFFFF; --ink:#27221B; --ink-2:#5C5346; --ink-3:#978D7E;
   --terre:#CC7A48; --terre-deep:#B05F2E; --terre-soft:#F4E2D2; --terre-mist:#FBF1E9;
@@ -346,6 +351,9 @@ footer a{color:var(--terre)}
 .page .lex-item p{margin:6px 0 0;font-size:14.5px}
 .page .lex-item p.lex-src{font-size:12.5px;color:var(--ink-3)}
 .lex-src a{text-decoration:none}
+.page.legal h3{font-size:15px;font-weight:600;margin:20px 0 6px}
+.page.legal p{font-size:14.5px}
+.page.legal .legal-maj{font-size:13px;color:var(--ink-3);margin-top:28px}
 .hidden{display:none!important}
 /* ===== Bandeau « version de secours » : affiché quand la base n'a pas pu être jointe ===== */
 .secours{background:var(--terre-mist);border-bottom:1px solid var(--terre-soft);color:var(--ink-2);font-size:13px;line-height:1.5}
@@ -464,6 +472,55 @@ footer a{color:var(--terre)}
   </div>
 </main>
 
+<!-- ===== Vue mentions légales et confidentialité ===== -->
+<main id="view-mentions" class="hidden">
+  <div class="page legal">
+    <h1>Mentions légales et confidentialité</h1>
+    <p class="lede">Qui publie ce site, qui l'héberge, et ce que deviennent les quelques données personnelles qu'il traite.</p>
+
+    <h2>Éditeur</h2>
+    <p>Le site comparateur2027.fr est édité à titre non professionnel par une personne physique, bénévole. Conformément à l'article 6, III, 2 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique, ses éléments d'identification ont été communiqués à l'hébergeur et ne sont pas publiés.</p>
+    <p>Contact : <a class="mail-contact" href="#"></a></p>
+
+    <h2>Hébergement</h2>
+    <p><b>Site :</b> GitHub, Inc. (service GitHub Pages), 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</p>
+    <p><b>Base de données :</b> Supabase, Inc. Les données sont stockées à Paris (centre de données Amazon Web Services, région eu-west-3).</p>
+    <p><b>Nom de domaine :</b> enregistré auprès d'OVH SAS, 2 rue Kellermann, 59100 Roubaix, France.</p>
+
+    <h2>Contenus</h2>
+    <p>Les extraits de programmes sont reproduits mot à mot, à des fins d'information du public et de comparaison. Ils restent la propriété de leurs auteurs, et chacun renvoie à son document d'origine, consultable depuis la page <a href="#sources" data-nav="sources">Sources</a>. Les analyses, partis pris et définitions du lexique sont publiés par les contributeurs du projet ; pour toute réutilisation, écrivez-nous.</p>
+    <p>Une erreur, un texte mal attribué ? <button class="cite-link" type="button" data-signaler style="font-size:inherit">Signalez-la nous</button>.</p>
+
+    <h2>Données personnelles</h2>
+    <p>Le responsable du traitement est l'éditeur du site, joignable à l'adresse indiquée ci-dessus. Le site ne collecte que ce qui est nécessaire à son fonctionnement. Aucune donnée n'est vendue, louée ni utilisée à des fins publicitaires.</p>
+
+    <h3>Ce que le site ne fait pas</h3>
+    <p>Pas de cookie, pas de mesure d'audience, pas de publicité, pas de bouton de réseau social. Les polices de caractères sont hébergées sur le site lui-même : aucune requête n'est envoyée à Google ou à un autre service tiers pendant la lecture.</p>
+
+    <h3>Ce qui reste dans votre navigateur</h3>
+    <p>Le site enregistre dans votre navigateur (stockage local) une copie des contenus publiés, pour rester consultable si la base ne répond pas, et votre choix des candidats affichés. Pour les contributeurs connectés, il enregistre aussi leur session. Ces informations ne quittent pas votre appareil et ne servent qu'au service que vous utilisez ; elles sont à ce titre dispensées de consentement. Vous pouvez les effacer à tout moment depuis les réglages de votre navigateur.</p>
+
+    <h3>Visiteurs</h3>
+    <p>Comme tout site, celui-ci est servi par des machines qui reçoivent votre adresse IP et des informations techniques (navigateur, heure de la requête). L'hébergeur du site (GitHub) et celui de la base (Supabase) les conservent dans leurs journaux techniques, pour la sécurité et le bon fonctionnement du service, selon leurs propres durées. Nous ne les exploitons pas.</p>
+
+    <h3>Signalements</h3>
+    <p>Quand vous signalez un problème, nous recevons votre message, le sujet concerné et, si vous l'indiquez, un moyen de vous répondre. Ces informations ne servent qu'à corriger le site et à vous répondre ; seuls les mainteneurs du projet y ont accès. Un signalement est supprimé une fois traité, et au plus tard un an après sa réception.</p>
+
+    <h3>Contributeurs</h3>
+    <p>L'espace contributeurs s'ouvre avec un compte Discord. Nous recevons alors les informations de profil transmises par Discord : pseudo, identifiant, adresse e-mail et image de profil. Nous enregistrons aussi les droits accordés, les textes déposés avec le nom des relecteurs déclarés, et un journal des validations, refus et dépublications. Ces données servent à gérer les accès et à garantir que chaque texte publié a suivi le circuit de relecture. Seuls les mainteneurs du projet y ont accès.</p>
+    <p>Les auteurs de partis pris publient sous un pseudonyme ou leurs initiales, avec leur âge. Leur identité réelle est connue de l'équipe du projet, conservée hors du site et jamais publiée. Un parti pris exprimant une opinion, cette information n'est traitée qu'avec l'accord écrit et explicite de son auteur, qui peut le retirer à tout moment : son texte est alors dépublié.</p>
+    <p>Ces données sont conservées pendant la durée du projet, et au plus tard un an après le second tour de l'élection présidentielle de 2027. Un compte peut être supprimé plus tôt, sur simple demande.</p>
+
+    <h3>Prestataires</h3>
+    <p>GitHub (hébergement du site, États-Unis), Supabase (base de données, stockée à Paris) et Discord (connexion des contributeurs, États-Unis). Dans l'espace contributeurs, deux outils de la page sont chargés depuis les services jsDelivr et cdnjs, qui reçoivent à cette occasion l'adresse IP du contributeur. Les transferts hors de l'Union européenne sont encadrés par les garanties prévues par le RGPD (cadre de protection des données UE–États-Unis ou clauses contractuelles types de la Commission européenne).</p>
+
+    <h3>Vos droits</h3>
+    <p>Vous pouvez accéder aux données qui vous concernent, les faire rectifier ou effacer, en limiter l'usage, vous opposer à leur traitement, en obtenir une copie, et retirer à tout moment un consentement donné. Écrivez à <a class="mail-contact" href="#"></a> ; nous répondons dans un délai d'un mois. Si vous estimez que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (<a href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener">cnil.fr</a>).</p>
+
+    <p class="legal-maj">Dernière mise à jour : 1<sup>er</sup> novembre 2026.</p>
+  </div>
+</main>
+
 <!-- ===== Vue sources : corpus des programmes + bibliographie des analyses ===== -->
 <main id="view-sources" class="hidden">
   <div class="page">
@@ -504,7 +561,7 @@ footer a{color:var(--terre)}
   <div class="wrap">
     <span>Les cases « À venir » correspondent aux positions non encore publiées par écrit.</span>
     <span id="footMeta"></span>
-    <span><button class="cite-link" type="button" data-signaler>Signaler un problème</button> · <a href="contribuer.html">Espace contributeurs</a></span>
+    <span><button class="cite-link" type="button" data-signaler>Signaler un problème</button> · <a href="contribuer.html">Espace contributeurs</a> · <a href="#mentions" data-nav="mentions">Mentions légales et confidentialité</a></span>
   </div>
 </footer>
 
@@ -521,6 +578,7 @@ footer a{color:var(--terre)}
     <label for="sigContact">Un moyen de vous répondre (facultatif)</label>
     <input type="text" id="sigContact" maxlength="200" placeholder="Adresse e-mail ou pseudo Discord">
     <input type="text" id="sigSite" tabindex="-1" autocomplete="off" aria-hidden="true" class="sig-pot">
+    <p class="sig-ctx" style="margin-top:8px">Votre message est lu par les mainteneurs du projet, puis supprimé une fois traité (au plus tard après un an). <a href="#mentions" data-nav="mentions" data-fermer-sig>En savoir plus</a></p>
     <p class="sig-etat" id="sigEtat" role="status"></p>
     <div class="sig-actions">
       <button type="submit" id="sigEnvoi" class="sig-btn sig-pri">Envoyer</button>
@@ -536,6 +594,8 @@ footer a{color:var(--terre)}
    data.js rangée à côté de cette page. */
 var BASE_URL = 'https://bwkqtcxygzxcvrbzvdzg.supabase.co';
 var BASE_CLE = 'sb_publishable_iaBd03vrVGP-NxntLO9dzg_enTfgPHa';
+/* Adresse de contact affichée dans les mentions légales. */
+var CONTACT = 'contact@comparateur2027.fr';
 
 function demarrer(D){
 "use strict";
@@ -734,7 +794,7 @@ function allerTerme(id){
 }
 
 /* ===== Navigation entre vues ===== */
-var views = ['accueil','theme','lexique','methodologie','sources'];
+var views = ['accueil','theme','lexique','methodologie','sources','mentions'];
 function showView(v){
   /* Tout changement de vue referme le panneau et libère le défilement : sans cela, le
      bouton « retour » du navigateur laisserait la page figée derrière un panneau ouvert.
@@ -1357,7 +1417,7 @@ document.querySelectorAll('.p-tab').forEach(function(b){
 /* ===== Liens partageables (hash) ===== */
 function applyHash(){
   var h=decodeURIComponent(location.hash.replace(/^#/,''));
-  if(h==='methodologie'){showView(h);return;}
+  if(h==='methodologie'||h==='mentions'){showView(h);return;}
   if(h==='lexique'||h.indexOf('lexique/')===0){showView('lexique');if(h.length>8)allerTerme(h.slice(8));return;}
   /* « bibliographie » est conservé : les liens partagés avant la refonte
      de la page Sources doivent continuer de fonctionner. */
@@ -1510,6 +1570,11 @@ function renderSources(){
     });
   });
 })();
+
+/* ===== Mentions légales : adresse de contact ===== */
+document.querySelectorAll('.mail-contact').forEach(function(a){ a.textContent=CONTACT; a.href='mailto:'+CONTACT; });
+/* Le lien « En savoir plus » de la fenêtre de signalement la referme avant d'ouvrir la page. */
+document.querySelectorAll('[data-fermer-sig]').forEach(function(a){ a.addEventListener('click',function(){ var d=$('sigDlg'); if(d.open)d.close(); }); });
 
 /* ===== Init ===== */
 $('majDate').textContent = D.meta && D.meta.generated ? 'Données du '+D.meta.generated : '';
