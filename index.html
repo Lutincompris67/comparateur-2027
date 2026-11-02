@@ -36,7 +36,8 @@ button{font-family:var(--sans);cursor:pointer}
 
 /* ===== En-tête : comparateur en avant, annexes discrètes ===== */
 header{border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:40}
-.head-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+/* Marges latérales conservées : sans elles, le titre touche le bord de l'écran sur téléphone. */
+.head-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px}
 .brand{display:flex;flex-direction:column;gap:1px;text-decoration:none;color:var(--ink)}
 .brand b{font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:.2px}
 .brand span{font-size:11px;color:var(--ink-2);letter-spacing:.1px;font-style:italic}
