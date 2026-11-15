@@ -56,6 +56,9 @@ p{margin-bottom:10px}
 .field{margin-bottom:13px}
 .field label,.lab{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px}
 .field small{display:block;color:var(--ink-3);font-size:12px;margin-top:3px}
+.autre-case{border-top:1px dashed var(--rule);margin-top:12px;padding-top:12px}
+.autre-case .row{align-items:flex-end}
+.autre-case .row>.fin{flex:0 0 auto;min-width:0;margin-bottom:13px}
 .choix{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:var(--ink-2);margin:8px 0;cursor:pointer;line-height:1.45}
 .choix input{margin-top:3px;flex:none;width:16px;height:16px}
 input[type=text],input[type=number],input[type=search],input[type=url],select,textarea{width:100%;padding:9px 11px;border:1px solid var(--rule);border-radius:8px;background:#fff}
@@ -441,7 +444,8 @@ function nouveauFormulaire(circuit){
   return { circuit:circuit, theme:'', sujet:'', candidat:'', auteur:'', initiales:'', age:'', texte:'',
            sources:[], relecteurs:['', ''], remplace:null, suite_de:null, ctx:null, motifPrecedent:null,
            mode:null, ancienTexte:null, docs:[], docsOuvert:false,
-           terme:'', developpe:'', variantes:'', remplace_terme:null };
+           terme:'', developpe:'', variantes:'', remplace_terme:null,
+           autres:[] };   /* verbatim : autres cases (même candidat) qui reçoivent le même texte */
 }
 /* Un seul relecteur pour un verbatim, une définition du lexique, une correction ou
    un nouveau dépôt après refus ; deux pour une nouvelle analyse ou un parti pris. */
@@ -522,6 +526,56 @@ async function majContexte(){
   majDiagnostic();
 }
 
+/* =====================================================================
+   VERBATIM : le même texte dans plusieurs cases
+   Un contributeur peut désigner jusqu'à quatre autres cases du même candidat.
+   Chaque case donne un dépôt distinct, validé séparément ; dans les autres cases,
+   le texte remplit la case si elle est vide, ou s'ajoute à la suite sinon.
+   ===================================================================== */
+var MAX_AUTRES_CASES = 4;
+async function chargerAutreCase(a){
+  var f = S.form;
+  a.pret = false; a.position = null; a.erreur = null;
+  if(!a.sujet || !f.candidat) return;
+  var jeton = a.jeton = (a.jeton || 0) + 1;
+  var r = await sb.from('positions').select('texte').eq('sujet_id', a.sujet).eq('candidat', f.candidat).maybeSingle();
+  if(a.jeton !== jeton || S.form !== f || f.autres.indexOf(a) < 0) return;
+  if(r.error) a.erreur = msgErreur(r.error);
+  else { a.position = r.data ? r.data.texte : null; a.pret = true; }
+  majAutresCases(); majDiagnostic();
+}
+function majAutresCases(){
+  var f = S.form, z = $('autresZone');
+  if(!z || f.circuit !== 'verbatim') return;
+  var h = '';
+  f.autres.forEach(function(a, i){
+    var etat = '';
+    if(a.sujet && !f.candidat) etat = '<p class="muted">Choisissez le candidat, plus haut.</p>';
+    else if(a.erreur) etat = '<div class="note err">' + esc(a.erreur) + '</div>';
+    else if(a.sujet && !a.pret) etat = '<p class="muted">Vérification du contenu de la case…</p>';
+    else if(a.sujet && a.position != null) etat = '<details><summary>Cette case contient déjà un texte : le vôtre s\'ajoutera à la suite</summary><div>' + rendreTexte(a.position, null, 'verb') + '</div></details>';
+    else if(a.sujet) etat = '<p class="muted">Cette case est vide : votre texte la remplira.</p>';
+    h += '<div class="autre-case" data-i="' + i + '"><div class="row">'
+      + '<div class="field"><label for="aTheme' + i + '">Autre case ' + (i + 1) + ' — thématique</label><select id="aTheme' + i + '" data-r="theme"><option value="">— choisir —</option>' + S.themes.map(function(t){ return '<option' + (t === a.theme ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select></div>'
+      + '<div class="field"><label for="aSujet' + i + '">Sujet</label><select id="aSujet' + i + '" data-r="sujet"' + (a.theme ? '' : ' disabled') + '>' + optionsSujets(a.theme, a.sujet) + '</select></div>'
+      + '<div class="fin"><button type="button" class="btn small danger" data-r="oter">Retirer</button></div>'
+      + '</div>' + etat + '</div>';
+  });
+  if(f.autres.length < MAX_AUTRES_CASES){
+    h += '<div class="actions"><button type="button" class="btn small" id="btnAutreCase">+ Déposer aussi ce texte dans une autre case</button>'
+      + (f.autres.length ? '' : '<span class="muted">Pour une proposition qui relève de deux sujets : même candidat, même texte, même relecteur.</span>') + '</div>';
+  }
+  if(f.autres.length) h += '<p class="muted" style="margin-top:8px">Chaque case donne un dépôt distinct, validé séparément par un mainteneur. Une correction ultérieure devra être faite dans chacune.</p>';
+  z.innerHTML = h;
+  if($('btnAutreCase')) $('btnAutreCase').onclick = function(){ f.autres.push({ theme:f.theme, sujet:'', pret:false, position:null }); majAutresCases(); majDiagnostic(); };
+  z.querySelectorAll('.autre-case').forEach(function(bloc){
+    var a = f.autres[parseInt(bloc.getAttribute('data-i'), 10)];
+    bloc.querySelector('[data-r="theme"]').onchange = function(){ a.theme = this.value; a.sujet = ''; a.pret = false; a.position = null; majAutresCases(); majDiagnostic(); };
+    bloc.querySelector('[data-r="sujet"]').onchange = function(){ a.sujet = this.value; a.pret = false; majAutresCases(); majDiagnostic(); chargerAutreCase(a); };
+    bloc.querySelector('[data-r="oter"]').onclick = function(){ f.autres.splice(f.autres.indexOf(a), 1); majAutresCases(); majDiagnostic(); };
+  });
+}
+
 function diagnostics(f){
   var avert = [], bloc = [], t = f.texte;
   if(f.circuit === 'lexique') return diagnosticsLexique(f);
@@ -544,6 +598,21 @@ function diagnostics(f){
           if(/^—/.test(tt)) avert.push('Inutile de commencer par « — » : la base l\'ajoute elle-même entre le texte en ligne et le vôtre.');
         }
       }
+    }
+    if(f.autres.length){
+      if(f.mode === 'remplacement' && f.ctx && f.ctx.position != null) bloc.push('Une correction ne porte que sur une case : retirez les autres cases, ou choisissez « s\'ajoute à la suite ».');
+      var vus = {};
+      if(f.sujet) vus[f.sujet] = 1;
+      f.autres.forEach(function(a, i){
+        var nom = 'Autre case ' + (i + 1);
+        if(!a.sujet){ bloc.push(nom + ' : choisissez un sujet, ou retirez-la.'); return; }
+        if(vus[a.sujet]){ bloc.push(nom + ' : ce sujet est déjà choisi. Un sujet n\'a qu\'une case par candidat, même s\'il s\'affiche dans plusieurs thématiques.'); return; }
+        vus[a.sujet] = 1;
+        if(!f.candidat) return;
+        if(a.erreur) bloc.push(nom + ' : ' + a.erreur);
+        else if(!a.pret) bloc.push(nom + ' : vérification du contenu de la case en cours, réessayez dans un instant.');
+        else if(a.position != null && t.trim() && a.position.indexOf(t.trim()) >= 0) avert.push(nom + ' (' + libelleSujet(a.sujet) + ') : ce texte figure déjà dans la case en ligne, vérifiez qu\'il ne s\'agit pas d\'un doublon.');
+      });
     }
     if(/\[\s*…\s*\]|\(\s*(\.\.\.|…)\s*\)|\[\s*\.\.\s*\]|\[\s*\.{4,}\s*\]|\[\s+\.\.\.\s*\]|\[\.\.\.\s+\]/.test(t)) avert.push('Une coupe se note [...] : crochets droits et trois points saisis au clavier.');
     if(/\[\s*sic\s*\]/i.test(t)) avert.push('Pas de [sic] : une coquille du programme est reproduite telle quelle.');
@@ -680,7 +749,7 @@ function vueDeposer(){
     + '<div class="field"><label for="fTheme">Thématique</label><select id="fTheme"><option value="">— choisir —</option>' + S.themes.map(function(t){ return '<option' + (t === f.theme ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('') + '</select></div>'
     + '<div class="field"><label for="fSujet">Sujet</label><select id="fSujet"' + (f.theme ? '' : ' disabled') + '>' + optionsSujets(f.theme, f.sujet) + '</select><small id="noteSujet">' + (f.sujet ? noteSujet(f.sujet, f.theme) : 'Les sujets d\'autres onglets affichés dans celui-ci figurent en fin de liste.') + '</small></div>'
     + (estVerb ? '<div class="field"><label for="fCand">Candidat</label><select id="fCand"><option value="">— choisir —</option>' + S.candidats.map(function(c){ return '<option' + (c === f.candidat ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select></div>' : '')
-    + '</div><div id="ctxZone"></div></div>';
+    + '</div><div id="ctxZone"></div>' + (estVerb ? '<div id="autresZone"></div>' : '') + '</div>';
 
   h += '<div class="card"><h2>2. Le texte</h2>';
   if(estVerb){
@@ -723,7 +792,8 @@ function vueDeposer(){
   vue.querySelectorAll('.pill').forEach(function(b){ b.onclick = function(){ var anc = S.form; S.form = nouveauFormulaire(b.getAttribute('data-circuit')); S.form.theme = anc.theme; S.form.sujet = anc.sujet; vueDeposer(); }; });
   $('fTheme').onchange = function(){ f.theme = this.value; f.sujet = ''; f.ctx = null; f.remplace = null; f.mode = null; vueDeposer(); };
   $('fSujet').onchange = function(){ f.sujet = this.value; f.ctx = null; f.remplace = null; f.mode = null; vueDeposer(); };
-  if($('fCand')) $('fCand').onchange = function(){ f.candidat = this.value; f.ctx = null; f.mode = null; f.docs = []; vueDeposer(); };
+  if($('fCand')) $('fCand').onchange = function(){ f.candidat = this.value; f.ctx = null; f.mode = null; f.docs = []; f.autres.forEach(function(a){ a.pret = false; a.position = null; chargerAutreCase(a); }); vueDeposer(); };
+  if(estVerb) majAutresCases();
   var maj = function(){ majDiagnostic(); };
   $('fTexte').oninput = function(){ f.cesures = nbCesures(this.value); f.texte = sansCesure(this.value); maj(); };
   if($('fAuteur')) $('fAuteur').oninput = function(){ f.auteur = this.value; maj(); };
@@ -907,16 +977,25 @@ async function deposer(){
     remplace:estVerb ? null : f.remplace, suite_de:f.suite_de, depose_par:S.session.user.id,
     mode:mode, texte_base:base
   };
+  /* Même texte dans d'autres cases du même candidat : un dépôt par case, envoyés
+     ensemble. La base les enregistre tous ou aucun. Dans ces cases, le texte
+     s'ajoute (ou remplit la case vide) ; seul le premier dépôt reprend un refus. */
+  var lignes = [ligne];
+  if(estVerb) f.autres.forEach(function(a){
+    var l = Object.assign({}, ligne);
+    l.sujet_id = a.sujet; l.mode = 'ajout'; l.texte_base = null; l.suite_de = null;
+    lignes.push(l);
+  });
   $('btnDeposer').disabled = true;
-  var r = await sb.from('depots').insert(ligne);
+  var r = await sb.from('depots').insert(lignes.length > 1 ? lignes : ligne);
   if(r.error){
     $('btnDeposer').disabled = false;
-    $('diag').innerHTML = '<div class="note err">' + esc(msgErreur(r.error)) + '</div>';
+    $('diag').innerHTML = '<div class="note err">' + esc(msgErreur(r.error)) + (lignes.length > 1 ? ' Aucune des ' + lignes.length + ' cases n\'a été enregistrée.' : '') + '</div>';
     return;
   }
   S.form = nouveauFormulaire(f.circuit);
-  flash('ok', 'Dépôt enregistré. Il paraîtra sur le site dès qu\'un mainteneur l\'aura validé.');
-  if(S.profil.mainteneur) S.nAttente++;
+  flash('ok', lignes.length > 1 ? lignes.length + ' dépôts enregistrés, un par case. Chacun paraîtra sur le site dès qu\'un mainteneur l\'aura validé.' : 'Dépôt enregistré. Il paraîtra sur le site dès qu\'un mainteneur l\'aura validé.');
+  if(S.profil.mainteneur) S.nAttente += lignes.length;
   S.tab = 'mes'; afficher();
 }
 
