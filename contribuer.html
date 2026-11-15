@@ -157,6 +157,12 @@ var MOTS_MAX_PARTI_PRIS = 1000;     /* au-delà, le dépôt est bloqué */
 var CAR_REPERE_DEFINITION = 400;    /* une définition doit tenir dans une bulle */
 var CAR_MAX_DEFINITION = 1500;      /* au-delà, la base refuse le dépôt */
 var SEPARATEUR = ' — ';             /* entre deux mesures d'une même case (ajouté par la base) */
+/* Trait d'union conditionnel (U+00AD) : caractère de césure invisible, laissé par la mise en
+   page de certains programmes et repris par le copier-coller. Ce n'est pas un signe du texte :
+   il est retiré de tout texte saisi, sinon la recherche et le lexique ne reconnaîtraient pas le mot. */
+var CESURE = /\u00AD/g;
+function sansCesure(t){ return String(t == null ? '' : t).replace(CESURE, ''); }
+function nbCesures(t){ var m = String(t == null ? '' : t).match(CESURE); return m ? m.length : 0; }
 
 var $ = function(id){ return document.getElementById(id); };
 var esc = function(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); };
@@ -493,14 +499,14 @@ async function majContexte(){
   majDocs();
   /* Correction (y compris après un refus) : on part toujours du texte en ligne. */
   if(f.circuit === 'verbatim' && f.ctx.position != null && f.mode === 'remplacement' && !f.texte.trim()){
-    f.texte = f.ctx.position;
+    f.texte = sansCesure(f.ctx.position);
     if($('fTexte')) $('fTexte').value = f.texte;
   }
   zone.querySelectorAll('input[name="fMode"]').forEach(function(r){
     r.onchange = function(){
       f.mode = this.value;
-      if(f.mode === 'remplacement' && !f.texte.trim()) f.texte = f.ctx.position;
-      if(f.mode === 'ajout' && f.texte === f.ctx.position) f.texte = '';
+      if(f.mode === 'remplacement' && !f.texte.trim()) f.texte = sansCesure(f.ctx.position);
+      if(f.mode === 'ajout' && f.texte === sansCesure(f.ctx.position)) f.texte = '';
       $('fTexte').value = f.texte;
       majDiagnostic();
     };
@@ -644,7 +650,7 @@ function vueDeposerLexique(h){
   $('fTerme').oninput = function(){ f.terme = this.value; maj(); };
   $('fDev').oninput = function(){ f.developpe = this.value; maj(); };
   $('fVar').oninput = function(){ f.variantes = this.value; maj(); };
-  $('fTexte').oninput = function(){ f.texte = this.value; maj(); };
+  $('fTexte').oninput = function(){ f.cesures = nbCesures(this.value); f.texte = sansCesure(this.value); maj(); };
   $('fRel0').oninput = function(){ f.relecteurs[0] = this.value; maj(); };
   $('btnVider').onclick = function(){ S.form = nouveauFormulaire('lexique'); vueDeposer(); };
   $('btnApercu').onclick = function(){ $('apercu').innerHTML = '<h3>Aperçu</h3>' + rendreDefinition({ terme:f.terme, developpe:f.developpe, variantes:listeVariantes(f.variantes), texte:f.texte, sources:f.sources }); };
@@ -719,7 +725,7 @@ function vueDeposer(){
   $('fSujet').onchange = function(){ f.sujet = this.value; f.ctx = null; f.remplace = null; f.mode = null; vueDeposer(); };
   if($('fCand')) $('fCand').onchange = function(){ f.candidat = this.value; f.ctx = null; f.mode = null; f.docs = []; vueDeposer(); };
   var maj = function(){ majDiagnostic(); };
-  $('fTexte').oninput = function(){ f.texte = this.value; maj(); };
+  $('fTexte').oninput = function(){ f.cesures = nbCesures(this.value); f.texte = sansCesure(this.value); maj(); };
   if($('fAuteur')) $('fAuteur').oninput = function(){ f.auteur = this.value; maj(); };
   if($('fInit')) $('fInit').oninput = function(){ f.initiales = this.value; };
   if($('fAge')) $('fAge').oninput = function(){ f.age = this.value; maj(); };
@@ -770,6 +776,7 @@ function majDocs(){
 
 function majDiagnostic(){
   var f = S.form, d = diagnostics(f), h = '';
+  if(f.cesures) h += '<div class="note info">' + f.cesures + ' caractère' + (f.cesures > 1 ? 's' : '') + ' de césure invisible' + (f.cesures > 1 ? 's' : '') + ' (trait d\'union conditionnel) ' + (f.cesures > 1 ? 'viennent' : 'vient') + ' du texte collé : ' + (f.cesures > 1 ? 'ils seront retirés' : 'il sera retiré') + ' au dépôt. Le texte visible ne change pas.</div>';
   if(d.avert.length) h += '<div class="note warn"><b>À vérifier avant de déposer</b><ul>' + d.avert.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
   if($('diag')) $('diag').innerHTML = h;
   if($('compte') && f.circuit === 'lexique'){
@@ -871,7 +878,9 @@ function lierImage(){
 }
 
 async function deposer(){
-  var f = S.form, d = diagnostics(f);
+  var f = S.form;
+  f.texte = sansCesure(f.texte);
+  var d = diagnostics(f);
   if(d.bloc.length){
     $('diag').innerHTML = '<div class="note err"><b>Le dépôt n\'est pas possible en l\'état</b><ul>' + d.bloc.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
     $('diag').scrollIntoView({ block:'center' });
