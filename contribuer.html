@@ -65,6 +65,12 @@ input[type=text],input[type=number],input[type=search],input[type=url],select,te
 textarea{min-height:230px;line-height:1.6;resize:vertical}
 textarea.court{min-height:90px}
 textarea.verb{font-family:var(--serif);font-size:15.5px;min-height:130px}
+.rel-puces{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;align-items:center}
+.rel-puces .lab-puces{font-size:12px;color:var(--ink-3)}
+.rel-puces button{border:1px solid var(--rule);background:var(--card);border-radius:14px;padding:3px 10px;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.rel-puces button:hover:not(:disabled){border-color:var(--terre)}
+.rel-puces button[aria-pressed="true"]{background:var(--terre-soft);border-color:var(--terre);color:var(--terre-deep)}
+.rel-puces button:disabled{opacity:.4;cursor:not-allowed}
 .pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .pill{border:1px solid var(--rule);background:var(--card);border-radius:20px;padding:7px 15px;font-weight:600;color:var(--ink-2)}
 .pill.on{background:var(--terre-soft);border-color:var(--terre);color:var(--terre-deep)}
@@ -186,7 +192,7 @@ var CIRCUITS = [
 var S = {
   session:null, profil:null, tab:null,
   themes:[], sujets:[], sujetById:{}, candidats:[], sources:[], srcById:{}, figById:{}, lexique:[], lexById:{},
-  pseudos:{}, form:null, nAttente:0, nSignal:0, nDocs:0, message:null,
+  relecteursConnus:[], pseudos:{}, form:null, nAttente:0, nSignal:0, nDocs:0, message:null,
   progCand:null, progDoc:null, progTheme:'', progSansDoc:true,   /* onglet Programmes */
   filtreValider:null,  /* 'tous', 'autres', 'moi' ou l'identifiant d'un déposant */
   nReprendre:0,        /* mes dépôts refusés, pas encore redéposés */
@@ -393,9 +399,45 @@ async function chargerLexique(){
 /* Dépôts refusés que je n'ai pas encore redéposés : signalés sur l'onglet « Mes dépôts ». */
 async function compterAReprendre(){
   try {
-    var l = await tout(function(){ return sb.from('depots').select('id,statut,suite_de').eq('depose_par', S.session.user.id).order('id'); });
+    var l = await tout(function(){ return sb.from('depots').select('id,statut,suite_de,relecteurs').eq('depose_par', S.session.user.id).order('id'); });
     S.nReprendre = aReprendre(l).length;
+    /* Relecteurs déjà indiqués dans mes dépôts, du plus récent au plus ancien :
+       proposés en un clic au dépôt suivant. */
+    S.relecteursConnus = [];
+    for(var i = l.length - 1; i >= 0; i--) (l[i].relecteurs || []).forEach(retenirRelecteur);
   } catch(e){ S.nReprendre = 0; }
+}
+var MAX_RELECTEURS_PROPOSES = 8;
+function retenirRelecteur(nom){
+  nom = String(nom || '').trim();
+  if(!nom) return;
+  var bas = nom.toLowerCase();
+  if(S.relecteursConnus.some(function(x){ return x.toLowerCase() === bas; })) return;
+  if(S.relecteursConnus.length < MAX_RELECTEURS_PROPOSES) S.relecteursConnus.push(nom);
+}
+/* Sous chaque champ « Relecteur » : les pseudos déjà utilisés, à cocher d'un clic.
+   Un second clic décoche. Un pseudo pris dans l'autre champ y est grisé. */
+function majPucesRelecteurs(){
+  var f = S.form;
+  [0, 1].forEach(function(i){
+    var z = $('relPuces' + i);
+    if(!z) return;
+    if(!S.relecteursConnus.length){ z.innerHTML = ''; return; }
+    var ici = (f.relecteurs[i] || '').trim().toLowerCase(), autre = (f.relecteurs[1 - i] || '').trim().toLowerCase();
+    var deux = !!$('relPuces' + (1 - i));
+    z.innerHTML = '<span class="lab-puces">Déjà indiqués :</span>' + S.relecteursConnus.map(function(n){
+      var b = n.toLowerCase();
+      return '<button type="button" data-nom="' + esc(n) + '" aria-pressed="' + (b === ici) + '"' + (deux && b === autre ? ' disabled title="Déjà choisi comme autre relecteur"' : '') + '>' + esc(n) + '</button>';
+    }).join('');
+    z.querySelectorAll('button').forEach(function(bt){
+      bt.onclick = function(){
+        var n = bt.getAttribute('data-nom');
+        f.relecteurs[i] = (f.relecteurs[i] || '').trim().toLowerCase() === n.toLowerCase() ? '' : n;
+        $('fRel' + i).value = f.relecteurs[i];
+        majPucesRelecteurs(); majDiagnostic();
+      };
+    });
+  });
 }
 function aReprendre(liste){
   var repris = {};
@@ -704,7 +746,7 @@ function vueDeposerLexique(h){
     + '<div class="row"><div class="field"><label for="nsOrg">Éditeur ou organisme</label><input type="text" id="nsOrg"></div><div class="field"><label for="nsType">Nature</label><select id="nsType"><option>Dictionnaire ou glossaire</option><option>Texte officiel</option><option>Rapport institutionnel</option><option>Données statistiques</option><option>Étude scientifique</option><option>Presse et vulgarisation</option><option>Autre</option></select></div></div>'
     + '<div class="row"><div class="field"><label for="nsDate">Date de publication</label><input type="text" id="nsDate" placeholder="2026"></div><div class="field"><label for="nsUrl">Adresse web</label><input type="url" id="nsUrl" placeholder="https://…"></div></div>'
     + '<button class="btn" id="btnCreerSrc">Créer et ajouter cette source</button><div id="srcMsg"></div></div></details></div>';
-  h += '<div class="card"><h2>3. La relecture sur Discord</h2><div class="row"><div class="field"><label for="fRel0">Relecteur qui a validé</label><input type="text" id="fRel0" maxlength="60" value="' + esc(f.relecteurs[0] || '') + '" placeholder="Pseudo Discord"></div></div></div>';
+  h += '<div class="card"><h2>3. La relecture sur Discord</h2><div class="row"><div class="field"><label for="fRel0">Relecteur qui a validé</label><input type="text" id="fRel0" maxlength="60" value="' + esc(f.relecteurs[0] || '') + '" placeholder="Pseudo Discord"><div class="rel-puces" id="relPuces0"></div></div></div></div>';
   h += '<div id="diag"></div><div class="actions"><button class="btn pri" id="btnDeposer">Déposer pour validation</button><button class="btn" id="btnApercu">Aperçu</button><button class="btn" id="btnVider">Tout effacer</button></div><div id="apercu"></div>';
   vue.innerHTML = h;
 
@@ -720,7 +762,8 @@ function vueDeposerLexique(h){
   $('fDev').oninput = function(){ f.developpe = this.value; maj(); };
   $('fVar').oninput = function(){ f.variantes = this.value; maj(); };
   $('fTexte').oninput = function(){ f.cesures = nbCesures(this.value); f.texte = sansCesure(this.value); maj(); };
-  $('fRel0').oninput = function(){ f.relecteurs[0] = this.value; maj(); };
+  $('fRel0').oninput = function(){ f.relecteurs[0] = this.value; majPucesRelecteurs(); maj(); };
+  majPucesRelecteurs();
   $('btnVider').onclick = function(){ S.form = nouveauFormulaire('lexique'); vueDeposer(); };
   $('btnApercu').onclick = function(){ $('apercu').innerHTML = '<h3>Aperçu</h3>' + rendreDefinition({ terme:f.terme, developpe:f.developpe, variantes:listeVariantes(f.variantes), texte:f.texte, sources:f.sources }); };
   $('btnDeposer').onclick = deposer;
@@ -781,7 +824,7 @@ function vueDeposer(){
   h += '</div>';
 
   h += '<div class="card"><h2>3. La relecture sur Discord</h2><div class="row">';
-  for(var i = 0; i < relecteursRequis(f); i++) h += '<div class="field"><label for="fRel' + i + '">Relecteur' + (relecteursRequis(f) > 1 ? ' ' + (i + 1) : '') + ' qui a validé</label><input type="text" id="fRel' + i + '" maxlength="60" value="' + esc(f.relecteurs[i] || '') + '" placeholder="Pseudo Discord"></div>';
+  for(var i = 0; i < relecteursRequis(f); i++) h += '<div class="field"><label for="fRel' + i + '">Relecteur' + (relecteursRequis(f) > 1 ? ' ' + (i + 1) : '') + ' qui a validé</label><input type="text" id="fRel' + i + '" maxlength="60" value="' + esc(f.relecteurs[i] || '') + '" placeholder="Pseudo Discord"><div class="rel-puces" id="relPuces' + i + '"></div></div>';
   h += '</div>';
   h += '</div>';
 
@@ -799,7 +842,8 @@ function vueDeposer(){
   if($('fAuteur')) $('fAuteur').oninput = function(){ f.auteur = this.value; maj(); };
   if($('fInit')) $('fInit').oninput = function(){ f.initiales = this.value; };
   if($('fAge')) $('fAge').oninput = function(){ f.age = this.value; maj(); };
-  [0, 1].forEach(function(i){ if($('fRel' + i)) $('fRel' + i).oninput = function(){ f.relecteurs[i] = this.value; maj(); }; });
+  [0, 1].forEach(function(i){ if($('fRel' + i)) $('fRel' + i).oninput = function(){ f.relecteurs[i] = this.value; majPucesRelecteurs(); maj(); }; });
+  majPucesRelecteurs();
   $('btnVider').onclick = function(){ S.form = nouveauFormulaire(f.circuit); vueDeposer(); };
   $('btnApercu').onclick = function(){
     var ajoutVerb = estVerb && f.ctx && f.ctx.position != null && f.mode === 'ajout';
@@ -993,6 +1037,9 @@ async function deposer(){
     $('diag').innerHTML = '<div class="note err">' + esc(msgErreur(r.error)) + (lignes.length > 1 ? ' Aucune des ' + lignes.length + ' cases n\'a été enregistrée.' : '') + '</div>';
     return;
   }
+  /* Les relecteurs de ce dépôt passent en tête des pseudos proposés. */
+  var anciens = S.relecteursConnus; S.relecteursConnus = [];
+  (ligne.relecteurs || []).concat(anciens).forEach(retenirRelecteur);
   S.form = nouveauFormulaire(f.circuit);
   flash('ok', lignes.length > 1 ? lignes.length + ' dépôts enregistrés, un par case. Chacun paraîtra sur le site dès qu\'un mainteneur l\'aura validé.' : 'Dépôt enregistré. Il paraîtra sur le site dès qu\'un mainteneur l\'aura validé.');
   if(S.profil.mainteneur) S.nAttente += lignes.length;
