@@ -82,6 +82,13 @@ nav a.nav-contrib:hover{border-color:var(--terre)}
 .s-list button{display:block;width:100%;text-align:left;padding:9px 13px;border:none;background:none;font-size:13.5px;border-bottom:1px solid var(--rule-soft)}
 .s-list button:hover{background:var(--terre-mist)}
 .s-list button small{display:block;color:var(--ink-3);font-size:11.5px}
+.s-list button mark,.grid-wrap mark{background:var(--terre-soft);color:inherit;border-radius:2px;padding:0 1px}
+/* Recherche dans une thématique : filtre les lignes de la grille. */
+.t-search{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.t-search input{flex:1;min-width:220px;max-width:460px;padding:9px 13px;border:1px solid var(--rule);border-radius:8px;background:var(--card);font-family:var(--sans);font-size:14px;color:var(--ink)}
+.t-search input::placeholder{color:var(--ink-3)}
+.t-search .ts-etat{font-size:12.5px;color:var(--ink-3)}
+.t-search .ts-vider{border:none;background:none;padding:0;font-size:12.5px;font-weight:600;color:var(--terre);text-decoration:underline;text-underline-offset:2px}
 .maj{font-size:12px;color:var(--ink-3);margin-left:auto}
 .som-label{font-size:11.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:18px 0 10px}
 .constit-banner{position:relative;display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;text-align:left;margin:16px 0 4px;padding:14px 18px;background:var(--gb);border:1px solid var(--gb-border);border-radius:var(--r);color:var(--gb-ink);transition:background .12s, transform .12s, box-shadow .12s}
@@ -219,6 +226,7 @@ tbody tr:hover .subj-btn .arr,.subj-btn:focus-visible .arr{background:var(--terr
 .p-head{padding:18px 22px 0;border-bottom:1px solid var(--rule)}
 .p-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .p-theme{font-size:11.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--terre);font-weight:600}
+.p-commun{font-size:12px;color:var(--ink-3);margin:-6px 0 10px}
 .p-title{font-family:var(--serif);font-size:21px;font-weight:600;line-height:1.3;margin:3px 0 10px}
 .p-close{border:1px solid var(--rule);background:var(--card);border-radius:8px;width:34px;height:34px;font-size:17px;color:var(--ink-2);flex:0 0 auto}
 .p-tabs{display:flex;gap:2px}
@@ -424,6 +432,10 @@ footer a{color:var(--terre)}
     <h1 class="t-title" id="tTitle"></h1>
     <p class="t-sub" id="tSub"></p>
     <div class="cand-filter" id="candFilter" role="group" aria-label="Candidats affichés"></div>
+    <div class="t-search">
+      <input type="search" id="tSearch" placeholder="Chercher dans cette thématique (sujet ou mot d'un programme)…" aria-label="Chercher dans cette thématique" autocomplete="off">
+      <span class="ts-etat" id="tSearchEtat" role="status"></span>
+    </div>
     <div class="grid-nav hidden" id="gridNav" aria-label="Faire défiler les candidats">
       <button type="button" id="gPrev" aria-label="Candidats précédents">‹ Précédents</button>
       <div class="grid-bar" id="gridBar"><div></div></div>
@@ -546,6 +558,7 @@ footer a{color:var(--terre)}
       <div>
         <div class="p-theme" id="pTheme"></div>
         <h2 class="p-title" id="pTitle"></h2>
+        <p class="p-commun hidden" id="pCommun"></p>
       </div>
       <button class="p-close" id="pClose" aria-label="Fermer le panneau">✕</button>
     </div>
@@ -897,6 +910,9 @@ function openTheme(name){
 }
 function renderThemeView(){
   var t=themeByName(state.theme); if(!t)return;
+  /* Changer de thématique efface la recherche de la précédente. */
+  if(typeof tSearch!=='undefined'&&tSearch&&renderThemeView.dernier!==state.theme){tSearch.value='';$('tSearchEtat').innerHTML='';}
+  renderThemeView.dernier=state.theme;
   $('tTitle').textContent=t.name;
   var ed=edByTheme[t.name];
   var bits=[t.subjects.length+' sujet'+(t.subjects.length>1?'s':'')];
@@ -994,8 +1010,9 @@ function renderGrid(){
   h+='</tbody></table>';
   w.innerHTML=h;
   w.querySelectorAll('tr[data-sid]').forEach(function(tr){
-    tr.addEventListener('click',function(e){if(e.target.closest('.lex'))return;openPanel(tr.getAttribute('data-sid'));});
+    tr.addEventListener('click',function(e){if(e.target.closest('.lex'))return;openPanel(tr.getAttribute('data-sid'),state.theme);});
   });
+  if(tSearch&&tSearch.value)filtrerGrille();
   markClamped();
   /* La mesure dépend de la police : on la refait une fois la mise en page et les
      polices stabilisées, sinon « Lire la suite » peut manquer sur une case tronquée. */
@@ -1087,10 +1104,19 @@ function verbatimHTML(p){
   if(parts.length<2)return '<span class="verbatim">'+lexHTML(p,vus)+'</span>';
   return parts.map(function(x){return '<span class="verbatim vb-item">'+lexHTML(x,vus)+'</span>';}).join('');
 }
-function findSubject(sid){
+/* Un sujet peut s'afficher dans plusieurs thématiques (il n'a pourtant qu'une case
+   par candidat). « pref » désigne la thématique d'où vient le lecteur : on y reste. */
+function findSubject(sid,pref){
+  var premier=null;
   for(var i=0;i<D.themes.length;i++){var t=D.themes[i];
-    for(var j=0;j<t.subjects.length;j++)if(t.subjects[j].id===sid)return{theme:t,subject:t.subjects[j]};}
-  return null;
+    for(var j=0;j<t.subjects.length;j++)if(t.subjects[j].id===sid){
+      if(!premier)premier={theme:t,subject:t.subjects[j]};
+      if(pref&&t.name===pref)return{theme:t,subject:t.subjects[j]};
+    }}
+  return premier;
+}
+function themesDuSujet(sid){
+  return D.themes.filter(function(t){return t.subjects.some(function(s){return s.id===sid;});}).map(function(t){return t.name;});
 }
 /* ===== Figures =====
    Une ligne de texte réduite à {{FIG-…}} est remplacée par la figure correspondante.
@@ -1376,20 +1402,25 @@ function lockPageScroll(on){
     document.body.style.paddingRight='';
   }
 }
-function openPanel(sid){
-  var f=findSubject(sid); if(!f)return;
+function openPanel(sid,theme){
+  var f=findSubject(sid,theme); if(!f)return;
   state.subject=sid; state.tab='positions';
   state.theme=f.theme.name;
   renderThemeView(); showView('theme');
   $('pTheme').textContent=f.theme.name;
   $('pTitle').textContent=f.subject.label;
+  /* Sujet affiché dans plusieurs thématiques : on le dit, car les mêmes textes s'y lisent. */
+  var autres=themesDuSujet(sid).filter(function(n){return n!==f.theme.name;});
+  $('pCommun').textContent=autres.length?'Ce sujet figure aussi dans : '+autres.join(', ')+'. Les mêmes textes y sont affichés.':'';
+  $('pCommun').classList.toggle('hidden',!autres.length);
   var np=(edBySubject[sid]||[]).filter(function(e){return e.type==='parti pris';}).length;
   $('tabPartis').textContent='Partis pris'+(np?' ('+np+')':'');
   document.querySelectorAll('.p-tab').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-tab')==='positions');});
   renderPanelBody();
   $('overlay').classList.add('open'); $('panel').classList.add('open');
   lockPageScroll(true);
-  location.hash='s/'+encodeURIComponent(sid);
+  /* Le lien retient la thématique quand ce n'est pas la première où figure le sujet. */
+  location.hash='s/'+encodeURIComponent(sid)+(findSubject(sid).theme.name!==f.theme.name?'/'+encodeURIComponent(f.theme.name):'');
   $('pClose').focus();
 }
 function closePanel(){
@@ -1423,29 +1454,152 @@ function applyHash(){
   /* « bibliographie » est conservé : les liens partagés avant la refonte
      de la page Sources doivent continuer de fonctionner. */
   if(h==='sources'||h==='bibliographie'){showView('sources');return;}
-  if(h.indexOf('s/')===0){var sid=h.slice(2);if(findSubject(sid)){openPanel(sid);return;}}
+  if(h.indexOf('s/')===0){
+    var reste=h.slice(2), coupe=reste.indexOf('/'), sid=coupe<0?reste:reste.slice(0,coupe), th=coupe<0?null:reste.slice(coupe+1);
+    if(findSubject(sid)){
+      /* Rien à refaire si ce panneau est déjà ouvert sur cette thématique. */
+      if(state.subject===sid&&$('panel').classList.contains('open')&&findSubject(sid,th).theme.name===state.theme)return;
+      openPanel(sid,th);return;
+    }
+  }
   if(h.indexOf('t/')===0){var tn=h.slice(2);if(themeByName(tn)){state.theme=tn;renderThemeView();showView('theme');return;}}
   showView('accueil');
 }
 window.addEventListener('hashchange',applyHash);
 
+/* ===== Recherche tolérante =====
+   Sans accents ni majuscules, et tolérante aux petites fautes : chaque mot cherché
+   doit correspondre au début d'un mot du texte, ou en être très proche (une lettre
+   de différence à partir de 4 lettres, deux à partir de 8). Les mots vides (de, la,
+   des…) sont ignorés. */
+var MOTS_VIDES={de:1,du:1,des:1,la:1,le:1,les:1,l:1,d:1,un:1,une:1,et:1,en:1,a:1,au:1,aux:1,pour:1,par:1,sur:1};
+function normRech(t){return String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/œ/g,'oe').replace(/æ/g,'ae');}
+/* Forme de base très simple : pluriel et féminin ramenés au masculin singulier
+   (« retraites » → « retraite », « publique » → « public »). */
+function racine(m){
+  if(m.length<=3)return m;
+  m=m.replace(/(aux)$/,'al').replace(/[sx]$/,'');
+  if(m.length>4)m=m.replace(/e$/,'');
+  return m.replace(/qu$/,'c').replace(/(ell|enn|onn)$/,function(x){return x.slice(0,2);});
+}
+function motsRech(t){return normRech(t).split(/[^a-z0-9]+/).filter(Boolean).map(racine);}
+function motsRequete(q){return motsRech(q).filter(function(m){return !MOTS_VIDES[m];});}
+/* Distance d'édition bornée (Damerau restreinte : une inversion compte pour une faute). */
+function distance(a,b,max){
+  if(Math.abs(a.length-b.length)>max)return max+1;
+  var d=[],i,j;
+  for(i=0;i<=a.length;i++){d[i]=[i];}
+  for(j=0;j<=b.length;j++)d[0][j]=j;
+  for(i=1;i<=a.length;i++){
+    var minLigne=max+1;
+    for(j=1;j<=b.length;j++){
+      var c=a[i-1]===b[j-1]?0:1;
+      d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+c);
+      if(i>1&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1])d[i][j]=Math.min(d[i][j],d[i-2][j-2]+1);
+      if(d[i][j]<minLigne)minLigne=d[i][j];
+    }
+    if(minLigne>max)return max+1;
+  }
+  return d[a.length][b.length];
+}
+function tolerance(m){return m.length>=8?2:m.length>=4?1:0;}
+/* Score d'un mot cherché face aux mots d'un texte : 3 mot exact, 2 début de mot,
+   1 mot proche (faute de frappe), 0 rien. */
+function scoreMot(q,mots){
+  var meilleur=0,tol=tolerance(q);
+  for(var i=0;i<mots.length&&meilleur<3;i++){
+    var m=mots[i];
+    if(m===q){meilleur=3;break;}
+    if(m.indexOf(q)===0){meilleur=Math.max(meilleur,2);continue;}
+    if(tol&&meilleur<1){
+      /* Faute dans le mot entier, ou dans le début d'un mot plus long (« educat » → « éducation »). */
+      if(distance(q,m,tol)<=tol||(m.length>q.length&&distance(q,m.slice(0,q.length),tol)<=tol))meilleur=1;
+    }
+  }
+  return meilleur;
+}
+/* Score global : tous les mots cherchés doivent être trouvés ; 0 sinon. */
+function scoreTexte(qm,mots){
+  var tot=0;
+  for(var i=0;i<qm.length;i++){var s=scoreMot(qm[i],mots);if(!s)return 0;tot+=s;}
+  return tot;
+}
+/* Surligne dans un libellé les mots trouvés (comparaison sans accents). */
+function surligner(texte,qm){
+  if(!qm.length)return esc(texte);
+  return String(texte).split(/([^A-Za-zÀ-ÖØ-öø-ÿŒœ0-9]+)/).map(function(seg){
+    var n=normRech(seg);
+    if(!n||!/[a-z0-9]/.test(n))return esc(seg);
+    n=racine(n);
+    var ok=qm.some(function(q){return n===q||n.indexOf(q)===0||(tolerance(q)&&(distance(q,n,tolerance(q))<=tolerance(q)||(n.length>q.length&&distance(q,n.slice(0,q.length),tolerance(q))<=tolerance(q))));});
+    return ok?'<mark>'+esc(seg)+'</mark>':esc(seg);
+  }).join('');
+}
+
 /* ===== Recherche (sommaire) ===== */
-var allSubjects=[];
-D.themes.forEach(function(t){t.subjects.forEach(function(s){allSubjects.push({t:t.name,s:s});});});
+var allSubjects=[], vuSujet={};
+D.themes.forEach(function(t){t.subjects.forEach(function(s){allSubjects.push({t:t.name,s:s,mots:motsRech(s.label),motsTheme:motsRech(t.name)});});});
 var sInput=$('searchInput'), sList=$('searchList');
 sInput.addEventListener('input',function(){
-  var q=sInput.value.trim().toLowerCase();
-  if(q.length<2){sList.classList.remove('open');sList.innerHTML='';return;}
-  var hits=allSubjects.filter(function(x){return x.s.label.toLowerCase().indexOf(q)>=0;}).slice(0,12);
+  var qm=motsRequete(sInput.value);
+  if(normRech(sInput.value).replace(/[^a-z0-9]/g,'').length<2||!qm.length){sList.classList.remove('open');sList.innerHTML='';return;}
+  var hits=allSubjects.map(function(x){
+    var sc=scoreTexte(qm,x.mots);
+    if(!sc&&scoreTexte(qm,x.mots.concat(x.motsTheme)))sc=0.5;   /* trouvé grâce au nom de la thématique : après les autres */
+    return {x:x,sc:sc};
+  }).filter(function(h){return h.sc>0;})
+    .sort(function(a,b){return b.sc-a.sc||a.x.s.label.localeCompare(b.x.s.label,'fr');})
+    .slice(0,12);
   sList.innerHTML = hits.length ? '' : '<button disabled>Aucun sujet trouvé</button>';
-  hits.forEach(function(x){
-    var b=document.createElement('button');
-    b.innerHTML=esc(x.s.label)+'<small>'+esc(x.t)+'</small>';
-    b.addEventListener('click',function(){sList.classList.remove('open');sInput.value='';openPanel(x.s.id);});
+  hits.forEach(function(h){
+    var x=h.x, b=document.createElement('button');
+    b.innerHTML=surligner(x.s.label,qm)+'<small>'+esc(x.t)+'</small>';
+    b.addEventListener('click',function(){sList.classList.remove('open');sInput.value='';openPanel(x.s.id,x.t);});
     sList.appendChild(b);
   });
   sList.classList.add('open');
 });
+/* Entrée ouvre le premier résultat. */
+sInput.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){var b=sList.querySelector('button:not([disabled])');if(b){e.preventDefault();b.click();}}
+});
+
+/* ===== Recherche dans une thématique : filtre les lignes de la grille =====
+   Cherche dans le libellé du sujet et dans les textes des candidats affichés. */
+var tSearch=$('tSearch');
+function filtrerGrille(){
+  var qm=motsRequete(tSearch.value), w=$('gridWrap'), etat=$('tSearchEtat');
+  var lignes=w.querySelectorAll('tbody tr[data-sid]');
+  var vide=w.querySelector('.ts-aucun'); if(vide)vide.remove();
+  if(!qm.length){
+    lignes.forEach(function(tr){tr.classList.remove('hidden');var b=tr.querySelector('.subj-lab');if(b&&b.dataset.lib)b.textContent=b.dataset.lib;});
+    etat.innerHTML=''; majGridNav(); return;
+  }
+  var n=0;
+  lignes.forEach(function(tr){
+    var f=findSubject(tr.getAttribute('data-sid'),state.theme), s=f.subject;
+    var motsLib=motsRech(s.label);
+    var ok=scoreTexte(qm,motsLib)>0;
+    if(!ok){
+      var txt=s.label+' '+candidatsVisibles().map(function(c){return s.positions[c]||'';}).join(' ');
+      ok=scoreTexte(qm,motsRech(txt))>0;
+    }
+    tr.classList.toggle('hidden',!ok);
+    var lab=tr.querySelector('.subj-lab');
+    if(lab){ if(!lab.dataset.lib)lab.dataset.lib=lab.textContent; lab.innerHTML=surligner(lab.dataset.lib,qm); }
+    if(ok)n++;
+  });
+  var tot=lignes.length;
+  etat.innerHTML=n+' sujet'+(n>1?'s':'')+' sur '+tot+' · <button type="button" class="ts-vider">Effacer</button>';
+  etat.querySelector('.ts-vider').onclick=function(){tSearch.value='';filtrerGrille();tSearch.focus();};
+  if(!n){
+    var tb=w.querySelector('tbody');
+    if(tb){var tr=document.createElement('tr');tr.className='ts-aucun';tr.innerHTML='<td colspan="'+(candidatsVisibles().length+1)+'" class="empty-theme">Aucun sujet ni texte ne correspond dans cette thématique. Essayez la recherche générale de la page d\'accueil.</td>';tb.appendChild(tr);}
+  }
+  markClamped(); majGridNav();
+}
+var tsMinuteur=null;
+tSearch.addEventListener('input',function(){clearTimeout(tsMinuteur);tsMinuteur=setTimeout(filtrerGrille,120);});
 document.addEventListener('click',function(e){if(!e.target.closest('.search'))sList.classList.remove('open');});
 
 /* ===== Sources : corpus des programmes + bibliographie des analyses ===== */
