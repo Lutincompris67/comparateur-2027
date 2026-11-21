@@ -141,13 +141,6 @@ dialog::backdrop{background:rgba(45,32,22,.45)}
 .filtres-mes label{display:block;font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:3px}
 .card.a-reprendre{border-color:#E3BDB8;border-left:4px solid var(--rouge)}
 .tab .n.alerte{background:var(--rouge)}
-.badge.pret{background:var(--vert-soft);color:var(--vert)}
-.lotline{border-top:1px solid var(--rule-soft);padding:9px 0}
-.lotline ul{margin:4px 0 0 42px;font-size:13px}
-.lotline li.bloc{color:var(--rouge)}
-.lotline li.av{color:#7A4A26}
-.lotline details{margin:4px 0 0 24px}
-.selbar{position:sticky;bottom:0;z-index:5;background:var(--paper);border-top:1px solid var(--rule);padding:10px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .hidden{display:none!important}
 </style>
 </head>
@@ -176,7 +169,7 @@ var SEPARATEUR = ' — ';             /* entre deux mesures d'une même case (aj
 /* Trait d'union conditionnel (U+00AD) : caractère de césure invisible, laissé par la mise en
    page de certains programmes et repris par le copier-coller. Ce n'est pas un signe du texte :
    il est retiré de tout texte saisi, sinon la recherche et le lexique ne reconnaîtraient pas le mot. */
-var CESURE = /­/g;
+var CESURE = /\u00AD/g;
 function sansCesure(t){ return String(t == null ? '' : t).replace(CESURE, ''); }
 function nbCesures(t){ var m = String(t == null ? '' : t).match(CESURE); return m ? m.length : 0; }
 
@@ -202,10 +195,8 @@ var S = {
   relecteursConnus:[], pseudos:{}, form:null, nAttente:0, nSignal:0, nDocs:0, message:null,
   progCand:null, progDoc:null, progTheme:'', progSansDoc:true,   /* onglet Programmes */
   filtreValider:null,  /* 'tous', 'autres', 'moi' ou l'identifiant d'un déposant */
-  filtreCircuit:'',    /* « À valider » : un seul circuit, ou tous */
   nReprendre:0,        /* mes dépôts refusés, pas encore redéposés */
-  mes:null,            /* filtres de l'onglet « Mes dépôts » */
-  lot:null, lotRel:'', lotOuvert:false   /* lexique : lot de définitions lu depuis un classeur */
+  mes:null             /* filtres de l'onglet « Mes dépôts » */
 };
 /* Filtres de « Mes dépôts », retenus par ce navigateur (sauf la recherche). */
 var CLE_MES = 'comparateur2027-filtres-mes-depots';
@@ -219,6 +210,14 @@ function garderFiltresMes(){ var m = S.mes; try { localStorage.setItem(CLE_MES, 
 var CLE_FILTRE = 'comparateur2027-filtre-valider';
 function lireFiltre(){ try { return localStorage.getItem(CLE_FILTRE) || 'tous'; } catch(e){ return 'tous'; } }
 function garderFiltre(v){ S.filtreValider = v; try { localStorage.setItem(CLE_FILTRE, v); } catch(e){} }
+/* Autres filtres de « À valider » (circuit, candidat, thématique, ordre), retenus aussi. */
+var CLE_VAL = 'comparateur2027-filtres-valider';
+function lireFiltresVal(){
+  var d = { circuit:'', cand:'', theme:'', tri:'ancien', n:30 };
+  try { var v = JSON.parse(localStorage.getItem(CLE_VAL) || 'null'); if(v) ['circuit', 'cand', 'theme', 'tri'].forEach(function(k){ if(typeof v[k] === 'string') d[k] = v[k]; }); } catch(e){}
+  return d;
+}
+function garderFiltresVal(){ var m = S.val; try { localStorage.setItem(CLE_VAL, JSON.stringify({ circuit:m.circuit, cand:m.cand, theme:m.theme, tri:m.tri })); } catch(e){} }
 
 /* ===== Outils ===== */
 function msgErreur(e){
@@ -727,7 +726,7 @@ function diagnosticsLexique(f){
   S.lexique.forEach(function(l){
     if(l.id === f.remplace_terme) return;
     formesLex(l.terme, l.variantes).forEach(function(x){
-      if(miennes.indexOf(x.toLowerCase()) >= 0) bloc.push('« ' + x + ' » figure déjà dans le lexique (terme « ' + l.terme + ' »). Déposez plutôt une correction de ce terme.');
+      if(miennes.indexOf(x.toLowerCase()) >= 0) bloc.push('« ' + x + ' » figure déjà dans le lexique (terme « ' + l.terme + ' »). Déposez plutôt une correction de ce terme : recherchez-le dans « Corriger un terme existant ? », en haut du formulaire.');
     });
   });
   if(/^[A-ZÀ-Ý0-9.\- ]+$/.test(terme) && /[A-Z]/.test(terme) && terme.length <= 12 && !f.developpe.trim()) avert.push('« ' + terme + ' » ressemble à un sigle : indiquez sa forme développée.');
@@ -737,13 +736,35 @@ function diagnosticsLexique(f){
   if(/\n/.test(t)) avert.push('Une définition tient en un seul paragraphe.');
   return { avert:avert, bloc:bloc };
 }
+/* Recherche dans le lexique, sans tenir compte des majuscules ni des accents.
+   Ordre : terme exact, terme qui commence par la recherche, terme qui la contient,
+   puis autres formes et forme développée ; la définition en dernier si demandé. */
+function normal(t){ return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function chercherLexique(q, avecDefinition){
+  q = normal(q.trim());
+  if(!q) return S.lexique.slice();
+  var notes = [];
+  S.lexique.forEach(function(l){
+    var t = normal(l.terme), n = 0;
+    if(t === q) n = 5;
+    else if(t.indexOf(q) === 0) n = 4;
+    else if(t.indexOf(q) >= 0) n = 3;
+    else if((l.variantes || []).concat([l.developpe]).some(function(x){ return normal(x).indexOf(q) >= 0; })) n = 2;
+    else if(avecDefinition && normal(l.definition).indexOf(q) >= 0) n = 1;
+    if(n) notes.push({ l:l, n:n });
+  });
+  return notes.sort(function(a, b){ return b.n - a.n || a.l.terme.localeCompare(b.l.terme, 'fr', { sensitivity:'base' }); }).map(function(x){ return x.l; });
+}
+var MAX_RESULTATS_LEXIQUE = 8;
 function vueDeposerLexique(h){
   var f = S.form, vue = $('vue');
-  h += carteLot();
+  var choisi = f.remplace_terme ? S.lexById[f.remplace_terme] : null;
   h += '<div class="card"><h2>1. Quel terme ?</h2>'
-    + '<div class="field"><label for="fLexRemplace">Nouveau terme ou correction ?</label><select id="fLexRemplace"><option value="">Nouveau terme</option>'
-    + S.lexique.map(function(l){ return '<option value="' + l.id + '"' + (f.remplace_terme === l.id ? ' selected' : '') + '>Correction de « ' + esc(l.terme) + ' »' + (l.publie ? '' : ' (dépublié)') + '</option>'; }).join('')
-    + '</select><small>Une correction remplace la définition en ligne, sans mention visible.</small></div>'
+    + (choisi
+      ? '<div class="note info">Vous déposez une <b>correction de « ' + esc(choisi.terme) + ' »</b>' + (choisi.publie ? '' : ' (terme dépublié)') + '. Elle remplacera la définition en ligne, sans mention visible.'
+        + '<div class="actions" style="margin-top:8px"><button type="button" class="btn small" id="btnLexNouveau">Déposer plutôt un nouveau terme</button></div></div>'
+      : '<div class="field"><label for="fLexCherche">Corriger un terme existant ?</label><input type="search" id="fLexCherche" autocomplete="off" placeholder="Rechercher un terme, un sigle ou une autre forme…"><div class="results" id="fLexResultats"></div>'
+        + '<small>Pour un nouveau terme, laissez ce champ vide et remplissez directement les champs ci-dessous. Le lexique compte ' + S.lexique.length + ' terme' + (S.lexique.length > 1 ? 's' : '') + '. Une correction remplace la définition en ligne, sans mention visible.</small></div>')
     + '<div class="row"><div class="field"><label for="fTerme">Terme, tel qu\'il figurera au lexique</label><input type="text" id="fTerme" maxlength="80" value="' + esc(f.terme) + '" placeholder="Ex. Dette publique, HATVP"></div>'
     + '<div class="field"><label for="fDev">Forme développée (pour un sigle)</label><input type="text" id="fDev" maxlength="200" value="' + esc(f.developpe) + '" placeholder="Ex. Haute Autorité pour la transparence de la vie publique"></div></div>'
     + '<div class="field"><label for="fVar">Autres formes à reconnaître dans les textes</label><input type="text" id="fVar" value="' + esc(f.variantes) + '" placeholder="Ex. dettes publiques, dette de l\'État"><small>Séparées par des virgules : pluriel, féminin, autre graphie, forme développée d\'un sigle. Le site rend cliquables le terme et ces formes partout où ils apparaissent, mot entier seulement. Un sigle écrit en majuscules n\'est reconnu qu\'en majuscules ; les autres formes, sans tenir compte des majuscules.</small></div>'
@@ -764,12 +785,34 @@ function vueDeposerLexique(h){
   vue.innerHTML = h;
 
   vue.querySelectorAll('.pill').forEach(function(b){ b.onclick = function(){ var anc = S.form; S.form = nouveauFormulaire(b.getAttribute('data-circuit')); S.form.theme = anc.theme; S.form.sujet = anc.sujet; vueDeposer(); }; });
-  $('fLexRemplace').onchange = function(){
-    f.remplace_terme = this.value ? parseInt(this.value, 10) : null;
-    var l = S.lexById[f.remplace_terme];
-    if(l){ f.terme = l.terme; f.developpe = l.developpe; f.variantes = l.variantes.join(', '); f.texte = l.definition; f.sources = l.sources.slice(); }
-    vueDeposer();
+  if($('btnLexNouveau')) $('btnLexNouveau').onclick = function(){
+    /* Les champs venaient du terme corrigé : on repart d'un formulaire vierge,
+       en gardant le relecteur et un éventuel lien avec un dépôt refusé. */
+    var n = nouveauFormulaire('lexique');
+    n.relecteurs = f.relecteurs.slice(); n.suite_de = f.suite_de; n.motifPrecedent = f.motifPrecedent;
+    S.form = n; vueDeposer();
   };
+  if($('fLexCherche')){
+    var champ = $('fLexCherche'), res = $('fLexResultats');
+    champ.oninput = function(){
+      var q = champ.value.trim();
+      if(!q){ res.innerHTML = ''; return; }
+      var hits = chercherLexique(q, false);
+      res.innerHTML = hits.length ? '' : '<p class="muted">Aucun terme trouvé : vous pouvez le déposer comme nouveau terme.</p>';
+      hits.slice(0, MAX_RESULTATS_LEXIQUE).forEach(function(l){
+        var bt = document.createElement('button');
+        bt.type = 'button';
+        bt.innerHTML = '<b>' + esc(l.terme) + '</b>' + (l.developpe ? ' <span class="lex-dev">— ' + esc(l.developpe) + '</span>' : '') + (l.publie ? '' : ' <span class="badge hors">dépublié</span>')
+          + '<br><span class="muted">' + esc(l.definition.slice(0, 110)) + (l.definition.length > 110 ? '…' : '') + '</span>';
+        bt.onclick = function(){
+          f.remplace_terme = l.id; f.terme = l.terme; f.developpe = l.developpe; f.variantes = l.variantes.join(', '); f.texte = l.definition; f.sources = l.sources.slice();
+          vueDeposer();
+        };
+        res.appendChild(bt);
+      });
+      if(hits.length > MAX_RESULTATS_LEXIQUE) res.insertAdjacentHTML('beforeend', '<p class="muted">' + (hits.length - MAX_RESULTATS_LEXIQUE) + ' autre' + (hits.length - MAX_RESULTATS_LEXIQUE > 1 ? 's' : '') + ' résultat' + (hits.length - MAX_RESULTATS_LEXIQUE > 1 ? 's' : '') + ' : précisez la recherche.</p>');
+    };
+  }
   var maj = function(){ majDiagnostic(); };
   $('fTerme').oninput = function(){ f.terme = this.value; maj(); };
   $('fDev').oninput = function(){ f.developpe = this.value; maj(); };
@@ -781,272 +824,12 @@ function vueDeposerLexique(h){
   $('btnApercu').onclick = function(){ $('apercu').innerHTML = '<h3>Aperçu</h3>' + rendreDefinition({ terme:f.terme, developpe:f.developpe, variantes:listeVariantes(f.variantes), texte:f.texte, sources:f.sources }); };
   $('btnDeposer').onclick = deposer;
   majSources(); lierSources(); majDiagnostic();
-  lierLot();
 }
 /* Une définition telle que la relit un mainteneur : terme, forme développée, formes reconnues. */
 function rendreDefinition(o){
   return '<div class="lex-terme">' + esc(o.terme) + '</div>' + (o.developpe ? '<div class="lex-dev">' + esc(o.developpe) + '</div>' : '')
     + '<div class="meta">Formes reconnues : <b>' + esc(formesLex(o.terme, o.variantes).join(' · ')) + '</b></div>'
     + rendreTexte(o.texte, o.sources, 'lex');
-}
-
-/* =====================================================================
-   LEXIQUE : dépôt d'un lot de définitions depuis un classeur Excel
-   Pour un lot relu dans un même fil Discord. Une ligne du classeur = un terme.
-   Chaque ligne devient un dépôt distinct, soumis aux mêmes contrôles qu'un dépôt
-   seul (ici et dans la base), et validé par un mainteneur autre que le déposant.
-   ===================================================================== */
-var LOT_COLONNES = {
-  terme:['terme'],
-  developpe:['forme développée', 'forme developpee'],
-  variantes:['autres formes reconnues', 'autres formes à reconnaître', 'autres formes a reconnaitre', 'autres formes'],
-  definition:['définition', 'definition'],
-  sources:['sources', 'source'],
-  relecteur:['relecteur', 'relecteurs']
-};
-var LOT_COLONNES_SOURCES = {
-  url:['url', 'adresse web', 'adresse'],
-  titre:['titre'],
-  auteurs:['auteurs', 'auteur'],
-  organisme:['éditeur/organisme', 'éditeur ou organisme', 'organisme', 'éditeur'],
-  type:['nature', 'type'],
-  date:['date de publication', 'date']
-};
-var NATURES_SOURCE = ['Dictionnaire ou glossaire', 'Texte officiel', 'Rapport institutionnel', 'Données statistiques', 'Étude scientifique', 'Presse et vulgarisation', 'Autre'];
-function normEntete(x){ return String(x == null ? '' : x).toLowerCase().replace(/\s+/g, ' ').trim(); }
-function trouverColonnes(entetes, def){
-  var h = (entetes || []).map(normEntete), o = {};
-  Object.keys(def).forEach(function(k){
-    o[k] = -1;
-    def[k].some(function(n){ var i = h.indexOf(n); if(i >= 0){ o[k] = i; return true; } return false; });
-  });
-  return o;
-}
-/* Pour reconnaître une adresse déjà connue : sans espace ni barre finale, sans tenir compte des majuscules. */
-function normUrl(u){ return String(u || '').trim().replace(/\/+$/, '').toLowerCase(); }
-
-/* Lit le classeur : l'onglet « Lexique » (ou le premier onglet qui a une colonne « Terme »)
-   et, s'il existe, l'onglet des sources nouvelles (« Sources du lot »). */
-function lireLot(XLSX, wb){
-  var cell = function(v){ return sansCesure(v == null ? '' : String(v)).trim(); };
-  var lignesDe = function(nom){ return XLSX.utils.sheet_to_json(wb.Sheets[nom], { header:1, defval:'' }); };
-  var nomL = wb.SheetNames.filter(function(n){ return normEntete(n) === 'lexique'; })[0]
-    || wb.SheetNames.filter(function(n){ var r = lignesDe(n); return r.length && trouverColonnes(r[0], LOT_COLONNES).terme >= 0; })[0];
-  if(!nomL) throw new Error('Ce classeur n\'a pas d\'onglet « Lexique » (ni d\'onglet avec une colonne « Terme »). Partez du modèle à télécharger ci-dessus.');
-  var r = lignesDe(nomL), c = trouverColonnes(r[0], LOT_COLONNES);
-  if(c.terme < 0) throw new Error('Colonne « Terme » introuvable dans l\'onglet « ' + nomL + ' ».');
-  if(c.definition < 0) throw new Error('Colonne « Définition » introuvable dans l\'onglet « ' + nomL + ' ».');
-  var g = function(row, k){ return c[k] >= 0 ? cell(row[c[k]]) : ''; };
-  var lignes = [];
-  for(var i = 1; i < r.length; i++){
-    var o = { n:i + 1, terme:g(r[i], 'terme'), developpe:g(r[i], 'developpe'), variantes:listeVariantes(g(r[i], 'variantes')),
-              texte:g(r[i], 'definition'), sourcesBrutes:g(r[i], 'sources').split(/[\s,;]+/).filter(Boolean), relecteur:g(r[i], 'relecteur') };
-    if(!o.terme && !o.texte && !o.sourcesBrutes.length) continue;   /* ligne vide */
-    lignes.push(o);
-  }
-  var nouvelles = {}, problemes = [];
-  var nomS = wb.SheetNames.filter(function(n){ var x = normEntete(n); return x === 'sources du lot' || x === 'sources'; })[0];
-  if(nomS){
-    var rs = lignesDe(nomS), cs = trouverColonnes(rs[0], LOT_COLONNES_SOURCES);
-    if(cs.url < 0) problemes.push('Onglet « ' + nomS + ' » : colonne « URL » introuvable, onglet ignoré.');
-    else for(var j = 1; j < rs.length; j++){
-      var url = cell(rs[j][cs.url]);
-      if(!url) continue;
-      if(!/^https?:\/\//i.test(url)){ problemes.push('Onglet « ' + nomS + ' », ligne ' + (j + 1) + ' : l\'adresse doit commencer par https://, source ignorée.'); continue; }
-      var gs = function(k){ return cs[k] >= 0 ? cell(rs[j][cs[k]]) : ''; };
-      var type = gs('type');
-      nouvelles[normUrl(url)] = { url:url, titre:gs('titre'), auteurs:gs('auteurs'), organisme:gs('organisme'),
-        type:NATURES_SOURCE.filter(function(x){ return x.toLowerCase() === type.toLowerCase(); })[0] || (type ? 'Autre' : 'Dictionnaire ou glossaire'), date:gs('date') };
-    }
-  }
-  return { onglet:nomL, lignes:lignes, nouvelles:nouvelles, problemes:problemes };
-}
-
-/* Contrôle chaque ligne : sources, mêmes vérifications qu'un dépôt seul, formes en double
-   dans le lot. Un terme déjà au lexique devient une correction de sa définition. */
-function analyserLot(lot, relDefaut){
-  var parUrl = {}, formesVues = {};
-  S.sources.forEach(function(b){ if(b.url) parUrl[normUrl(b.url)] = b.id; });
-  lot.lignes.forEach(function(o){
-    var bloc = [], avert = [];
-    o.relecteurEff = o.relecteur || String(relDefaut || '').trim();
-    var existant = S.lexique.filter(function(l){ return l.terme.trim().toLowerCase() === o.terme.toLowerCase(); })[0];
-    o.remplace_terme = existant ? existant.id : null;
-    o.ids = []; o.aCreer = [];
-    o.sourcesBrutes.forEach(function(t){
-      if(S.srcById[t]){ if(o.ids.indexOf(t) < 0) o.ids.push(t); return; }
-      if(/^https?:\/\//i.test(t)){
-        var k = normUrl(t), s = lot.nouvelles[k];
-        if(parUrl[k]){ if(o.ids.indexOf(parUrl[k]) < 0) o.ids.push(parUrl[k]); return; }
-        if(s && s.titre){ if(o.aCreer.indexOf(s) < 0) o.aCreer.push(s); return; }
-        bloc.push(s ? 'La source ' + t + ' figure dans l\'onglet « Sources du lot », mais sans titre.'
-                    : 'La source ' + t + ' n\'est pas encore dans la bibliographie : ajoutez-la à l\'onglet « Sources du lot » (adresse et titre au moins).');
-        return;
-      }
-      bloc.push('Source « ' + t + ' » non reconnue : indiquez son adresse web (https://…) ou son identifiant dans la bibliographie.');
-    });
-    var d = diagnosticsLexique({ terme:o.terme, developpe:o.developpe, variantes:o.variantes.join(', '), texte:o.texte,
-                                 sources:o.ids.concat(o.aCreer), relecteurs:[o.relecteurEff], remplace_terme:o.remplace_terme });
-    bloc = d.bloc.concat(bloc); avert = d.avert;
-    o.termeDepot = o.terme;
-    if(o.remplace_terme){
-      /* Une correction garde l'écriture du terme en ligne (« Dette publique », pas « dette publique »). */
-      o.termeDepot = existant.terme;
-      var anciennes = (existant.variantes || []).filter(function(x){ return !o.variantes.some(function(y){ return y.toLowerCase() === x.toLowerCase(); }); });
-      if(anciennes.length) avert.unshift('Les formes reconnues de la ligne remplaceront celles en ligne : « ' + anciennes.join(' », « ') + ' » ne serai' + (anciennes.length > 1 ? 'ent' : 't') + ' plus reconnue' + (anciennes.length > 1 ? 's' : '') + '. Recopiez-les dans la colonne si elles doivent rester.');
-      avert.unshift('« ' + existant.terme + ' » figure déjà au lexique : cette ligne sera déposée comme une correction de sa définition.');
-    }
-    formesLex(o.terme, o.variantes).forEach(function(x){
-      var k = x.toLowerCase();
-      if(formesVues[k] && formesVues[k] !== o.n) bloc.push('« ' + x + ' » figure déjà ligne ' + formesVues[k] + ' de ce classeur : une forme ne peut appartenir qu\'à un seul terme.');
-      else formesVues[k] = o.n;
-    });
-    o.bloc = bloc; o.avert = avert;
-    o.etat = bloc.length ? 'bloquee' : avert.length ? 'averti' : 'prete';
-    /* Cochée par défaut si elle est déposable ; jamais si elle est bloquée. */
-    if(bloc.length) o.coche = false;
-    else if(o.coche == null || o.etaitBloquee) o.coche = true;
-    o.etaitBloquee = !!bloc.length;
-  });
-}
-
-function carteLot(){
-  return '<div class="card"><details id="detLot" style="margin:0"' + (S.lotOuvert || S.lot ? ' open' : '') + '><summary>Déposer un lot de définitions depuis Excel</summary><div>'
-    + '<p>Pour un lot relu dans un même fil Discord : un classeur au format du modèle, une ligne par terme. Chaque ligne devient un dépôt distinct, avec les mêmes contrôles qu\'un dépôt seul, puis un mainteneur le valide.</p>'
-    + '<div class="actions" style="margin:0 0 14px"><button class="btn small" id="lotModele">Télécharger le modèle Excel</button><span class="muted">Le modèle explique comment remplir chaque colonne (onglet « Lisez-moi »).</span></div>'
-    + '<div class="field"><label for="lotRel">Relecteur, pour les lignes dont la colonne « Relecteur » est vide</label><input type="text" id="lotRel" maxlength="60" value="' + esc(S.lotRel) + '" placeholder="Pseudo Discord de la personne qui a validé le lot"></div>'
-    + '<div class="drop" id="lotDrop">Cliquez ou glissez le classeur (.xlsx) ici</div><input type="file" id="lotFichier" accept=".xlsx,.xls,.ods" class="hidden">'
-    + '<div id="lotZone"></div></div></details></div>';
-}
-function lierLot(){
-  if(!$('detLot')) return;
-  $('detLot').ontoggle = function(){ S.lotOuvert = this.open; };
-  $('lotModele').onclick = function(){ telechargerModeleLot().catch(function(e){ $('lotZone').innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; }); };
-  var minuteur = null;
-  $('lotRel').oninput = function(){ var v = this.value; S.lotRel = v; clearTimeout(minuteur); minuteur = setTimeout(dessinerLot, 250); };
-  var drop = $('lotDrop'), champ = $('lotFichier');
-  drop.onclick = function(){ champ.click(); };
-  drop.ondragover = function(e){ e.preventDefault(); };
-  drop.ondrop = function(e){ e.preventDefault(); if(e.dataTransfer.files[0]) lireFichierLot(e.dataTransfer.files[0]); };
-  champ.onchange = function(){ if(champ.files[0]) lireFichierLot(champ.files[0]); champ.value = ''; };
-  dessinerLot();
-}
-async function lireFichierLot(fichier){
-  var z = $('lotZone');
-  if(!/\.(xlsx|xls|ods)$/i.test(fichier.name)){ z.innerHTML = '<div class="note err">Ce n\'est pas un classeur Excel (.xlsx).</div>'; return; }
-  z.innerHTML = '<p class="muted">Lecture du fichier…</p>';
-  try {
-    await chargerXLSX();
-    var wb = window.XLSX.read(new Uint8Array(await fichier.arrayBuffer()), { type:'array' });
-    S.lot = { nom:fichier.name, lot:lireLot(window.XLSX, wb) };
-  } catch(e){ S.lot = null; z.innerHTML = '<div class="note err">' + esc(msgErreur(e)) + '</div>'; return; }
-  dessinerLot();
-}
-function dessinerLot(){
-  var z = $('lotZone'), L = S.lot;
-  if(!z) return;
-  if(!L){ z.innerHTML = ''; return; }
-  analyserLot(L.lot, S.lotRel);
-  var lignes = L.lot.lignes, n = { prete:0, averti:0, bloquee:0 }, nouvelles = [];
-  lignes.forEach(function(o){ n[o.etat]++; if(o.coche) o.aCreer.forEach(function(s){ if(nouvelles.indexOf(s) < 0) nouvelles.push(s); }); });
-  var coches = lignes.filter(function(o){ return o.coche; }).length;
-  var lib = { prete:['pret', 'prête'], averti:['attente', 'à vérifier'], bloquee:['refuse', 'bloquée'] };
-  var pl = function(k, s, p){ return k + ' ' + (k > 1 ? p : s); };
-  var h = '<div class="note info" style="margin-top:14px"><b>' + esc(L.nom) + '</b>, onglet « ' + esc(L.lot.onglet) + ' » : ' + pl(lignes.length, 'ligne', 'lignes')
-    + ' — ' + pl(n.prete, 'prête', 'prêtes') + ', ' + n.averti + ' à vérifier, ' + pl(n.bloquee, 'bloquée', 'bloquées') + '.'
-    + (nouvelles.length ? ' ' + pl(nouvelles.length, 'nouvelle source sera ajoutée', 'nouvelles sources seront ajoutées') + ' à la bibliographie.' : '') + '</div>';
-  if(L.lot.problemes.length) h += '<div class="note warn"><ul>' + L.lot.problemes.map(function(p){ return '<li>' + esc(p) + '</li>'; }).join('') + '</ul></div>';
-  if(!lignes.length) h += '<div class="note warn">Aucune ligne remplie dans cet onglet.</div>';
-  if(n.averti) h += '<p class="muted">Les lignes « à vérifier » peuvent être déposées : relisez les remarques, et décochez celles qui doivent d\'abord être corrigées dans le classeur.</p>';
-  if(lignes.length) h += '<div class="actions" style="margin:0 0 6px"><button class="btn small" id="lotTout">Cocher toutes les lignes déposables</button><button class="btn small" id="lotRien">Tout décocher</button></div>';
-  h += lignes.map(function(o, i){
-    var nouv = o.aCreer.length ? '<p class="muted">Nouvelle(s) source(s) : ' + o.aCreer.map(function(s){ return esc(s.titre) + ' — ' + esc(s.url); }).join(' ; ') + '</p>' : '';
-    return '<div class="lotline"><label class="choix" style="margin:0"><input type="checkbox" data-l="' + i + '"' + (o.coche ? ' checked' : '') + (o.bloc.length ? ' disabled' : '') + '><span><b>Ligne ' + o.n + ' — ' + esc(o.terme || '(sans terme)') + '</b> '
-      + '<span class="badge ' + lib[o.etat][0] + '">' + lib[o.etat][1] + '</span>' + (o.remplace_terme ? ' <span class="badge">correction</span>' : '')
-      + (o.relecteurEff ? ' <span class="muted">relu par ' + esc(o.relecteurEff) + '</span>' : '') + '</span></label>'
-      + (o.bloc.length || o.avert.length ? '<ul>' + o.bloc.map(function(m){ return '<li class="bloc">' + esc(m) + '</li>'; }).join('') + o.avert.map(function(m){ return '<li class="av">' + esc(m) + '</li>'; }).join('') + '</ul>' : '')
-      + '<details><summary>Voir la définition</summary><div>' + rendreDefinition({ terme:o.terme, developpe:o.developpe, variantes:o.variantes, texte:o.texte, sources:o.ids }) + nouv + '</div></details></div>';
-  }).join('');
-  h += '<div class="actions"><button class="btn pri" id="lotDeposer"' + (coches ? '' : ' disabled') + '>'
-    + (coches ? 'Déposer ' + (coches > 1 ? 'les ' + coches + ' définitions cochées' : 'la définition cochée') : 'Aucune définition cochée') + '</button>'
-    + '<button class="btn" id="lotAbandon">Abandonner ce lot</button></div><div id="lotMsg"></div>';
-  z.innerHTML = h;
-  z.querySelectorAll('input[data-l]').forEach(function(c){ c.onchange = function(){ lignes[parseInt(c.getAttribute('data-l'), 10)].coche = c.checked; dessinerLot(); }; });
-  if($('lotTout')) $('lotTout').onclick = function(){ lignes.forEach(function(o){ o.coche = !o.bloc.length; }); dessinerLot(); };
-  if($('lotRien')) $('lotRien').onclick = function(){ lignes.forEach(function(o){ o.coche = false; }); dessinerLot(); };
-  $('lotAbandon').onclick = function(){ S.lot = null; dessinerLot(); };
-  $('lotDeposer').onclick = deposerLot;
-}
-async function deposerLot(){
-  var L = S.lot, choisies = L.lot.lignes.filter(function(o){ return o.coche && !o.bloc.length; }), msg = $('lotMsg');
-  if(!choisies.length) return;
-  var aCreer = [];
-  choisies.forEach(function(o){ o.aCreer.forEach(function(s){ if(aCreer.indexOf(s) < 0) aCreer.push(s); }); });
-  if(!await demander({ titre:'Déposer ' + choisies.length + ' définition' + (choisies.length > 1 ? 's' : '') + ' ?',
-    texte:'Chaque définition devient un dépôt distinct, en attente de validation par un mainteneur.' + (aCreer.length ? ' ' + aCreer.length + ' nouvelle(s) source(s) seront d\'abord ajoutées à la bibliographie.' : ''),
-    ok:'Déposer' })) return;
-  $('lotDeposer').disabled = true;
-  var creees = {};
-  try {
-    var auj = new Date().toLocaleDateString('fr-FR');
-    for(var i = 0; i < aCreer.length; i++){
-      var s = aCreer[i];
-      msg.innerHTML = '<p class="muted">Ajout des sources à la bibliographie… ' + (i + 1) + ' / ' + aCreer.length + '</p>';
-      var id = await rpc('creer_source', { p_auteurs:s.auteurs, p_titre:s.titre, p_type:s.type, p_organisme:s.organisme, p_date_publication:s.date, p_url:s.url, p_date_consultation:auj });
-      creees[normUrl(s.url)] = id;
-      if(!S.srcById[id]){
-        var b = { id:id, registre:'analyse', auteurs:s.auteurs, titre:s.titre, organisme:s.organisme, date_publication:s.date, url:s.url };
-        S.sources.push(b); S.srcById[id] = b;
-      }
-    }
-  } catch(e){
-    msg.innerHTML = '<div class="note err">L\'ajout d\'une source a échoué : ' + esc(msgErreur(e)) + ' Aucune définition n\'a été déposée. Les sources déjà ajoutées restent dans la bibliographie : elles seront reconnues au prochain essai.</div>';
-    dessinerLotApresErreur(msg.innerHTML);
-    return;
-  }
-  var lignes = choisies.map(function(o){
-    var src = o.ids.slice();
-    o.aCreer.forEach(function(s){ var id = creees[normUrl(s.url)]; if(id && src.indexOf(id) < 0) src.push(id); });
-    return { circuit:'lexique', sujet_id:null, terme:o.termeDepot, developpe:o.developpe, variantes:o.variantes, texte:o.texte, sources:src,
-             remplace_terme:o.remplace_terme, suite_de:null, relecteurs:[o.relecteurEff], depose_par:S.session.user.id };
-  });
-  msg.innerHTML = '<p class="muted">Enregistrement des dépôts…</p>';
-  var r = await sb.from('depots').insert(lignes);
-  if(r.error){
-    dessinerLotApresErreur('<div class="note err">' + esc(msgErreur(r.error)) + ' Aucune des ' + lignes.length + ' définitions n\'a été enregistrée : corrigez la ligne concernée dans le classeur, puis déposez-le à nouveau.</div>');
-    return;
-  }
-  var anciens = S.relecteursConnus; S.relecteursConnus = [];
-  lignes.map(function(l){ return l.relecteurs[0]; }).concat(anciens).forEach(retenirRelecteur);
-  S.lot = null;
-  flash('ok', lignes.length + ' définition' + (lignes.length > 1 ? 's déposées' : ' déposée') + ', un dépôt par terme. Chacune paraîtra sur le site dès qu\'un mainteneur l\'aura validée.');
-  if(S.profil.mainteneur) S.nAttente += lignes.length;
-  S.tab = 'mes'; afficher();
-}
-/* Après un échec, le lot est réanalysé (des sources ont pu être ajoutées) et le message reste affiché. */
-function dessinerLotApresErreur(html){ dessinerLot(); if($('lotMsg')) $('lotMsg').innerHTML = html; }
-
-/* Le modèle de classeur : les onglets « Lexique » et « Sources du lot », et un « Lisez-moi ». */
-async function telechargerModeleLot(){
-  await chargerXLSX();
-  var X = window.XLSX, wb = X.utils.book_new();
-  var ajouter = function(nom, aoa, largeurs){ var ws = X.utils.aoa_to_sheet(aoa); ws['!cols'] = largeurs.map(function(w){ return { wch:w }; }); X.utils.book_append_sheet(wb, ws, nom); };
-  ajouter('Lexique', [['Terme', 'Forme développée', 'Autres formes reconnues', 'Définition', 'Sources', 'Relecteur']], [22, 40, 36, 90, 50, 18]);
-  ajouter('Sources du lot', [['URL', 'Titre', 'Auteurs', 'Éditeur/Organisme', 'Nature', 'Date de publication']], [50, 50, 24, 30, 24, 16]);
-  ajouter('Lisez-moi', [
-    ['Lot de définitions du lexique — Comparateur 2027'],
-    ['Onglet « Lexique » : une ligne par terme. Les colonnes Terme et Définition sont obligatoires. Ne renommez pas les colonnes.'],
-    ['Terme : tel qu\'il figurera au lexique (« Dette publique », « HATVP »). Un terme déjà présent au lexique sera déposé comme une correction de sa définition.'],
-    ['Forme développée : pour un sigle seulement (HATVP → Haute Autorité pour la transparence de la vie publique).'],
-    ['Autres formes reconnues : séparées par des virgules. Pluriel, féminin, autre graphie, et la forme développée d\'un sigle si elle doit aussi être cliquable. Le pluriel n\'est pas deviné.'],
-    ['Définition : un seul paragraphe, sans retour à la ligne, environ 400 caractères (1 500 au plus), sans appel de note. Le texte validé sur Discord, tel quel.'],
-    ['Sources : les adresses web (https://…) des sources, séparées par des espaces. On peut aussi donner l\'identifiant d\'une source de la bibliographie du site.'],
-    ['Une adresse déjà présente dans la bibliographie du site est reconnue automatiquement. Une adresse nouvelle doit figurer dans l\'onglet « Sources du lot », avec au moins son titre.'],
-    ['Relecteur : le pseudo Discord de la personne qui a validé la ligne. La colonne peut rester vide si un même relecteur vaut pour tout le lot : il se saisit alors au moment du dépôt.'],
-    ['Onglet « Sources du lot » : une ligne par source nouvelle. URL et Titre sont obligatoires. Nature : ' + NATURES_SOURCE.join(', ') + '.'],
-    ['Au dépôt, l\'espace contributeurs contrôle chaque ligne et signale celles à corriger. Les lignes bloquées ne sont pas déposées ; les autres le sont ensemble.']
-  ], [150]);
-  X.writeFile(wb, 'Comparateur_2027_modele_lot_lexique.xlsx');
 }
 
 function vueDeposer(){
@@ -1360,10 +1143,7 @@ function carteDepot(d, mode){
   if(mode === 'mes' && d.statut === 'refusé') h += '<div class="actions"><button class="btn" data-act="redeposer">Corriger et redéposer</button><button class="btn danger small" data-act="supprimer">Supprimer ce dépôt…</button></div>';
   if(mode === 'valider'){
     var sien = d.depose_par === S.session.user.id;
-    d._selectionnable = !sien && !obsolete;
-    h += '<div class="actions">'
-      + (d._selectionnable ? '<label class="choix" style="margin:0 6px 0 0"><input type="checkbox" data-sel="' + d.id + '"' + (S.selValider && S.selValider[d.id] ? ' checked' : '') + '><span>Sélectionner</span></label>' : '')
-      + '<button class="btn pri" data-act="valider"' + (sien || obsolete ? ' disabled' : '') + '>Valider et publier</button><button class="btn danger" data-act="refuser">Refuser…</button>'
+    h += '<div class="actions"><button class="btn pri" data-act="valider"' + (sien || obsolete ? ' disabled' : '') + '>Valider et publier</button><button class="btn danger" data-act="refuser">Refuser…</button>'
       + (sien ? '<span class="muted">Vous avez déposé ce texte : un autre mainteneur doit le valider.</span>' : '') + '</div>';
   }
   return h + '</div>';
@@ -1507,10 +1287,9 @@ async function vueValider(){
   var vue = $('vue');
   var tete0 = prendreFlash();
   vue.innerHTML = tete0 + '<p class="muted">Chargement…</p>';
-  var r = await sb.from('depots').select('*').eq('statut', 'en attente').order('depose_le').order('id').limit(500);
-  if(r.error) throw r.error;
-  var liste = r.data;
+  var liste = await tout(function(){ return sb.from('depots').select('*').eq('statut', 'en attente').order('depose_le').order('id'); });
   S.nAttente = liste.length;
+  document.querySelectorAll('.tab[data-tab="valider"]').forEach(function(t){ t.innerHTML = 'À valider' + (S.nAttente ? '<span class="n">' + S.nAttente + '</span>' : ''); });
   /* Pour chaque dépôt : le texte en ligne à cet endroit, et le refus auquel il fait suite. */
   await Promise.all(liste.map(async function(d){
     if(d.circuit === 'verbatim'){
@@ -1528,107 +1307,134 @@ async function vueValider(){
       d._precedent = x.data;
     }
   }));
-  var tete = tete0 + '<p>Votre rôle ici : vérifier que le circuit a été respecté (bon sujet ou bon terme, relecteurs indiqués, registre respecté). Vous ne pouvez pas valider un texte que vous avez déposé. Pour un lot (par exemple des définitions relues dans un même fil Discord), cochez les dépôts vérifiés puis « Valider la sélection ».</p>';
+  var tete = tete0 + '<p>Votre rôle ici : vérifier que le circuit a été respecté (bon sujet ou bon terme, relecteurs indiqués, registre respecté). Vous ne pouvez pas valider un texte que vous avez déposé.</p>';
+  if(!liste.length){ vue.innerHTML = tete + '<div class="note ok">Rien à valider pour l\'instant.</div>'; return; }
 
-  /* Filtre par déposant : les miens, ceux des autres, ou une personne précise. */
-  var moi = S.session.user.id, parDeposant = {}, nMoi = 0;
-  liste.forEach(function(d){
-    var k = d.depose_par || 'inconnu';
-    parDeposant[k] = (parDeposant[k] || 0) + 1;
-    if(d.depose_par === moi) nMoi++;
-  });
-  var nomDe = function(k){ return k === 'inconnu' ? 'Compte supprimé' : (S.pseudos[k] || 'Compte supprimé'); };
-  var autresIds = Object.keys(parDeposant).filter(function(k){ return k !== moi; })
-    .sort(function(a, b){ return nomDe(a).localeCompare(nomDe(b), 'fr'); });
   if(S.filtreValider == null) S.filtreValider = lireFiltre();
-  var f = S.filtreValider;
-  if(f !== 'tous' && f !== 'autres' && f !== 'moi' && !parDeposant[f]) f = 'tous';   /* déposant qui n'a plus rien en attente */
-  /* Filtre par circuit, proposé dès que plusieurs circuits sont en attente. */
-  var parCircuit = {};
-  liste.forEach(function(d){ parCircuit[d.circuit] = (parCircuit[d.circuit] || 0) + 1; });
-  var circuitsEnAttente = CIRCUITS.filter(function(c){ return parCircuit[c.id]; });
-  if(S.filtreCircuit && !parCircuit[S.filtreCircuit]) S.filtreCircuit = '';
-  var fc = S.filtreCircuit;
-  var garde = function(d){
-    if(fc && d.circuit !== fc) return false;
-    if(f === 'tous') return true;
-    if(f === 'autres') return d.depose_par !== moi;
-    if(f === 'moi') return d.depose_par === moi;
-    return (d.depose_par || 'inconnu') === f;
-  };
-  var visibles = liste.filter(garde);
-  var opt = function(v, lib){ return '<option value="' + esc(v) + '"' + (v === f ? ' selected' : '') + '>' + esc(lib) + '</option>'; };
-  var barre = liste.length ? '<div class="filtre"><label for="filtreDep">Déposé par</label><select id="filtreDep">'
-      + opt('tous', 'Tous les déposants (' + liste.length + ')')
-      + opt('autres', 'Les autres, que je peux valider (' + (liste.length - nMoi) + ')')
-      + opt('moi', 'Moi (' + nMoi + ')')
-      + (autresIds.length ? '<optgroup label="Un déposant">' + autresIds.map(function(k){ return opt(k, nomDe(k) + ' (' + parDeposant[k] + ')'); }).join('') + '</optgroup>' : '')
-      + '</select>'
-      + (circuitsEnAttente.length > 1 ? '<label for="filtreCirc">Circuit</label><select id="filtreCirc" style="min-width:160px"><option value="">Tous (' + liste.length + ')</option>'
-          + circuitsEnAttente.map(function(c){ return '<option value="' + esc(c.id) + '"' + (c.id === fc ? ' selected' : '') + '>' + esc(c.nom) + ' (' + parCircuit[c.id] + ')</option>'; }).join('') + '</select>' : '')
-      + (f !== 'tous' || fc ? '<span class="muted">' + visibles.length + ' sur ' + liste.length + ' affiché' + (visibles.length > 1 ? 's' : '') + '</span>' : '') + '</div>' : '';
-  var vide = !liste.length ? '<div class="note ok">Rien à valider pour l\'instant.</div>'
-    : !visibles.length ? '<div class="note info">Aucun dépôt en attente pour ce choix.</div>' : '';
-  S.selValider = {};   /* la sélection repart de zéro à chaque affichage */
-  var cartes = vide || visibles.map(function(d){ return carteDepot(d, 'valider'); }).join('');
-  var selectionnables = visibles.filter(function(d){ return d._selectionnable; });
-  vue.innerHTML = tete + barre + cartes
-    + (selectionnables.length ? '<div class="selbar" id="selBar"><button class="btn small" id="selTout">Tout sélectionner (' + selectionnables.length + ')</button><button class="btn small" id="selRien">Tout désélectionner</button><button class="btn pri" id="selValider" disabled>Valider la sélection</button><span class="muted" id="selEtat"></span></div>' : '');
-  if($('filtreDep')) $('filtreDep').onchange = function(){ garderFiltre(this.value); vueValider(); };
-  if($('filtreCirc')) $('filtreCirc').onchange = function(){ S.filtreCircuit = this.value; vueValider(); };
-  document.querySelectorAll('.tab[data-tab="valider"]').forEach(function(t){ t.innerHTML = 'À valider' + (S.nAttente ? '<span class="n">' + S.nAttente + '</span>' : ''); });
+  if(!S.val) S.val = lireFiltresVal();
+  var m = S.val, moi = S.session.user.id;
 
-  /* Sélection pour la validation groupée. */
-  var majSel = function(){
-    var n = Object.keys(S.selValider).length;
-    if(!$('selValider')) return;
-    $('selValider').disabled = !n;
-    $('selValider').textContent = n ? 'Valider la sélection (' + n + ')' : 'Valider la sélection';
-  };
-  vue.querySelectorAll('input[data-sel]').forEach(function(c){
-    c.onchange = function(){ var id = c.getAttribute('data-sel'); if(c.checked) S.selValider[id] = 1; else delete S.selValider[id]; majSel(); };
-  });
-  if($('selTout')) $('selTout').onclick = function(){ vue.querySelectorAll('input[data-sel]').forEach(function(c){ c.checked = true; S.selValider[c.getAttribute('data-sel')] = 1; }); majSel(); };
-  if($('selRien')) $('selRien').onclick = function(){ vue.querySelectorAll('input[data-sel]').forEach(function(c){ c.checked = false; }); S.selValider = {}; majSel(); };
-  if($('selValider')) $('selValider').onclick = async function(){
-    /* Dans l'ordre de dépôt, comme à la main. */
-    var choisis = selectionnables.filter(function(d){ return S.selValider[d.id]; });
-    if(!choisis.length) return;
-    if(!await demander({ titre:'Valider et publier ' + choisis.length + ' dépôt' + (choisis.length > 1 ? 's' : '') + ' ?',
-      texte:'Ils seront publiés un par un, dans l\'ordre de dépôt, et visibles de tous aussitôt. Si la base en refuse un, les autres sont tout de même publiés et le problème vous est indiqué.',
-      ok:'Valider et publier' })) return;
-    vue.querySelectorAll('button, input').forEach(function(x){ x.disabled = true; });
-    var ok = 0, echecs = [];
-    for(var i = 0; i < choisis.length; i++){
-      var d = choisis[i];
-      $('selEtat').textContent = 'Publication… ' + (i + 1) + ' / ' + choisis.length;
-      try { await rpc('valider_depot', { p_id:d.id }); ok++; }
-      catch(e){ echecs.push((d.circuit === 'lexique' ? '« ' + d.terme + ' »' : libelleSujet(d.sujet_id) + (d.candidat ? ' — ' + d.candidat : '')) + ' : ' + msgErreur(e)); }
-    }
-    await chargerLexique();
-    flash(echecs.length ? 'warn' : 'ok', ok + ' dépôt' + (ok > 1 ? 's publiés' : ' publié') + '.' + (echecs.length ? ' ' + echecs.length + ' non publié' + (echecs.length > 1 ? 's' : '') + ', toujours en attente — ' + echecs.join(' ; ') : ''));
-    vueValider();
+  /* Valeurs proposées dans chaque menu : seulement celles présentes dans la file. */
+  var parDeposant = {}, nMoi = 0;
+  liste.forEach(function(d){ var k = d.depose_par || 'inconnu'; parDeposant[k] = (parDeposant[k] || 0) + 1; if(d.depose_par === moi) nMoi++; });
+  var nomDe = function(k){ return k === 'inconnu' ? 'Compte supprimé' : (S.pseudos[k] || 'Compte supprimé'); };
+  var autresIds = Object.keys(parDeposant).filter(function(k){ return k !== moi; }).sort(function(a, b){ return nomDe(a).localeCompare(nomDe(b), 'fr'); });
+  var circuits = CIRCUITS.filter(function(c){ return liste.some(function(d){ return d.circuit === c.id; }); });
+  var cands = S.candidats.filter(function(c){ return liste.some(function(d){ return d.candidat === c; }); });
+  var sansCand = liste.some(function(d){ return !d.candidat; });
+  var themesDe = function(d){ return d.sujet_id ? themesDuSujet(d.sujet_id) : []; };
+  var themes = S.themes.filter(function(t){ return liste.some(function(d){ return themesDe(d).indexOf(t) >= 0; }); });
+  var sansTheme = liste.some(function(d){ return !d.sujet_id; });
+  var fd = S.filtreValider;
+  if(fd !== 'tous' && fd !== 'autres' && fd !== 'moi' && !parDeposant[fd]) fd = S.filtreValider = 'tous';
+  if(m.circuit && !circuits.some(function(c){ return c.id === m.circuit; })) m.circuit = '';
+  if(m.cand && m.cand !== '-' && cands.indexOf(m.cand) < 0) m.cand = '';
+  if(m.cand === '-' && !sansCand) m.cand = '';
+  if(m.theme && m.theme !== '-' && themes.indexOf(m.theme) < 0) m.theme = '';
+  if(m.theme === '-' && !sansTheme) m.theme = '';
+
+  var o = function(v, lib, sel){ return '<option value="' + esc(v) + '"' + (v === sel ? ' selected' : '') + '>' + esc(lib) + '</option>'; };
+  var compte = function(test){ return liste.filter(test).length; };
+  var h = tete + '<div class="filtres-mes">'
+    + '<div class="large"><label for="filtreDep">Déposé par</label><select id="filtreDep">'
+    + o('tous', 'Tous les déposants (' + liste.length + ')', fd)
+    + o('autres', 'Les autres, que je peux valider (' + (liste.length - nMoi) + ')', fd)
+    + o('moi', 'Moi (' + nMoi + ')', fd)
+    + (autresIds.length ? '<optgroup label="Un déposant">' + autresIds.map(function(k){ return o(k, nomDe(k) + ' (' + parDeposant[k] + ')', fd); }).join('') + '</optgroup>' : '')
+    + '</select></div>'
+    + '<div><label for="valCand">Candidat</label><select id="valCand">' + o('', 'Tous', m.cand)
+    + cands.map(function(c){ return o(c, c + ' (' + compte(function(d){ return d.candidat === c; }) + ')', m.cand); }).join('')
+    + (sansCand ? o('-', 'Sans candidat — analyses, partis pris, lexique (' + compte(function(d){ return !d.candidat; }) + ')', m.cand) : '')
+    + '</select></div>'
+    + '<div><label for="valTheme">Thématique</label><select id="valTheme">' + o('', 'Toutes', m.theme)
+    + themes.map(function(t){ return o(t, t + ' (' + compte(function(d){ return themesDe(d).indexOf(t) >= 0; }) + ')', m.theme); }).join('')
+    + (sansTheme ? o('-', 'Lexique (' + compte(function(d){ return !d.sujet_id; }) + ')', m.theme) : '')
+    + '</select></div>'
+    + '</div><div class="filtres-mes">'
+    + (circuits.length > 1 ? '<div><label for="valCircuit">Circuit</label><select id="valCircuit">' + o('', 'Tous', m.circuit)
+      + circuits.map(function(c){ return o(c.id, c.nom + ' (' + compte(function(d){ return d.circuit === c.id; }) + ')', m.circuit); }).join('') + '</select></div>' : '')
+    + '<div><label for="valTri">Ordre</label><select id="valTri">'
+    + [['ancien', 'Plus anciens d\'abord'], ['recent', 'Plus récents d\'abord'], ['sujet', 'Par thématique et sujet'], ['candidat', 'Par candidat, puis sujet']].map(function(x){ return o(x[0], x[1], m.tri); }).join('')
+    + '</select></div>'
+    + '<div class="large" style="display:flex;align-items:flex-end;padding-bottom:2px"><button type="button" class="btn small" id="valRaz">Effacer les filtres</button></div>'
+    + '</div><div id="valListe"></div>';
+  vue.innerHTML = h;
+
+  var ordreTheme = {}, ordreCand = {};
+  S.themes.forEach(function(t, i){ ordreTheme[t] = i; });
+  S.candidats.forEach(function(c, i){ ordreCand[c] = i; });
+  var cleSujet = function(d){ var x = S.sujetById[d.sujet_id]; return x ? [ordreTheme[x.thematique] || 0, x.ordre || 0] : [9999, 0]; };
+  var parDate = function(a, b){ return a.depose_le < b.depose_le ? -1 : a.depose_le > b.depose_le ? 1 : a.id - b.id; };
+  var parSujet = function(a, b){ var x = cleSujet(a), y = cleSujet(b); return (x[0] - y[0]) || (x[1] - y[1]) || String(a.terme || '').localeCompare(String(b.terme || ''), 'fr'); };
+  var parCand = function(a, b){ var x = a.candidat ? ordreCand[a.candidat] : 9999, y = b.candidat ? ordreCand[b.candidat] : 9999; return x - y; };
+  var trier = function(a, b){
+    if(m.tri === 'recent') return -parDate(a, b);
+    if(m.tri === 'sujet') return parSujet(a, b) || parCand(a, b) || parDate(a, b);
+    if(m.tri === 'candidat') return parCand(a, b) || parSujet(a, b) || parDate(a, b);
+    return parDate(a, b);
   };
 
-  vue.querySelectorAll('[data-act]').forEach(function(b){
-    b.onclick = async function(){
-      var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10), act = b.getAttribute('data-act');
-      try {
-        if(act === 'valider'){
-          if(!await demander({ titre:'Publier ce texte sur le site ?', texte:'Il sera visible de tous les visiteurs immédiatement.', ok:'Valider et publier' })) return;
-          await rpc('valider_depot', { p_id:id });
-          flash('ok', 'Texte publié.');
-          await chargerLexique();
-        } else {
-          var motif = await demander({ titre:'Refuser ce dépôt', motif:'Motif, transmis au déposant', ok:'Refuser', danger:true });
-          if(motif == null) return;
-          await rpc('refuser_depot', { p_id:id, p_motif:motif });
-          flash('ok', 'Dépôt refusé. Le déposant voit le motif dans « Mes dépôts ».');
-        }
-      } catch(e){ flash('err', msgErreur(e)); }
-      vueValider();
+  function dessinerListe(){
+    var garde = function(d){
+      if(fd === 'autres' && d.depose_par === moi) return false;
+      if(fd === 'moi' && d.depose_par !== moi) return false;
+      if(fd !== 'tous' && fd !== 'autres' && fd !== 'moi' && (d.depose_par || 'inconnu') !== fd) return false;
+      if(m.circuit && d.circuit !== m.circuit) return false;
+      if(m.cand === '-' ? !!d.candidat : (m.cand && d.candidat !== m.cand)) return false;
+      if(m.theme === '-' ? !!d.sujet_id : (m.theme && themesDe(d).indexOf(m.theme) < 0)) return false;
+      return true;
     };
-  });
+    var visibles = liste.filter(garde).sort(trier), montres = visibles.slice(0, m.n), w = $('valListe');
+    var actif = fd !== 'tous' || m.circuit || m.cand || m.theme;
+    $('valRaz').disabled = !actif;
+    if(!visibles.length){ w.innerHTML = '<div class="note info">Aucun dépôt en attente pour ces critères.</div>'; return; }
+    var html = '<p class="muted">' + visibles.length + ' dépôt' + (visibles.length > 1 ? 's' : '') + (visibles.length < liste.length ? ' sur ' + liste.length : '') + (montres.length < visibles.length ? ', ' + montres.length + ' affichés' : '') + '.</p>';
+    /* Intertitres quand la liste est rangée par candidat ou par thématique. */
+    var groupe = null;
+    montres.forEach(function(d){
+      var g = m.tri === 'candidat' ? (d.candidat || 'Sans candidat') : m.tri === 'sujet' ? (d.sujet_id ? (S.sujetById[d.sujet_id] || {}).thematique || 'Sujet inconnu' : 'Lexique') : null;
+      if(g !== null && g !== groupe){ groupe = g; html += '<h3>' + esc(g) + '</h3>'; }
+      html += carteDepot(d, 'valider');
+    });
+    if(montres.length < visibles.length){
+      var encore = Math.min(30, visibles.length - montres.length);
+      html += '<div class="actions" style="justify-content:center;margin-bottom:20px"><button class="btn" id="valPlus">Afficher ' + encore + ' de plus</button><button class="btn" id="valTout">Tout afficher (' + visibles.length + ')</button></div>';
+    }
+    w.innerHTML = html;
+    if($('valPlus')) $('valPlus').onclick = function(){ m.n += 30; dessinerListe(); };
+    if($('valTout')) $('valTout').onclick = function(){ m.n = visibles.length; dessinerListe(); };
+    w.querySelectorAll('[data-depot] [data-act]').forEach(function(b){
+      b.onclick = async function(){
+        var id = parseInt(b.closest('[data-depot]').getAttribute('data-depot'), 10), act = b.getAttribute('data-act');
+        try {
+          if(act === 'valider'){
+            if(!await demander({ titre:'Publier ce texte sur le site ?', texte:'Il sera visible de tous les visiteurs immédiatement.', ok:'Valider et publier' })) return;
+            await rpc('valider_depot', { p_id:id });
+            flash('ok', 'Texte publié.');
+            await chargerLexique();
+          } else {
+            var motif = await demander({ titre:'Refuser ce dépôt', motif:'Motif, transmis au déposant', ok:'Refuser', danger:true });
+            if(motif == null) return;
+            await rpc('refuser_depot', { p_id:id, p_motif:motif });
+            flash('ok', 'Dépôt refusé. Le déposant voit le motif dans « Mes dépôts ».');
+          }
+        } catch(e){ flash('err', msgErreur(e)); }
+        vueValider();
+      };
+    });
+  }
+  var change = function(){ m.n = 30; garderFiltresVal(); dessinerListe(); };
+  $('filtreDep').onchange = function(){ fd = this.value; garderFiltre(fd); m.n = 30; dessinerListe(); };
+  $('valCand').onchange = function(){ m.cand = this.value; change(); };
+  $('valTheme').onchange = function(){ m.theme = this.value; change(); };
+  if($('valCircuit')) $('valCircuit').onchange = function(){ m.circuit = this.value; change(); };
+  $('valTri').onchange = function(){ m.tri = this.value; change(); };
+  $('valRaz').onclick = function(){
+    fd = 'tous'; garderFiltre('tous'); m.circuit = ''; m.cand = ''; m.theme = '';
+    ['filtreDep', 'valCand', 'valTheme', 'valCircuit'].forEach(function(k){ if($(k)) $(k).value = k === 'filtreDep' ? 'tous' : ''; });
+    change();
+  };
+  dessinerListe();
 }
 
 /* =====================================================================
@@ -1647,27 +1453,51 @@ async function vueEnLigne(){
       + (e.publie ? '<button class="btn danger small" data-act="depub-ed">Dépublier</button>' : '') + '</div>';
   }).join('') : '<p class="muted">Aucun texte.</p>';
   await chargerLexique();
-  h += '<h3>Lexique</h3>';
-  h += S.lexique.length ? S.lexique.map(function(l){
-    return '<div class="card" data-lex="' + l.id + '"><span class="badge">lexique</span> <span class="badge ' + (l.publie ? 'publie">en ligne' : 'hors">dépublié') + '</span>'
-      + '<h2 style="margin-top:8px">' + esc(l.terme) + (l.developpe ? ' <span class="lex-dev">— ' + esc(l.developpe) + '</span>' : '') + '</h2><div class="meta">Formes reconnues : <b>' + esc(formesLex(l.terme, l.variantes).join(' · ')) + '</b> · modifié le ' + esc(dateFr(l.maj)) + '</div>'
-      + '<p class="muted">' + esc(l.definition.slice(0, 180)) + (l.definition.length > 180 ? '…' : '') + '</p>'
-      + (l.publie ? '<button class="btn danger small" data-act="depub-lex">Dépublier</button>' : '') + '</div>';
-  }).join('') : '<p class="muted">Aucun terme.</p>';
+  h += '<h3>Lexique (' + S.lexique.length + ')</h3>';
+  h += S.lexique.length
+    ? '<div class="filtres-mes"><div class="large"><label for="lexQ">Rechercher</label><input type="search" id="lexQ" autocomplete="off" placeholder="Terme, sigle, autre forme ou mot de la définition" value="' + esc(S.lexQ || '') + '"></div>'
+      + '<div><label for="lexEtat">État</label><select id="lexEtat">' + [['', 'Tous'], ['publie', 'En ligne'], ['hors', 'Dépubliés']].map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === (S.lexEtat || '') ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div></div>'
+      + '<div id="lexListe"></div>'
+    : '<p class="muted">Aucun terme.</p>';
   h += '<h3>Verbatims</h3><div class="card"><div class="row">'
     + '<div class="field"><label for="dvTheme">Thématique</label><select id="dvTheme"><option value="">— choisir —</option>' + S.themes.map(function(t){ return '<option>' + esc(t) + '</option>'; }).join('') + '</select></div>'
     + '<div class="field"><label for="dvSujet">Sujet</label><select id="dvSujet" disabled><option value="">— choisir —</option></select></div></div><div id="dvCases"></div></div>';
   vue.innerHTML = h;
 
-  vue.querySelectorAll('[data-act="depub-lex"]').forEach(function(b){
-    b.onclick = async function(){
-      var id = parseInt(b.closest('[data-lex]').getAttribute('data-lex'), 10);
-      var motif = await demander({ titre:'Dépublier ce terme ?', texte:'Il cesse aussitôt d\'être cliquable sur le site et disparaît du lexique. La définition reste conservée dans la base.', motif:'Motif (facultatif, noté au journal)', motifFacultatif:true, ok:'Dépublier', danger:true });
-      if(motif == null) return;
-      try { await rpc('depublier_lexique', { p_id:id, p_motif:motif }); flash('ok', 'Terme dépublié.'); } catch(e){ flash('err', msgErreur(e)); }
-      vueEnLigne();
-    };
-  });
+  /* Lexique : recherche et état retenus pendant la session, affichage par 30. */
+  var nLex = 30;
+  function dessinerLexique(){
+    var w = $('lexListe');
+    if(!w) return;
+    var trouves = chercherLexique(S.lexQ || '', true).filter(function(l){ return !S.lexEtat || (S.lexEtat === 'publie') === !!l.publie; });
+    var montres = trouves.slice(0, nLex);
+    var html = (S.lexQ || S.lexEtat ? '<p class="muted">' + trouves.length + ' terme' + (trouves.length > 1 ? 's' : '') + ' sur ' + S.lexique.length + '.</p>' : '')
+      + (trouves.length ? montres.map(function(l){
+        return '<div class="card" data-lex="' + l.id + '"><span class="badge">lexique</span> <span class="badge ' + (l.publie ? 'publie">en ligne' : 'hors">dépublié') + '</span>'
+          + '<h2 style="margin-top:8px">' + esc(l.terme) + (l.developpe ? ' <span class="lex-dev">— ' + esc(l.developpe) + '</span>' : '') + '</h2><div class="meta">Formes reconnues : <b>' + esc(formesLex(l.terme, l.variantes).join(' · ')) + '</b> · modifié le ' + esc(dateFr(l.maj)) + '</div>'
+          + '<p class="muted">' + esc(l.definition.slice(0, 180)) + (l.definition.length > 180 ? '…' : '') + '</p>'
+          + (l.publie ? '<button class="btn danger small" data-act="depub-lex">Dépublier</button>' : '') + '</div>';
+      }).join('') : '<div class="note info">Aucun terme ne correspond à cette recherche.</div>');
+    if(montres.length < trouves.length) html += '<div class="actions" style="justify-content:center;margin-bottom:20px"><button class="btn" id="lexPlus">Afficher ' + Math.min(30, trouves.length - montres.length) + ' de plus</button><button class="btn" id="lexTout">Tout afficher (' + trouves.length + ')</button></div>';
+    w.innerHTML = html;
+    if($('lexPlus')) $('lexPlus').onclick = function(){ nLex += 30; dessinerLexique(); };
+    if($('lexTout')) $('lexTout').onclick = function(){ nLex = trouves.length; dessinerLexique(); };
+    w.querySelectorAll('[data-act="depub-lex"]').forEach(function(b){
+      b.onclick = async function(){
+        var id = parseInt(b.closest('[data-lex]').getAttribute('data-lex'), 10);
+        var motif = await demander({ titre:'Dépublier ce terme ?', texte:'Il cesse aussitôt d\'être cliquable sur le site et disparaît du lexique. La définition reste conservée dans la base.', motif:'Motif (facultatif, noté au journal)', motifFacultatif:true, ok:'Dépublier', danger:true });
+        if(motif == null) return;
+        try { await rpc('depublier_lexique', { p_id:id, p_motif:motif }); flash('ok', 'Terme dépublié.'); } catch(e){ flash('err', msgErreur(e)); }
+        vueEnLigne();
+      };
+    });
+  }
+  if($('lexQ')){
+    var minuteurLex = null;
+    $('lexQ').oninput = function(){ var v = this.value; clearTimeout(minuteurLex); minuteurLex = setTimeout(function(){ S.lexQ = v; nLex = 30; dessinerLexique(); }, 200); };
+    $('lexEtat').onchange = function(){ S.lexEtat = this.value; nLex = 30; dessinerLexique(); };
+    dessinerLexique();
+  }
   vue.querySelectorAll('[data-act="depub-ed"]').forEach(function(b){
     b.onclick = async function(){
       var id = parseInt(b.closest('[data-ed]').getAttribute('data-ed'), 10);
