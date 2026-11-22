@@ -382,6 +382,7 @@ footer a{color:var(--terre)}
       <a href="#lexique" data-nav="lexique">Lexique</a>
       <a href="#methodologie" data-nav="methodologie">Méthodologie</a>
       <a href="#sources" data-nav="sources">Sources</a>
+      <a href="#apropos" data-nav="apropos">À propos</a>
       <a href="contribuer.html" class="nav-contrib hidden" id="navContrib">Espace contributeurs</a>
     </nav>
   </div>
@@ -445,6 +446,30 @@ footer a{color:var(--terre)}
   </div>
 </main>
 
+<!-- ===== Vue à propos ===== -->
+<main id="view-apropos" class="hidden">
+  <div class="page">
+    <h1>À propos</h1>
+    <p class="lede">Ce projet a été élaboré pour permettre à chaque personne d'accéder à de l'information en quantité et en qualité suffisantes sur chaque sujet faisant l'objet d'une proposition programmatique lors de la campagne pour l'élection présidentielle de 2027 en France.</p>
+
+    <p>Toutes les personnes participant à ce projet le font bénévolement et ont un intérêt pour ce qui a trait à l'organisation de la société. Nous ne représentons que nous-mêmes et n'avons reçu aucun financement. Notre démarche est citoyenne.</p>
+
+    <p>Notre site donne accès à trois couches d'informations pour chaque sujet qui fera l'objet d'une proposition : un report fidèle des programmes, une analyse du sujet indépendamment du contenu des propositions et des partis pris sur ce sujet.</p>
+
+    <p>Nous nous adressons à toute personne s'intéressant à l'organisation de la société française, quel que soit son bord politique. Ce projet doit permettre aux personnes qui le consultent de se faire une idée plus claire d'un sujet qui les intéresse et de pouvoir confronter cette idée aux propositions des présidentiables. Nous ne représentons aucune formation politique, aucun camp et nous affirmons notre volonté de proposer un contenu aussi neutre que possible en respectant un cahier des charges strict.</p>
+
+    <p>Les personnes engagées dans ce projet ont des sensibilités politiques diverses, des âges variés, des parcours de vie différents et représentent ainsi une partie de la société française qui se veut aussi large que possible.</p>
+
+    <p>Les échanges entre les participants, les propositions, les relectures conduisant au rejet ou à la validation d'un écrit prennent place sur un serveur Discord dédié au projet.</p>
+
+    <p>Ce site est construit en HTML, CSS et JavaScript, et publié via GitHub Pages. Ses contenus sont conservés dans une base de données PostgreSQL hébergée par Supabase, dont la structure et les règles sont écrites en SQL. Le code a été réalisé avec l'aide d'une IA, Claude, développée par l'entreprise américaine Anthropic.</p>
+
+    <p>Dans un premier temps, nous commençons par saisir les 6 partis ayant obtenu les meilleurs scores en 2022 pour des raisons de ressources humaines de notre côté : Édouard Philippe et Gabriel Attal (pour Emmanuel Macron), Marine Le Pen, Jean-Luc Mélenchon, Éric Zemmour, Bruno Retailleau (pour Valérie Pécresse) et Raphaël Glucksmann (pour Yannick Jadot qui a rejoint sa campagne).</p>
+
+    <p>Les candidats déclarant avoir obtenu 500 promesses de parrainages seront ajoutés par la suite dès que possible.</p>
+  </div>
+</main>
+
 <!-- ===== Vue méthodologie ===== -->
 <main id="view-methodologie" class="hidden">
   <div class="page">
@@ -452,7 +477,8 @@ footer a{color:var(--terre)}
     <p class="lede">Ce comparateur est né d'un constat : lors des précédentes élections, la plupart des outils de comparaison restituaient les programmes à travers une grille de lecture implicite, sans que le lecteur puisse distinguer le fait de l'interprétation. Nous avons voulu un outil où cette distinction est la règle de construction.</p>
 
     <h2>Ce qui entre dans le comparateur</h2>
-    <p>Un candidat intègre le tableau dès lors qu'il a <strong>publié un programme écrit</strong>, même partiel ou limité à de grandes lignes. Les déclarations orales, propos de meeting ou interviews n'y suffisent pas : une idée testée à l'oral peut être abandonnée sans coût, tandis qu'un écrit publié engage son auteur. Les positions non encore publiées apparaissent comme « À venir ».</p>
+    <p>Dans un premier temps, pour des raisons de ressources humaines, le comparateur suit les candidats des <strong>six partis arrivés en tête de l'élection présidentielle de 2022</strong>. Les candidats déclarant avoir obtenu <strong>500 promesses de parrainage</strong> y seront ajoutés par la suite, dès que possible (voir <a href="#apropos" data-nav="apropos">À propos</a>).</p>
+    <p>Pour chacun, seul le <strong>programme écrit</strong> est transcrit, même partiel ou limité à de grandes lignes. Les déclarations orales, propos de meeting ou interviews n'y suffisent pas : une idée testée à l'oral peut être abandonnée sans coût, tandis qu'un écrit publié engage son auteur. Les positions non encore publiées apparaissent comme « À venir ».</p>
 
     <h2>Les trois registres</h2>
     <p>Chaque sujet est traité selon trois registres, visuellement distincts sur tout le site :</p>
@@ -575,7 +601,7 @@ footer a{color:var(--terre)}
   <div class="wrap">
     <span>Les cases « À venir » correspondent aux positions non encore publiées par écrit.</span>
     <span id="footMeta"></span>
-    <span><button class="cite-link" type="button" data-signaler>Signaler un problème</button> · <a href="contribuer.html">Espace contributeurs</a> · <a href="#mentions" data-nav="mentions">Mentions légales et confidentialité</a></span>
+    <span><button class="cite-link" type="button" data-signaler>Signaler un problème</button> · <a href="contribuer.html">Espace contributeurs</a> · <a href="#apropos" data-nav="apropos">À propos</a> · <a href="#mentions" data-nav="mentions">Mentions légales et confidentialité</a></span>
   </div>
 </footer>
 
@@ -808,7 +834,7 @@ function allerTerme(id){
 }
 
 /* ===== Navigation entre vues ===== */
-var views = ['accueil','theme','lexique','methodologie','sources','mentions'];
+var views = ['accueil','theme','lexique','methodologie','sources','mentions','apropos'];
 function showView(v){
   /* Tout changement de vue referme le panneau et libère le défilement : sans cela, le
      bouton « retour » du navigateur laisserait la page figée derrière un panneau ouvert.
@@ -1449,7 +1475,7 @@ document.querySelectorAll('.p-tab').forEach(function(b){
 /* ===== Liens partageables (hash) ===== */
 function applyHash(){
   var h=decodeURIComponent(location.hash.replace(/^#/,''));
-  if(h==='methodologie'||h==='mentions'){showView(h);return;}
+  if(h==='methodologie'||h==='mentions'||h==='apropos'){showView(h);return;}
   if(h==='lexique'||h.indexOf('lexique/')===0){showView('lexique');if(h.length>8)allerTerme(h.slice(8));return;}
   /* « bibliographie » est conservé : les liens partagés avant la refonte
      de la page Sources doivent continuer de fonctionner. */
