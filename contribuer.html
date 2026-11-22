@@ -198,7 +198,7 @@ var CIRCUITS = [
 ];
 var S = {
   session:null, profil:null, tab:null,
-  themes:[], sujets:[], sujetById:{}, candidats:[], sources:[], srcById:{}, figById:{}, lexique:[], lexById:{},
+  themes:[], sujets:[], sujetById:{}, candidats:[], tousCandidats:[], retires:[], sources:[], srcById:{}, figById:{}, lexique:[], lexById:{},
   relecteursConnus:[], pseudos:{}, form:null, nAttente:0, nSignal:0, nDocs:0, message:null,
   progCand:null, progDoc:null, progTheme:'', progSansDoc:true,   /* onglet Programmes */
   filtreValider:null,  /* 'tous', 'autres', 'moi' ou l'identifiant d'un déposant */
@@ -391,14 +391,18 @@ async function chargerReferentiel(){
   var r = await Promise.all([
     tout(function(){ return sb.from('thematiques').select('nom,ordre').order('ordre'); }),
     tout(function(){ return sb.from('sujets').select('id,libelle,thematique,ordre,aussi_dans').order('ordre'); }),
-    tout(function(){ return sb.from('candidats').select('nom,ordre').order('ordre'); }),
+    tout(function(){ return sb.from('candidats').select('*').order('ordre'); }),
     tout(function(){ return sb.from('sources').select('id,registre,auteurs,titre,organisme,date_publication,url,date_consultation,archive,statut,motif,cree_par,traite_le').order('ordre'); }),
     tout(function(){ return sb.from('figures').select('id,type,titre,alt,credit,url,fichier').order('id'); })
   ]);
   S.themes = r[0].map(function(t){ return t.nom; });
   S.sujets = r[1]; S.sujetById = {};
   S.sujets.forEach(function(s){ S.sujetById[s.id] = s; });
-  S.candidats = r[2].map(function(c){ return c.nom; });
+  /* Candidats affichés sur le site, puis candidats retirés (absents du dernier classeur
+     réimporté : leurs textes restent dans la base, mais ne sont plus en ligne). */
+  S.tousCandidats = r[2].map(function(c){ return c.nom; });
+  S.candidats = r[2].filter(function(c){ return !c.retire; }).map(function(c){ return c.nom; });
+  S.retires = r[2].filter(function(c){ return c.retire; }).map(function(c){ return c.nom; });
   S.sources = r[3]; S.srcById = {};
   S.sources.forEach(function(b){ S.srcById[b.id] = b; });
   S.figById = {};
@@ -702,7 +706,7 @@ function diagnostics(f){
       if(n > MOTS_MAX_PARTI_PRIS) bloc.push('Le texte compte ' + n + ' mots : la limite est de ' + MOTS_MAX_PARTI_PRIS + ', notes non comprises.');
       else if(n > MOTS_REPERE_PARTI_PRIS) avert.push('Le texte compte ' + n + ' mots : l\'ordre de grandeur visé est de ' + MOTS_REPERE_PARTI_PRIS + ' (blocage au-delà de ' + MOTS_MAX_PARTI_PRIS + ').');
       var bas = ' ' + t.toLowerCase() + ' ';
-      S.candidats.forEach(function(c){
+      S.tousCandidats.forEach(function(c){
         var nom = c.trim().split(/\s+/).pop().toLowerCase();
         if(nom.length > 3 && !/^candidat/i.test(c) && bas.indexOf(nom) >= 0) avert.push('Le texte semble nommer un candidat (« ' + c + ' ») : un parti pris parle des idées, pas des personnes.');
       });
@@ -717,7 +721,7 @@ function diagnostics(f){
 /* Dans une définition, les noms de candidats n'ont pas leur place. */
 function nommeCandidat(t){
   var bas = ' ' + String(t || '').toLowerCase() + ' ', trouves = [];
-  S.candidats.forEach(function(c){
+  S.tousCandidats.forEach(function(c){
     var nom = c.trim().split(/\s+/).pop().toLowerCase();
     if(nom.length > 3 && !/^candidat/i.test(c) && bas.indexOf(nom) >= 0) trouves.push(c);
   });
@@ -1593,7 +1597,7 @@ async function vueValider(){
   var nomDe = function(k){ return k === 'inconnu' ? 'Compte supprimé' : (S.pseudos[k] || 'Compte supprimé'); };
   var autresIds = Object.keys(parDeposant).filter(function(k){ return k !== moi; }).sort(function(a, b){ return nomDe(a).localeCompare(nomDe(b), 'fr'); });
   var circuits = CIRCUITS.filter(function(c){ return liste.some(function(d){ return d.circuit === c.id; }); });
-  var cands = S.candidats.filter(function(c){ return liste.some(function(d){ return d.candidat === c; }); });
+  var cands = S.tousCandidats.filter(function(c){ return liste.some(function(d){ return d.candidat === c; }); });
   var sansCand = liste.some(function(d){ return !d.candidat; });
   var themesDe = function(d){ return d.sujet_id ? themesDuSujet(d.sujet_id) : []; };
   var themes = S.themes.filter(function(t){ return liste.some(function(d){ return themesDe(d).indexOf(t) >= 0; }); });
@@ -1636,7 +1640,7 @@ async function vueValider(){
 
   var ordreTheme = {}, ordreCand = {};
   S.themes.forEach(function(t, i){ ordreTheme[t] = i; });
-  S.candidats.forEach(function(c, i){ ordreCand[c] = i; });
+  S.tousCandidats.forEach(function(c, i){ ordreCand[c] = i; });
   var cleSujet = function(d){ var x = S.sujetById[d.sujet_id]; return x ? [ordreTheme[x.thematique] || 0, x.ordre || 0] : [9999, 0]; };
   var parDate = function(a, b){ return a.depose_le < b.depose_le ? -1 : a.depose_le > b.depose_le ? 1 : a.id - b.id; };
   var parSujet = function(a, b){ var x = cleSujet(a), y = cleSujet(b); return (x[0] - y[0]) || (x[1] - y[1]) || String(a.terme || '').localeCompare(String(b.terme || ''), 'fr'); };
@@ -1926,13 +1930,13 @@ async function vueProgrammes(){
   document.querySelectorAll('.tab[data-tab="programmes"]').forEach(function(t){ t.innerHTML = 'Programmes' + (S.profil.mainteneur && S.nDocs ? '<span class="n">' + S.nDocs + '</span>' : ''); });
 
   /* Candidats de la grille, puis les éventuels auteurs de documents qui n'en font pas partie. */
-  var auteurs = S.candidats.slice();
+  var auteurs = S.tousCandidats.slice();
   docs.forEach(function(b){ if(b.auteurs && auteurs.indexOf(b.auteurs) < 0) auteurs.push(b.auteurs); });
   if(!S.progCand || auteurs.indexOf(S.progCand) < 0){
     var avec = auteurs.filter(function(a){ return docs.some(function(b){ return b.auteurs === a; }); });
     S.progCand = avec[0] || auteurs[0] || '';
   }
-  var c = S.progCand, estCand = S.candidats.indexOf(c) >= 0;
+  var c = S.progCand, estCand = S.tousCandidats.indexOf(c) >= 0;
   var pos = [], liens = [];
   if(estCand){
     pos = await tout(function(){ return sb.from('positions').select('sujet_id,texte').eq('candidat', c).order('sujet_id'); });
@@ -2267,7 +2271,7 @@ function construireClasseur(XLSX, x){
   }); }); });
   ajouter('Données des figures', pts, [24, 44, 9, 8, 10, 12, 11]);
 
-  var pris = { 'lisez-moi':1, 'analyses & partis pris':1, 'bibliographie':1, 'figures':1, 'données des figures':1, 'lexique':1, '_dépôts':1, '_rattachements':1, '_journal':1 };
+  var pris = { 'lisez-moi':1, 'analyses & partis pris':1, 'bibliographie':1, 'figures':1, 'données des figures':1, 'lexique':1, '_dépôts':1, '_rattachements':1, '_journal':1, '_candidats retirés':1 };
   x.thematiques.forEach(function(t){
     var nom = t.nom.replace(/[:\\\/?*\[\]]/g, ' ').slice(0, 31);
     if(pris[nom.toLowerCase()]) return;
@@ -2276,6 +2280,17 @@ function construireClasseur(XLSX, x){
       t.sujets.map(function(s){ return [s.id, s.libelle, (s.aussi_dans || []).join(', ')].concat(x.candidats.map(function(c){ return s.positions[c] || ''; })); })),
       [30, 40, 22].concat(x.candidats.map(function(){ return 60; })));
   });
+
+  /* Textes des candidats retirés : sauvegardés à part, dans un onglet jamais réimporté
+     (le nom commence par « _ ») ; les remettre dans la grille les ferait revenir sur le site. */
+  var ret = x.candidats_retires || [];
+  if(ret.length){
+    var lignesRet = [];
+    x.thematiques.forEach(function(t){ t.sujets.forEach(function(s){
+      if(ret.some(function(c){ return s.positions[c]; })) lignesRet.push([s.id, s.libelle, t.nom].concat(ret.map(function(c){ return s.positions[c] || ''; })));
+    }); });
+    ajouter('_Candidats retirés', [['ID_sujet', 'Sujet', 'Thématique'].concat(ret)].concat(lignesRet), [30, 40, 22].concat(ret.map(function(){ return 60; })));
+  }
 
   ajouter('_Dépôts', [['N°', 'Circuit', 'Statut', 'ID_sujet', 'Candidat', 'Auteur', 'Initiales', 'Âge', 'Texte', 'Sources', 'Relecteurs', 'Corrige (ID_base)', 'Fait suite au dépôt', 'Déposé par', 'Déposé le', 'Traité par', 'Traité le', 'Motif du refus', 'Mode (verbatim)', 'Texte de départ (correction)', 'Terme (lexique)']].concat(
     x.depots.map(function(d){ return [d.id, d.circuit, d.statut, d.sujet_id || '', d.candidat || '', d.auteur, d.initiales, d.age == null ? '' : d.age, d.texte, d.sources.join(', '), d.relecteurs.join(', '), d.remplace || '', d.suite_de || '', d.depose_par_pseudo || '', jour(d.depose_le), d.traite_par_pseudo || '', jour(d.traite_le), d.motif || '', d.mode || '', d.texte_base || '', d.terme || '']; })));
@@ -2303,7 +2318,7 @@ async function vueExcel(){
     + '<div class="card"><h2>Sauvegarde : exporter toute la base vers Excel</h2><p>Produit un classeur au format du fichier source : un onglet par thématique, les analyses et partis pris, la bibliographie, les figures, le lexique, plus l\'historique des dépôts, les rattachements des cases à leurs documents et le journal. À faire régulièrement, et à ranger hors de ce service.</p><div class="actions"><button class="btn pri" id="btnExport"' + (vide ? ' disabled' : '') + '>Télécharger la sauvegarde Excel</button><button class="btn" id="btnSecours"' + (vide ? ' disabled' : '') + '>Télécharger data.js (copie de secours du site)</button></div><p class="muted" style="margin-top:8px">Le fichier data.js se dépose dans le dépôt GitHub à côté de index.html : le site l\'affiche si la base ne répond pas.</p><div id="exportMsg"></div></div>'
     + '<div class="card"><h2>' + (vide ? 'Import initial : charger le classeur source' : 'Mettre à jour la structure depuis Excel') + '</h2>'
     + (vide ? '<p>La base est vide. Déposez le classeur <b>Comparateur_2027_source.xlsx</b> : sa structure et tous ses textes seront chargés. Cette opération n\'est possible qu\'une seule fois.</p>'
-            : '<p>Déposez un classeur pour mettre à jour <b>la structure seulement</b> : thématiques, sujets, libellés, colonne « Aussi dans », candidats. Aucun texte n\'est modifié. Un sujet absent du fichier est supprimé s\'il est vide, conservé et signalé s\'il contient quoi que ce soit.</p><div class="note warn">Ne renommez jamais un ID_sujet qui porte déjà des textes : l\'outil y verrait un nouveau sujet vide.</div>')
+            : '<p>Déposez un classeur pour mettre à jour <b>la structure seulement</b> : thématiques, sujets, libellés, colonne « Aussi dans », candidats. Aucun texte n\'est modifié. Un sujet absent du fichier est supprimé s\'il est vide, conservé et signalé s\'il contient quoi que ce soit.</p><p>Un candidat absent du fichier est supprimé s\'il n\'a aucun texte. S\'il en a, il est <b>retiré</b> : sa colonne disparaît du site, mais tous ses textes restent dans la base. Il revient, avec ses textes, si sa colonne réapparaît dans un classeur réimporté.' + (S.retires.length ? ' Candidats retirés aujourd\'hui : <b>' + esc(S.retires.join(', ')) + '</b>.' : '') + '</p><div class="note warn">Ne renommez jamais un ID_sujet qui porte déjà des textes : l\'outil y verrait un nouveau sujet vide.</div>')
     + '<div class="drop" id="drop">Cliquez ou glissez le fichier .xlsx ici</div><input type="file" id="fichierXlsx" accept=".xlsx" class="hidden"><div id="importMsg"></div></div>';
 
   $('btnExport').onclick = async function(){
@@ -2361,8 +2376,9 @@ async function vueExcel(){
         + (vide ? ', ' + r.verbatims + ' verbatims, ' + r.textes + ' textes, ' + r.sources + ' sources, ' + r.figures + ' figures' : ' (' + r.sujets_ajoutes + ' sujet(s) ajouté(s), ' + r.sujets_supprimes + ' supprimé(s))') + '.</div>';
       var alertes = [];
       if(r.sujets_conserves.length) alertes.push('Sujets absents du fichier mais conservés car ils portent des textes ou des dépôts : ' + r.sujets_conserves.join(', '));
-      if(r.candidats_conserves.length) alertes.push('Candidats absents du fichier mais conservés car ils ont des verbatims : ' + r.candidats_conserves.join(', '));
+      if(r.candidats_conserves && r.candidats_conserves.length) alertes.push('Candidats absents du fichier mais conservés car ils ont des verbatims : ' + r.candidats_conserves.join(', '));
       if(r.emprunts_invalides.length) alertes.push('Emprunts vers une thématique inexistante : ' + r.emprunts_invalides.join(', '));
+      if(r.candidats_retires && r.candidats_retires.length) h += '<div class="note info"><b>Candidats retirés du site</b> (absents du fichier, textes conservés dans la base) : ' + esc(r.candidats_retires.join(', ')) + '. Pour faire revenir l\'un d\'eux, remettez sa colonne dans un classeur et réimportez-le.</div>';
       if(alertes.length) h += '<div class="note warn"><ul>' + alertes.map(function(a){ return '<li>' + esc(a) + '</li>'; }).join('') + '</ul></div>';
       await chargerReferentiel();
       msg.innerHTML = h;
